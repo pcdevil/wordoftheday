@@ -8,7 +8,7 @@ import {
 
 import { MastodonPoster } from '#lib/mastodon-poster.mjs';
 import { WordResolver } from '#lib/word-resolver.mjs';
-import { InvalidSourceName, WordOfTheDay } from '#src/word-of-the-day.mjs';
+import { InvalidSourceNameError, WordOfTheDay } from '#src/word-of-the-day.mjs';
 import { mockLoggerFactory } from '#util/logger-factory.test.mjs';
 
 describe('WordOfTheDay', () => {
@@ -77,10 +77,10 @@ describe('WordOfTheDay', () => {
 			]);
 		});
 
-		it('should throw an InvalidSourceName when the given source name is invalid', async () => {
+		it('should throw an InvalidSourceNameError when the given source name is invalid', async () => {
 			await strict.rejects(
 				async () => await wordOfTheDay.run(sourceName + 'NotExisting'),
-				InvalidSourceName
+				InvalidSourceNameError
 			);
 		});
 	});

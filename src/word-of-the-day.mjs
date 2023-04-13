@@ -3,7 +3,7 @@ import { MastodonPoster } from '#lib/mastodon-poster.mjs';
 import { WordResolver } from '#lib/word-resolver.mjs';
 import { loggerFactory } from '#util/logger-factory.mjs';
 
-export class InvalidSourceName extends Error {}
+export class InvalidSourceNameError extends Error {}
 
 export class WordOfTheDay {
 	#config;
@@ -47,7 +47,7 @@ export class WordOfTheDay {
 
 	#getSourceConfig (sourceName) {
 		if (!this.#config.sources[sourceName]) {
-			throw new InvalidSourceName(`Referenced source "${sourceName}" is not configured.`);
+			throw new InvalidSourceNameError(`Referenced source "${sourceName}" is not configured.`);
 		}
 
 		return this.#config.sources[sourceName];
