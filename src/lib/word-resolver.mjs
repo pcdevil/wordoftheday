@@ -5,7 +5,7 @@ import { FetchError, assertResponseOk } from '#util/fetch-response.mjs';
 export class FeedParserError extends Error {}
 export class NoItemError extends Error {}
 
-export default class WordResolver {
+export class WordResolver {
 	#fetchMethod;
 	#logger;
 	#parseFeedMethod;

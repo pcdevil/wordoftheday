@@ -1,11 +1,11 @@
-import Config from '#lib/config.mjs';
-import MastodonPoster from '#lib/mastodon-poster.mjs';
-import WordResolver from '#lib/word-resolver.mjs';
+import { Config } from '#lib/config.mjs';
+import { MastodonPoster } from '#lib/mastodon-poster.mjs';
+import { WordResolver } from '#lib/word-resolver.mjs';
 import { loggerFactory } from '#util/logger-factory.mjs';
 
 export class InvalidSourceName extends Error {}
 
-export default class WordOfTheDay {
+export class WordOfTheDay {
 	#config;
 	#logger;
 	#mastodonPoster;

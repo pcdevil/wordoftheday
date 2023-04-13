@@ -1,6 +1,6 @@
 import { FetchError, assertResponseOk, isClientFetchResponseError } from '#util/fetch-response.mjs';
 
-export default class MastodonPoster {
+export class MastodonPoster {
 	static language = 'en-GB';
 	static retryCount = 2;
 	static retryDelay = 30_000; // in milliseconds

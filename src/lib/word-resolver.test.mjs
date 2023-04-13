@@ -6,7 +6,7 @@ import {
 	mock,
 } from 'node:test';
 
-import WordResolver, { FeedParserError, NoItemError } from '#lib/word-resolver.mjs';
+import { FeedParserError, NoItemError, WordResolver } from '#lib/word-resolver.mjs';
 import { FetchError, FetchResponseError } from '#util/fetch-response.mjs';
 import { mockLoggerFactory } from '#util/logger-factory.test.mjs';
 

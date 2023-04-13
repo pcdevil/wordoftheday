@@ -2,7 +2,7 @@ import dotenv from 'dotenv';
 
 export class MissingEnvVariableError extends Error {}
 
-export default class Config {
+export class Config {
 	constructor (dotenvModule = dotenv) {
 		const processEnv = {
 			...process.env,

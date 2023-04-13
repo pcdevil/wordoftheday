@@ -6,7 +6,7 @@ import {
 	mock,
 } from 'node:test';
 
-import MastodonPoster from '#lib/mastodon-poster.mjs';
+import { MastodonPoster } from '#lib/mastodon-poster.mjs';
 import { FetchError, FetchResponseError } from '#util/fetch-response.mjs';
 import { mockLoggerFactory } from '#util/logger-factory.test.mjs';
 

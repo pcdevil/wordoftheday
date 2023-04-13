@@ -7,7 +7,7 @@ import {
 	mock,
 } from 'node:test';
 
-import Config, { MissingEnvVariableError } from '#lib/config.mjs';
+import { Config, MissingEnvVariableError } from '#lib/config.mjs';
 
 describe('Config', () => {
 	const environmentVariableName = 'TEST_RUN';
