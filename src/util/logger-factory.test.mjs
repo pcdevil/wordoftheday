@@ -6,9 +6,7 @@ import {
 	mock,
 } from 'node:test';
 
-import {
-	loggerFactory,
-} from '#util/logger-factory.mjs';
+import { loggerFactory } from '#util';
 
 // expose a mocked logger for other test modules
 export function mockLoggerFactory () {

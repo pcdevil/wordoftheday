@@ -1,4 +1,4 @@
-import { FetchError, assertResponseOk, isClientFetchResponseError } from '#util/fetch-response.mjs';
+import { FetchError, assertResponseOk, isClientFetchResponseError } from '#util';
 
 export class MastodonPoster {
 	static language = 'en-GB';

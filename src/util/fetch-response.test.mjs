@@ -9,7 +9,7 @@ import {
 	FetchResponseError,
 	assertResponseOk,
 	isClientFetchResponseError,
-} from '#util/fetch-response.mjs';
+} from '#util';
 
 describe('assertResponseOk', () => {
 	it('should throw a FetchResponseError when the response is not ok', () => {

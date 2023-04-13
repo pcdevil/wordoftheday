@@ -1,7 +1,5 @@
-import { Config } from '#lib/config.mjs';
-import { MastodonPoster } from '#lib/mastodon-poster.mjs';
-import { WordResolver } from '#lib/word-resolver.mjs';
-import { loggerFactory } from '#util/logger-factory.mjs';
+import { Config, MastodonPoster, WordResolver } from '#lib';
+import { loggerFactory } from '#util';
 
 export class InvalidSourceNameError extends Error {}
 

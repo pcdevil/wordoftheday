@@ -6,8 +6,8 @@ import {
 	mock,
 } from 'node:test';
 
-import { FeedParserError, NoItemError, WordResolver } from '#lib/word-resolver.mjs';
-import { FetchError, FetchResponseError } from '#util/fetch-response.mjs';
+import { FeedParserError, NoItemError, WordResolver } from '#lib';
+import { FetchError, FetchResponseError } from '#util';
 import { mockLoggerFactory } from '#util/logger-factory.test.mjs';
 
 function fakeItem (titleSuffix = '') {
