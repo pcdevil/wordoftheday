@@ -1,0 +1,22 @@
+{
+  "name": "@pcdevil/wordoftheday",
+  "version": "0.0.0",
+  "description": "A Mastodon \"Word of the Day\" bot.",
+  "private": true,
+  "type": "module",
+  "scripts": {},
+  "engines": {
+    "node": "^18.17.0",
+    "npm": "^9.6.7"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pcdevil/wordoftheday.git"
+  },
+  "author": "Attila Gonda (https://attilagonda.com/)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/pcdevil/wordoftheday/issues"
+  },
+  "homepage": "https://github.com/pcdevil/wordoftheday#readme"
+}
