@@ -6,7 +6,9 @@
   "type": "module",
   "scripts": {
     "lint": "eslint --ext .js,.mjs --ignore-path .gitignore .",
-    "lint:fix": "npm run lint -- --fix"
+    "lint:fix": "npm run lint -- --fix",
+    "test": "node --test test",
+    "test:watch": "node --test --watch test"
   },
   "engines": {
     "node": "^18.17.0",
