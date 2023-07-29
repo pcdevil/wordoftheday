@@ -1,0 +1,27 @@
+# EditorConfig is awesome: https://EditorConfig.org
+
+# top-most EditorConfig file
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+indent_style = tab
+insert_final_newline = true
+tab_width = 2
+trim_trailing_whitespace = true
+
+# keep space indentation for npm package files
+[{package.json,package-lock.json}]
+indent_size = 2
+indent_style = space
+
+# keep space indentation for markdown files and trailing spaces
+[*.md]
+indent_size = 2
+indent_style = space
+trim_trailing_whitespace = false
+
+[{*.yml,*.yaml}]
+indent_size = 2
+indent_style = space
