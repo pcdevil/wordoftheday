@@ -1,0 +1,27 @@
+name: Default
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  check:
+    name: 'Check'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout project
+        uses: actions/checkout@v3
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          cache: 'npm'
+          node-version-file: '.nvmrc'
+      - name: Install npm dependencies
+        run: npm clean-install
+      - name: Perform code analyzer and format check
+        run: npm run lint
+      - name: Perform tests
+        run: npm run test
