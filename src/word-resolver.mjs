@@ -1,5 +1,8 @@
 import RssParser from 'rss-parser';
 
+export class NoItemsError extends Error {}
+export class RssParserError extends Error {}
+
 export default class WordResolver {
 	#rssParser;
 	#url;
@@ -10,12 +13,19 @@ export default class WordResolver {
 	}
 
 	async get () {
-		const { items } = await this.#rssParser.parseURL(this.#url);
+		let items;
+
+		try {
+			const output = await this.#rssParser.parseURL(this.#url);
+			items = output.items;
+		} catch (error) {
+			throw new RssParserError('Rss parser call failed.', { cause: error });
+		}
 
 		const firstItem = items[0];
 
 		if (!firstItem) {
-			return;
+			throw new NoItemsError('No items in the rss feed.');
 		}
 
 		const date = new Date(firstItem.isoDate);

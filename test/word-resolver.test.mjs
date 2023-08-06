@@ -7,7 +7,20 @@ import {
 } from 'node:test';
 import RssParser from 'rss-parser';
 
-import WordResolver from '../src/word-resolver.mjs';
+import WordResolver, { NoItemsError, RssParserError } from '../src/word-resolver.mjs';
+
+function fakeItem () {
+	const link = 'https://www.merriam-webster.com/word-of-the-day/bully pulpit-2023-07-29';
+	const title = 'bully pulpit';
+	const pubDate = 'Sat, 29 Jul 2023 01:00:01 -0400';
+
+	return {
+		link,
+		isoDate: new Date(pubDate).toISOString(),
+		pubDate,
+		title,
+	};
+}
 
 describe('WordResolver', () => {
 	const url = 'https://example.com/rss2';
@@ -17,7 +30,7 @@ describe('WordResolver', () => {
 	beforeEach(() => {
 		rssParserMock = new RssParser();
 		mock.method(rssParserMock, 'parseURL').mock
-			.mockImplementation(() => Promise.resolve({ items: [] }));
+			.mockImplementation(() => Promise.resolve({ items: [fakeItem()] }));
 
 		wordResolver = new WordResolver(url, rssParserMock);
 	});
@@ -32,27 +45,20 @@ describe('WordResolver', () => {
 			strict.deepEqual(firstCall.arguments, [url]);
 		});
 
-		it('should return undefined when there is no item', async () => {
-			const wordObject = await wordResolver.get();
+		it('should throw a RssParserError when the rss parser throws an error', async () => {
+			rssParserMock.parseURL.mock.mockImplementation(() => Promise.reject(new Error()));
 
-			strict.equal(wordObject, undefined);
+			await strict.rejects(async () => await wordResolver.get(), RssParserError);
+		});
+
+		it('should throw a NoItemsError when there is no item in the feed', async () => {
+			rssParserMock.parseURL.mock.mockImplementation(() => Promise.resolve({ items: [] }));
+
+			await strict.rejects(async () => await wordResolver.get(), NoItemsError);
 		});
 
 		it('should properly return a word object', async () => {
-			const link = 'https://www.merriam-webster.com/word-of-the-day/bully pulpit-2023-07-29';
-			const title = 'bully pulpit';
-			const pubDate = 'Sat, 29 Jul 2023 01:00:01 -0400';
-
-			rssParserMock.parseURL.mock.mockImplementation(() => Promise.resolve({
-				items: [
-					{
-						link,
-						isoDate: new Date(pubDate).toISOString(),
-						pubDate,
-						title,
-					},
-				],
-			}));
+			const { pubDate, link, title } = fakeItem();
 
 			const wordObject = await wordResolver.get();
 
