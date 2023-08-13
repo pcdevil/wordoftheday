@@ -23,7 +23,7 @@ function fakeItem () {
 }
 
 describe('WordResolver', () => {
-	const url = 'https://example.com/rss2';
+	const feedUrl = 'https://example.com/rss2';
 	let rssParserMock;
 	let wordResolver;
 
@@ -32,35 +32,35 @@ describe('WordResolver', () => {
 		mock.method(rssParserMock, 'parseURL').mock
 			.mockImplementation(() => Promise.resolve({ items: [fakeItem()] }));
 
-		wordResolver = new WordResolver(url, rssParserMock);
+		wordResolver = new WordResolver(rssParserMock);
 	});
 
 	describe('get()', () => {
 		it('should call the parse url method of rss parser with the given url', async () => {
-			await wordResolver.get();
+			await wordResolver.get(feedUrl);
 
 			strict.equal(rssParserMock.parseURL.mock.calls.length, 1);
 
 			const firstCall = rssParserMock.parseURL.mock.calls[0];
-			strict.deepEqual(firstCall.arguments, [url]);
+			strict.deepEqual(firstCall.arguments, [feedUrl]);
 		});
 
 		it('should throw a RssParserError when the rss parser throws an error', async () => {
 			rssParserMock.parseURL.mock.mockImplementation(() => Promise.reject(new Error()));
 
-			await strict.rejects(async () => await wordResolver.get(), RssParserError);
+			await strict.rejects(async () => await wordResolver.get(feedUrl), RssParserError);
 		});
 
 		it('should throw a NoItemsError when there is no item in the feed', async () => {
 			rssParserMock.parseURL.mock.mockImplementation(() => Promise.resolve({ items: [] }));
 
-			await strict.rejects(async () => await wordResolver.get(), NoItemsError);
+			await strict.rejects(async () => await wordResolver.get(feedUrl), NoItemsError);
 		});
 
 		it('should properly return a word object', async () => {
 			const { pubDate, link, title } = fakeItem();
 
-			const wordObject = await wordResolver.get();
+			const wordObject = await wordResolver.get(feedUrl);
 
 			strict.deepEqual(wordObject, {
 				date: new Date(pubDate),

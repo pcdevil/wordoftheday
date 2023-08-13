@@ -5,18 +5,16 @@ export class RssParserError extends Error {}
 
 export default class WordResolver {
 	#rssParser;
-	#url;
 
-	constructor (url, rssParser = new RssParser()) {
+	constructor (rssParser = new RssParser()) {
 		this.#rssParser = rssParser;
-		this.#url = url;
 	}
 
-	async get () {
+	async get (feedUrl) {
 		let items;
 
 		try {
-			const output = await this.#rssParser.parseURL(this.#url);
+			const output = await this.#rssParser.parseURL(feedUrl);
 			items = output.items;
 		} catch (error) {
 			throw new RssParserError('Rss parser call failed.', { cause: error });
