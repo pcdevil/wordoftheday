@@ -4,17 +4,22 @@ export class FetchError extends Error {}
 
 export default class MastodonPoster {
 	#fetchMethod;
+	#language = 'en-GB';
 
 	constructor (fetchMethod = globalThis.fetch) {
 		this.#fetchMethod = fetchMethod;
 	}
 
-	async post (baseUrl, accessToken, status) {
+	get language () {
+		return this.#language;
+	}
+
+	async post (baseUrl, accessToken, wordObject, hashtag) {
 		try {
-			const response = await this.#fetchMethod(
-				this.#createUrl(baseUrl),
-				this.#createOptions(accessToken, status)
-			);
+			const url = this.#createUrl(baseUrl);
+			const status = this.#createStatus(wordObject, hashtag);
+			const options = this.#createOptions(accessToken, status);
+			const response = await this.#fetchMethod(url, options);
 
 			if (response.status !== HTTP_OK) {
 				const { body, status, statusText } = response;
@@ -33,7 +38,7 @@ export default class MastodonPoster {
 
 	#createOptions (accessToken, status) {
 		const body = JSON.stringify({
-			language: 'en',
+			language: this.#language,
 			status,
 			visibility: 'public',
 		});
@@ -46,6 +51,19 @@ export default class MastodonPoster {
 			},
 			method: 'POST',
 		};
+	}
+
+	#createStatus (wordObject, hashtag) {
+		const dateString = new Intl.DateTimeFormat(this.#language, { dateStyle: 'long' })
+			.format(wordObject.date);
+
+		return [
+			`#WordOfTheDay ${hashtag} ${dateString}`,
+			'', // empty line
+			wordObject.word,
+			'', // empty line
+			wordObject.url,
+		].join('\n');
 	}
 
 	#createUrl (baseUrl) {
