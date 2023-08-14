@@ -25,6 +25,7 @@
   },
   "homepage": "https://github.com/pcdevil/wordoftheday#readme",
   "dependencies": {
+    "dotenv": "^16.3.1",
     "rss-parser": "^3.13.0"
   },
   "devDependencies": {
