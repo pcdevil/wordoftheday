@@ -1,0 +1,75 @@
+import { strict } from 'node:assert';
+import {
+	beforeEach,
+	describe,
+	it,
+	mock,
+} from 'node:test';
+
+import MastodonPoster from '../src/lib/mastodon-poster.mjs';
+import WordOfTheDay from '../src/word-of-the-day.mjs';
+import WordResolver from '../src/lib/word-resolver.mjs';
+
+describe('WordOfTheDay', () => {
+	const sourceName = 'theFreeDictionary';
+	const wordObject = {
+		date: new Date('2023-08-16T05:00:00.000Z'),
+		url: 'https://www.thefreedictionary.com/punctilious',
+		word: 'punctilious',
+	};
+	let configMock;
+	let mastodonPosterMock;
+	let wordResolverMock;
+	let wordOfTheDay;
+
+	beforeEach(() => {
+		configMock = {
+			mastodon: {
+				accessToken: 'eSbzh2R7x5JTNqpOe9oZSFf-Uf7jJyXIqHquSSACeYo',
+				baseUrl: 'https://mastodon.social',
+			},
+			sources: {
+				[sourceName]: {
+					hashtag: '#TheFreeDictionary',
+					itemIndex: 0,
+					url: 'https://www.thefreedictionary.com/_/WoD/rss.aspx',
+				},
+			},
+		};
+		mastodonPosterMock = new MastodonPoster();
+		mock.method(mastodonPosterMock, 'post').mock
+			.mockImplementation(() => Promise.resolve());
+		wordResolverMock = new WordResolver();
+		mock.method(wordResolverMock, 'get').mock
+			.mockImplementation(() => Promise.resolve(wordObject));
+
+		wordOfTheDay = new WordOfTheDay(configMock, mastodonPosterMock, wordResolverMock);
+	});
+
+	describe('run()', () => {
+		it('should get the word from the configured feed', async () => {
+			await wordOfTheDay.run(sourceName);
+
+			strict.equal(wordResolverMock.get.mock.calls.length, 1);
+
+			const firstCall = wordResolverMock.get.mock.calls[0];
+			strict.deepEqual(firstCall.arguments, [
+				configMock.sources[sourceName].url, configMock.sources[sourceName].itemIndex,
+			]);
+		});
+
+		it('should post the fetched word to the configured mastodon', async () => {
+			await wordOfTheDay.run(sourceName);
+
+			strict.equal(mastodonPosterMock.post.mock.calls.length, 1);
+
+			const firstCall = mastodonPosterMock.post.mock.calls[0];
+			strict.deepEqual(firstCall.arguments, [
+				configMock.mastodon.baseUrl,
+				configMock.mastodon.accessToken,
+				wordObject,
+				configMock.sources[sourceName].hashtag,
+			]);
+		});
+	});
+});
