@@ -1,5 +1,7 @@
 import dotenv from 'dotenv';
 
+export class MissingEnvVariableError extends Error {}
+
 export default class Config {
 	constructor (dotenvModule = dotenv) {
 		const processEnv = {};
@@ -31,9 +33,17 @@ export default class Config {
 	#createMastodonConfig (processEnv) {
 		return {
 			mastodon: {
-				accessToken: processEnv.MASTODON_ACCESS_TOKEN,
-				baseUrl: processEnv.MASTODON_BASE_URL,
+				accessToken: this.#getEnvVariableOrThrow(processEnv, 'MASTODON_ACCESS_TOKEN'),
+				baseUrl: this.#getEnvVariableOrThrow(processEnv, 'MASTODON_BASE_URL'),
 			},
 		};
+	}
+
+	#getEnvVariableOrThrow (processEnv, variableName) {
+		if (!processEnv[variableName]) {
+			throw new MissingEnvVariableError(`The environment variable "${variableName}" is not defined.`);
+		}
+
+		return processEnv[variableName];
 	}
 }

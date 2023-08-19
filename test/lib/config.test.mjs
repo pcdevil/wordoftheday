@@ -6,7 +6,7 @@ import {
 	mock,
 } from 'node:test';
 
-import Config from '../../src/lib/config.mjs';
+import Config, { MissingEnvVariableError } from '../../src/lib/config.mjs';
 
 describe('Config', () => {
 	const mastodonAccessToken = 'e5K-I8_IMYUEI-u9IH4B6Qws_5KEXDK60LJOcY2SfJU';
@@ -42,5 +42,14 @@ describe('Config', () => {
 		const config = new Config(dotenvMock);
 
 		strict.ok(typeof config.sources, 'object');
+	});
+
+	it('should throw a MissingEnvVariableError error when an environment variable is not defined.', () => {
+		dotenvMock.config.mock.mockImplementation(() => {});
+
+		strict.throws(
+			() => new Config(dotenvMock),
+			MissingEnvVariableError
+		);
 	});
 });
