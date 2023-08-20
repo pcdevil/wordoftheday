@@ -1,6 +1,4 @@
-const HTTP_OK = 200;
-
-export class FetchError extends Error {}
+import { FetchError, assertResponseOk } from '../util/assert-response-ok.mjs';
 
 export default class MastodonPoster {
 	#fetchMethod;
@@ -21,16 +19,7 @@ export default class MastodonPoster {
 			const options = this.#createOptions(accessToken, status);
 			const response = await this.#fetchMethod(url, options);
 
-			if (response.status !== HTTP_OK) {
-				const { body, status, statusText } = response;
-				// throwing literal object is fine because it will used as `cause` of the actual error
-				// eslint-disable-next-line no-throw-literal
-				throw {
-					body,
-					status,
-					statusText,
-				};
-			}
+			assertResponseOk(response);
 		} catch (error) {
 			throw new FetchError('Status post failed.', { cause: error });
 		}

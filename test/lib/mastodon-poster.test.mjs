@@ -6,7 +6,8 @@ import {
 	mock,
 } from 'node:test';
 
-import MastodonPoster, { FetchError } from '../../src/lib/mastodon-poster.mjs';
+import MastodonPoster from '../../src/lib/mastodon-poster.mjs';
+import { FetchError } from '../../src/util/assert-response-ok.mjs';
 
 describe('MastodonPoster', () => {
 	const baseUrl = 'https://example.com';
@@ -25,7 +26,7 @@ describe('MastodonPoster', () => {
 		jsonMock = mock.fn(() => Promise.resolve({}));
 		fetchMock = mock.fn(() => Promise.resolve({
 			json: jsonMock,
-			status: 200,
+			ok: true,
 		}));
 
 		mastodonPoster = new MastodonPoster(fetchMock);
@@ -68,8 +69,8 @@ describe('MastodonPoster', () => {
 			);
 		});
 
-		it('should throw a FetchError when the response status is not HTTP OK', async () => {
-			fetchMock.mock.mockImplementation(() => Promise.resolve({ status: 404 }));
+		it('should throw a FetchError when the response is not ok', async () => {
+			fetchMock.mock.mockImplementation(() => Promise.resolve({ ok: false }));
 
 			await strict.rejects(
 				async () => await mastodonPoster.post(baseUrl, accessToken, wordObject, hashtag),
