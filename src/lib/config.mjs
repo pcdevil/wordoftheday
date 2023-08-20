@@ -4,7 +4,9 @@ export class MissingEnvVariableError extends Error {}
 
 export default class Config {
 	constructor (dotenvModule = dotenv) {
-		const processEnv = {};
+		const processEnv = {
+			...process.env,
+		};
 		dotenvModule.config({ processEnv });
 
 		return {

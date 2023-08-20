@@ -1,5 +1,6 @@
 import { strict } from 'node:assert';
 import {
+	afterEach,
 	beforeEach,
 	describe,
 	it,
@@ -9,6 +10,8 @@ import {
 import Config, { MissingEnvVariableError } from '#lib/config.mjs';
 
 describe('Config', () => {
+	const environmentVariableName = 'TEST_RUN';
+	const environmentVariableValue = 'true';
 	const mastodonAccessToken = 'e5K-I8_IMYUEI-u9IH4B6Qws_5KEXDK60LJOcY2SfJU';
 	const mastodonBaseUrl = 'https://botsin.space';
 	let dotenvMock;
@@ -20,13 +23,25 @@ describe('Config', () => {
 				processEnv.MASTODON_BASE_URL = mastodonBaseUrl;
 			}),
 		};
+
+		process.env[environmentVariableName] = environmentVariableValue;
 	});
 
-	it('should call the dotenv module when a new instance is created', () => {
+	afterEach(() => {
+		delete process.env[environmentVariableName];
+	});
+
+	it('should call the dotenv module with a copy of the env variables when a new instance is created', () => {
 		const config = new Config(dotenvMock);
 
-		strict.equal(dotenvMock.config.mock.calls.length, 1);
 		strict.equal(typeof config, 'object');
+		strict.equal(dotenvMock.config.mock.calls.length, 1);
+
+		const firstCall = dotenvMock.config.mock.calls[0];
+		const { processEnv } = firstCall.arguments[0];
+
+		strict.ok(processEnv !== process.env);
+		strict.equal(processEnv[environmentVariableName], environmentVariableValue);
 	});
 
 	it('should expose the mastodon config coming from the dotenv', () => {
