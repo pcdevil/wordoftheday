@@ -26,6 +26,11 @@ export default class Config {
 					itemIndex: -1,
 					url: 'https://feeds.feedburner.com/OLD-WordOfTheDay',
 				},
+				theFreeDictionary: {
+					hashtag: '#TheFreeDictionary',
+					itemIndex: 0,
+					url: 'https://www.thefreedictionary.com/_/WoD/rss.aspx',
+				},
 			},
 		};
 	}
