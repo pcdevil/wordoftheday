@@ -6,9 +6,9 @@ import {
 	mock,
 } from 'node:test';
 
-import MastodonPoster from '../src/lib/mastodon-poster.mjs';
-import WordOfTheDay from '../src/word-of-the-day.mjs';
-import WordResolver from '../src/lib/word-resolver.mjs';
+import MastodonPoster from '#lib/mastodon-poster.mjs';
+import WordResolver from '#lib/word-resolver.mjs';
+import WordOfTheDay from '#src/word-of-the-day.mjs';
 
 describe('WordOfTheDay', () => {
 	const sourceName = 'theFreeDictionary';

@@ -1,4 +1,4 @@
-import { FetchError, assertResponseOk } from '../util/assert-response-ok.mjs';
+import { FetchError, assertResponseOk } from '#util/assert-response-ok.mjs';
 
 export default class MastodonPoster {
 	#fetchMethod;

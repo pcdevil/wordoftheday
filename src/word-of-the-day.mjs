@@ -1,6 +1,6 @@
-import Config from './lib/config.mjs';
-import MastodonPoster from './lib/mastodon-poster.mjs';
-import WordResolver from './lib/word-resolver.mjs';
+import Config from '#lib/config.mjs';
+import MastodonPoster from '#lib/mastodon-poster.mjs';
+import WordResolver from '#lib/word-resolver.mjs';
 
 export default class WordOfTheDay {
 	#config;

@@ -6,8 +6,8 @@ import {
 	mock,
 } from 'node:test';
 
-import MastodonPoster from '../../src/lib/mastodon-poster.mjs';
-import { FetchError } from '../../src/util/assert-response-ok.mjs';
+import MastodonPoster from '#lib/mastodon-poster.mjs';
+import { FetchError } from '#util/assert-response-ok.mjs';
 
 describe('MastodonPoster', () => {
 	const baseUrl = 'https://example.com';

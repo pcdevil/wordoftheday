@@ -4,6 +4,11 @@
   "description": "A Mastodon \"Word of the Day\" bot.",
   "private": true,
   "type": "module",
+  "imports": {
+    "#lib/*": "./src/lib/*",
+    "#src/*": "./src/*",
+    "#util/*": "./src/util/*"
+  },
   "scripts": {
     "lint": "eslint --ext .js,.mjs --ignore-path .gitignore .",
     "lint:fix": "npm run lint -- --fix",
