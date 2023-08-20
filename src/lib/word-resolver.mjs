@@ -1,23 +1,38 @@
-import RssParser from 'rss-parser';
+import { parseFeed } from 'htmlparser2';
 
+import { FetchError, assertResponseOk } from '#util/assert-response-ok.mjs';
+
+export class FeedParserError extends Error {}
 export class NoItemError extends Error {}
-export class RssParserError extends Error {}
 
 export default class WordResolver {
-	#rssParser;
+	#fetchMethod;
+	#parseFeedMethod;
 
-	constructor (rssParser = new RssParser()) {
-		this.#rssParser = rssParser;
+	constructor (fetchMethod = globalThis.fetch, parseFeedMethod = parseFeed) {
+		this.#fetchMethod = fetchMethod;
+		this.#parseFeedMethod = parseFeedMethod;
 	}
 
 	async get (feedUrl, itemIndex) {
+		let text;
 		let items;
 
 		try {
-			const output = await this.#rssParser.parseURL(feedUrl);
-			items = output.items;
+			const response = await this.#fetchMethod(feedUrl);
+
+			assertResponseOk(response);
+
+			text = await response.text();
 		} catch (error) {
-			throw new RssParserError('Rss parser call failed.', { cause: error });
+			throw new FetchError('Feed get failed.', { cause: error });
+		}
+
+		try {
+			const feed = this.#parseFeedMethod(text);
+			items = feed.items;
+		} catch (error) {
+			throw new FeedParserError('Rss parser call failed.', { cause: error });
 		}
 
 		const item = items.at(itemIndex);
@@ -26,7 +41,7 @@ export default class WordResolver {
 			throw new NoItemError(`No item found in the rss feed with ${itemIndex} index.`);
 		}
 
-		const date = new Date(item.isoDate);
+		const date = item.pubDate;
 		const word = item.title;
 		const url = encodeURI(item.link);
 

@@ -5,18 +5,17 @@ import {
 	it,
 	mock,
 } from 'node:test';
-import RssParser from 'rss-parser';
 
-import WordResolver, { NoItemError, RssParserError } from '#lib/word-resolver.mjs';
+import WordResolver, { FeedParserError, NoItemError } from '#lib/word-resolver.mjs';
+import { FetchError } from '#util/assert-response-ok.mjs';
 
 function fakeItem (titleSuffix = '') {
 	const link = 'https://www.merriam-webster.com/word-of-the-day/bully pulpit-2023-07-29';
 	const title = `bully pulpit${titleSuffix}`;
-	const pubDate = 'Sat, 29 Jul 2023 01:00:01 -0400';
+	const pubDate = new Date('Sat, 29 Jul 2023 01:00:01 -0400');
 
 	return {
 		link,
-		isoDate: new Date(pubDate).toISOString(),
 		pubDate,
 		title,
 	};
@@ -24,47 +23,45 @@ function fakeItem (titleSuffix = '') {
 
 describe('WordResolver', () => {
 	const feedUrl = 'https://example.com/rss2';
-	let rssParserMock;
+	const feedText = '<rss><channel></channel></rss>';
+	let textMock;
+	let fetchMock;
+	let parseFeedMock;
 	let wordResolver;
 
 	beforeEach(() => {
-		rssParserMock = new RssParser();
-		mock.method(rssParserMock, 'parseURL').mock
-			.mockImplementation(() => Promise.resolve({ items: [fakeItem()] }));
+		textMock = mock.fn(() => Promise.resolve(feedText));
+		fetchMock = mock.fn(() => Promise.resolve({
+			ok: true,
+			text: textMock,
+		}));
+		parseFeedMock = mock.fn(() => ({ items: [fakeItem()] }));
 
-		wordResolver = new WordResolver(rssParserMock);
+		wordResolver = new WordResolver(fetchMock, parseFeedMock);
 	});
 
 	describe('get()', () => {
-		it('should call the parse url method of rss parser with the given url', async () => {
+		it('should properly call the fetch method', async () => {
 			await wordResolver.get(feedUrl, 0);
 
-			strict.equal(rssParserMock.parseURL.mock.calls.length, 1);
+			strict.equal(fetchMock.mock.calls.length, 1);
 
-			const firstCall = rssParserMock.parseURL.mock.calls[0];
+			const firstCall = fetchMock.mock.calls[0];
 			strict.deepEqual(firstCall.arguments, [feedUrl]);
 		});
 
-		it('should throw a RssParserError when the rss parser throws an error', async () => {
-			rssParserMock.parseURL.mock.mockImplementation(() => Promise.reject(new Error()));
+		it('should parse the response feed', async () => {
+			await wordResolver.get(feedUrl, 0);
 
-			await strict.rejects(async () => await wordResolver.get(feedUrl, 0), RssParserError);
-		});
+			strict.equal(parseFeedMock.mock.calls.length, 1);
 
-		it('should throw a NoItemError when the requested item index is not available', async () => {
-			const itemCount = 3;
-			rssParserMock.parseURL.mock.mockImplementation(() => Promise.resolve({
-				items: Array.from({ length: itemCount }, () => fakeItem()),
-			}));
-
-			// retrieve the item after the last one
-			const itemIndex = itemCount + 1;
-			await strict.rejects(async () => await wordResolver.get(feedUrl, itemIndex), NoItemError);
+			const firstCall = parseFeedMock.mock.calls[0];
+			strict.deepEqual(firstCall.arguments, [feedText]);
 		});
 
 		it('should properly return a word object with the given item index', async () => {
 			const itemCount = 3;
-			rssParserMock.parseURL.mock.mockImplementation(() => Promise.resolve({
+			parseFeedMock.mock.mockImplementation(() => ({
 				items: Array.from({ length: itemCount }, (_value, index) => fakeItem(index + 1)),
 			}));
 
@@ -76,10 +73,46 @@ describe('WordResolver', () => {
 			const wordObject = await wordResolver.get(feedUrl, itemIndex);
 
 			strict.deepEqual(wordObject, {
-				date: new Date(pubDate),
+				date: pubDate,
 				url: encodeURI(link),
 				word: title,
 			});
+		});
+
+		it('should throw a FetchError when the fetch method throws an error', async () => {
+			fetchMock.mock.mockImplementation(() => Promise.reject(new Error()));
+
+			await strict.rejects(
+				async () => await wordResolver.get(feedUrl, 0),
+				FetchError
+			);
+		});
+
+		it('should throw a FetchError when the response is not ok', async () => {
+			fetchMock.mock.mockImplementation(() => Promise.resolve({ ok: false }));
+
+			await strict.rejects(
+				async () => await wordResolver.get(feedUrl, 0),
+				FetchError
+			);
+		});
+
+		it('should throw a FeedParserError when the feed parser throws an error', async () => {
+			const itemCount = 3;
+			parseFeedMock.mock.mockImplementation(() => { throw new Error(); });
+
+			// retrieve the item after the last one
+			const itemIndex = itemCount + 1;
+			await strict.rejects(async () => await wordResolver.get(feedUrl, itemIndex), FeedParserError);
+		});
+
+		it('should throw a NoItemError when the requested item index is not available', async () => {
+			const itemCount = 3;
+			parseFeedMock.mock.mockImplementation(() => ({ items: [fakeItem()] }));
+
+			// retrieve the item after the last one
+			const itemIndex = itemCount + 1;
+			await strict.rejects(async () => await wordResolver.get(feedUrl, itemIndex), NoItemError);
 		});
 	});
 });
