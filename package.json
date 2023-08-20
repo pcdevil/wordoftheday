@@ -12,6 +12,7 @@
   "scripts": {
     "lint": "eslint --ext .js,.mjs --ignore-path .gitignore .",
     "lint:fix": "npm run lint -- --fix",
+    "start": "node src/cli.mjs",
     "test": "node --test test",
     "test:watch": "node --test --watch test"
   },
