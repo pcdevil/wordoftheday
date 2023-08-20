@@ -2,6 +2,8 @@ import Config from '#lib/config.mjs';
 import MastodonPoster from '#lib/mastodon-poster.mjs';
 import WordResolver from '#lib/word-resolver.mjs';
 
+export class InvalidSourceName extends Error {}
+
 export default class WordOfTheDay {
 	#config;
 	#mastodonPoster;
@@ -29,6 +31,10 @@ export default class WordOfTheDay {
 	}
 
 	#getSourceConfig (sourceName) {
+		if (!this.#config.sources[sourceName]) {
+			throw new InvalidSourceName(`Referenced source "${sourceName}" is not configured.`);
+		}
+
 		return this.#config.sources[sourceName];
 	}
 }

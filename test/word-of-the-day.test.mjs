@@ -8,7 +8,7 @@ import {
 
 import MastodonPoster from '#lib/mastodon-poster.mjs';
 import WordResolver from '#lib/word-resolver.mjs';
-import WordOfTheDay from '#src/word-of-the-day.mjs';
+import WordOfTheDay, { InvalidSourceName } from '#src/word-of-the-day.mjs';
 
 describe('WordOfTheDay', () => {
 	const sourceName = 'theFreeDictionary';
@@ -70,6 +70,13 @@ describe('WordOfTheDay', () => {
 				wordObject,
 				configMock.sources[sourceName].hashtag,
 			]);
+		});
+
+		it('should throw an InvalidSourceName when the given source name is invalid', async () => {
+			await strict.rejects(
+				async () => await wordOfTheDay.run(sourceName + 'NotExisting'),
+				InvalidSourceName
+			);
 		});
 	});
 });
