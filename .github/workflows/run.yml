@@ -1,5 +1,11 @@
 name: Run
 on:
+  workflow_call:
+    inputs:
+      source_name:
+        description: "Source site name"
+        required: true
+        type: string
   workflow_dispatch:
     inputs:
       source_name:
