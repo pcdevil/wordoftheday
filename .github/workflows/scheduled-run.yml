@@ -37,3 +37,4 @@ jobs:
     uses: ./.github/workflows/run.yml
     with:
       source_name: ${{ needs.set-source-name.outputs.source_name }}
+    secrets: inherit
