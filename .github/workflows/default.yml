@@ -7,6 +7,9 @@ on:
     branches:
       - main
 
+env:
+  GIT_TAG_NAME: stable
+
 jobs:
   check:
     name: 'Check'
@@ -25,3 +28,16 @@ jobs:
         run: npm run lint
       - name: Perform tests
         run: npm run test
+  publish-tag:
+    name: Publish tag
+    if: ${{ github.event_name == 'push' && github.ref_name == 'main' }}
+    needs:
+      - check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout project
+        uses: actions/checkout@v3
+      - name: Create tag
+        run: git tag --force ${{ env.GIT_TAG_NAME }}
+      - name: Push tag
+        run: git push --force origin ${{ env.GIT_TAG_NAME }}
