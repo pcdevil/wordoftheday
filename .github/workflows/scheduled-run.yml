@@ -2,9 +2,9 @@ name: Scheduled Run
 
 on:
   schedule:
-    - cron: '00 09 * * *'
-    - cron: '30 09 * * *'
+    - cron: '00 08 * * *'
     - cron: '00 10 * * *'
+    - cron: '00 12 * * *'
 
 jobs:
   set-source-name:
@@ -15,15 +15,15 @@ jobs:
 
     steps:
       - name: Set SOURCE_NAME to "Merriam Webster"
-        if: ${{ github.event.schedule == '00 09 * * *' }}
+        if: ${{ github.event.schedule == '00 08 * * *' }}
         run: echo "SOURCE_NAME=merriamWebster" >> $GITHUB_ENV
 
       - name: Set SOURCE_NAME to "Oxford Learner's Dictionaries"
-        if: ${{ github.event.schedule == '30 09 * * *' }}
+        if: ${{ github.event.schedule == '00 10 * * *' }}
         run: echo "SOURCE_NAME=oxfordLearnersDictionaries" >> $GITHUB_ENV
 
       - name: Set SOURCE_NAME to "The Free Dictionary"
-        if: ${{ github.event.schedule == '00 10 * * *' }}
+        if: ${{ github.event.schedule == '00 12 * * *' }}
         run: echo "SOURCE_NAME=theFreeDictionary" >> $GITHUB_ENV
 
       - name: Output source name from the job
