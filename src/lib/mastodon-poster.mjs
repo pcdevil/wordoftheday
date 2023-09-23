@@ -1,4 +1,4 @@
-import { FetchError, FetchResponseError, assertResponseOk } from '#util/fetch-response.mjs';
+import { FetchError, assertResponseOk, isClientFetchResponseError } from '#util/fetch-response.mjs';
 
 export default class MastodonPoster {
 	#fetchMethod;
@@ -24,7 +24,7 @@ export default class MastodonPoster {
 			const response = await this.#fetchMethod(url, options);
 			assertResponseOk(response);
 		} catch (error) {
-			if (error instanceof FetchResponseError && error.status < 500) {
+			if (isClientFetchResponseError(error)) {
 				throw error;
 			}
 

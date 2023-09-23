@@ -15,3 +15,7 @@ export function assertResponseOk (response) {
 		throw new FetchResponseError(status, statusText);
 	}
 }
+
+export function isClientFetchResponseError (error) {
+	return error instanceof FetchResponseError && error.status <= 500;
+}

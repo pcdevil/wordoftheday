@@ -4,7 +4,12 @@ import {
 	it,
 } from 'node:test';
 
-import { FetchResponseError, assertResponseOk } from '#util/fetch-response.mjs';
+import {
+	FetchError,
+	FetchResponseError,
+	assertResponseOk,
+	isClientFetchResponseError,
+} from '#util/fetch-response.mjs';
 
 describe('assertResponseOk', () => {
 	it('should throw a FetchResponseError when the response is not ok', () => {
@@ -19,5 +24,28 @@ describe('assertResponseOk', () => {
 			() => assertResponseOk(response),
 			new FetchResponseError(response.status, response.statusText)
 		);
+	});
+});
+
+describe('isClientFetchResponseError', () => {
+	it('should return true when the status of the fetch response error is below 500', () => {
+		const error = new FetchResponseError(404, 'Not Found');
+		const result = isClientFetchResponseError(error);
+
+		strict.ok(result);
+	});
+
+	it('should return false when the status of the fetch response error is above 500', () => {
+		const error = new FetchResponseError(504, 'Gateway Timeout');
+		const result = isClientFetchResponseError(error);
+
+		strict.equal(result, false);
+	});
+
+	it('should return false when the error is not a fetch response error', () => {
+		const error = new FetchError();
+		const result = isClientFetchResponseError(error);
+
+		strict.equal(result, false);
 	});
 });
