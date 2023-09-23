@@ -1,18 +1,21 @@
-import { FetchError, assertResponseOk } from '#util/fetch-response.mjs';
+import { FetchError, FetchResponseError, assertResponseOk } from '#util/fetch-response.mjs';
 
 export default class MastodonPoster {
 	#fetchMethod;
 	#language = 'en-GB';
+	#setTimeoutMethod;
+	#retryDelay = 30_000; // in milliseconds
 
-	constructor (fetchMethod = globalThis.fetch) {
+	constructor (fetchMethod = globalThis.fetch, setTimeoutMethod = globalThis.setTimeout) {
 		this.#fetchMethod = fetchMethod;
+		this.#setTimeoutMethod = setTimeoutMethod;
 	}
 
 	get language () {
 		return this.#language;
 	}
 
-	async post (baseUrl, accessToken, wordObject, hashtag) {
+	async post (baseUrl, accessToken, wordObject, hashtag, retryCount = 2) {
 		const url = this.#createUrl(baseUrl);
 		const status = this.#createStatus(wordObject, hashtag);
 		const options = this.#createOptions(accessToken, status);
@@ -21,10 +24,16 @@ export default class MastodonPoster {
 			const response = await this.#fetchMethod(url, options);
 			assertResponseOk(response);
 		} catch (error) {
-			if (error instanceof FetchError) {
+			if (error instanceof FetchResponseError && error.status < 500) {
 				throw error;
 			}
-			throw new FetchError('Status post failed.', { cause: error });
+
+			if (retryCount === 0) {
+				throw new FetchError('Status post failed.', { cause: error });
+			}
+
+			await this.#sleep(this.#retryDelay);
+			await this.post(baseUrl, accessToken, wordObject, hashtag, retryCount - 1);
 		}
 	}
 
@@ -60,5 +69,9 @@ export default class MastodonPoster {
 
 	#createUrl (baseUrl) {
 		return new URL('/api/v1/statuses', baseUrl).toString();
+	}
+
+	async #sleep (delay) {
+		return new Promise((resolve) => this.#setTimeoutMethod(() => resolve(), delay));
 	}
 }

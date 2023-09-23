@@ -20,6 +20,7 @@ describe('MastodonPoster', () => {
 	};
 	let fetchMock;
 	let jsonMock;
+	let setTimeoutMock;
 	let mastodonPoster;
 
 	beforeEach(() => {
@@ -28,8 +29,9 @@ describe('MastodonPoster', () => {
 			json: jsonMock,
 			ok: true,
 		}));
+		setTimeoutMock = mock.fn((callback) => callback());
 
-		mastodonPoster = new MastodonPoster(fetchMock);
+		mastodonPoster = new MastodonPoster(fetchMock, setTimeoutMock);
 	});
 
 	describe('post()', () => {
@@ -60,16 +62,49 @@ describe('MastodonPoster', () => {
 			strict.equal(options.method, 'POST');
 		});
 
-		it('should throw a FetchError when the fetch method throws an error', async () => {
-			fetchMock.mock.mockImplementation(() => Promise.reject(new Error()));
+		it('should re-call fetch when the retry count is above zero and the fetch method throws an error', async () => {
+			const retryCount = 3;
+
+			for (let callIndex = 0; callIndex < retryCount; ++callIndex) {
+				fetchMock.mock.mockImplementationOnce(() => Promise.reject(new Error()), callIndex);
+			}
+
+			await mastodonPoster.post(baseUrl, accessToken, wordObject, hashtag, retryCount);
+
+			strict.equal(fetchMock.mock.calls.length, retryCount + 1);
+		});
+
+		it('should wait 30 seconds before every fetch re-call', async () => {
+			const retryCount = 3;
+
+			for (let callIndex = 0; callIndex < retryCount; ++callIndex) {
+				fetchMock.mock.mockImplementationOnce(() => Promise.reject(new Error()), callIndex);
+			}
+
+			await mastodonPoster.post(baseUrl, accessToken, wordObject, hashtag, retryCount);
+
+			strict.equal(setTimeoutMock.mock.calls.length, retryCount);
+
+			for (const call of setTimeoutMock.mock.calls) {
+				const [_callback, delay] = call.arguments;
+				strict.equal(delay, 30_000);
+			}
+		});
+
+		it('should throw a FetchError when the fetch method throws an error even after retries', async () => {
+			const retryCount = 3;
+
+			for (let callIndex = 0; callIndex < (retryCount + 1); ++callIndex) {
+				fetchMock.mock.mockImplementationOnce(() => Promise.reject(new Error()), callIndex);
+			}
 
 			await strict.rejects(
-				async () => await mastodonPoster.post(baseUrl, accessToken, wordObject, hashtag),
+				async () => await mastodonPoster.post(baseUrl, accessToken, wordObject, hashtag, retryCount),
 				FetchError
 			);
 		});
 
-		it('should throw a FetchResponseError when the response is not ok', async () => {
+		it('should throw a FetchResponseError without retry when the response is not ok with client error', async () => {
 			const response = {
 				ok: false,
 				status: 404,
@@ -81,6 +116,8 @@ describe('MastodonPoster', () => {
 				async () => await mastodonPoster.post(baseUrl, accessToken, wordObject, hashtag),
 				new FetchResponseError(response.status, response.statusText)
 			);
+
+			strict.equal(setTimeoutMock.mock.calls.length, 0);
 		});
 	});
 });
