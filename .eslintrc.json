@@ -28,6 +28,12 @@
 		"curly": ["error", "all"],
 		"indent": ["error", "tab"],
 		"no-tabs": "off",
+		"no-unused-vars": ["error", {
+			"argsIgnorePattern": "^_",
+			"caughtErrorsIgnorePattern": "^_",
+			"destructuredArrayIgnorePattern": "^_",
+			"varsIgnorePattern": "^_"
+		}],
 		"object-curly-newline": ["error", {
 			"consistent": true
 		}],
