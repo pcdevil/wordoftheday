@@ -4,7 +4,7 @@ import {
 	it,
 } from 'node:test';
 
-import { FetchResponseError, assertResponseOk } from '#util/assert-response-ok.mjs';
+import { FetchResponseError, assertResponseOk } from '#util/fetch-response.mjs';
 
 describe('assertResponseOk', () => {
 	it('should throw a FetchResponseError when the response is not ok', () => {

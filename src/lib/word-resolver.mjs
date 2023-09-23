@@ -1,6 +1,6 @@
 import { parseFeed } from 'htmlparser2';
 
-import { FetchError, assertResponseOk } from '#util/assert-response-ok.mjs';
+import { FetchError, assertResponseOk } from '#util/fetch-response.mjs';
 
 export class FeedParserError extends Error {}
 export class NoItemError extends Error {}
