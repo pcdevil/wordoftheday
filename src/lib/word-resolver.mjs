@@ -25,6 +25,9 @@ export default class WordResolver {
 
 			text = await response.text();
 		} catch (error) {
+			if (error instanceof FetchError) {
+				throw error;
+			}
 			throw new FetchError('Feed get failed.', { cause: error });
 		}
 

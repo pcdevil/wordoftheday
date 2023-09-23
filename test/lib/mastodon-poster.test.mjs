@@ -7,7 +7,7 @@ import {
 } from 'node:test';
 
 import MastodonPoster from '#lib/mastodon-poster.mjs';
-import { FetchError } from '#util/assert-response-ok.mjs';
+import { FetchError, FetchResponseError } from '#util/assert-response-ok.mjs';
 
 describe('MastodonPoster', () => {
 	const baseUrl = 'https://example.com';
@@ -69,12 +69,17 @@ describe('MastodonPoster', () => {
 			);
 		});
 
-		it('should throw a FetchError when the response is not ok', async () => {
-			fetchMock.mock.mockImplementation(() => Promise.resolve({ ok: false }));
+		it('should throw a FetchResponseError when the response is not ok', async () => {
+			const response = {
+				ok: false,
+				status: 404,
+				statusText: 'Not Found',
+			};
+			fetchMock.mock.mockImplementation(() => Promise.resolve(response));
 
 			await strict.rejects(
 				async () => await mastodonPoster.post(baseUrl, accessToken, wordObject, hashtag),
-				FetchError
+				new FetchResponseError(response.status, response.statusText)
 			);
 		});
 	});

@@ -7,7 +7,7 @@ import {
 } from 'node:test';
 
 import WordResolver, { FeedParserError, NoItemError } from '#lib/word-resolver.mjs';
-import { FetchError } from '#util/assert-response-ok.mjs';
+import { FetchError, FetchResponseError } from '#util/assert-response-ok.mjs';
 
 function fakeItem (titleSuffix = '') {
 	const link = 'https://www.merriam-webster.com/word-of-the-day/bully pulpit-2023-07-29';
@@ -88,12 +88,17 @@ describe('WordResolver', () => {
 			);
 		});
 
-		it('should throw a FetchError when the response is not ok', async () => {
-			fetchMock.mock.mockImplementation(() => Promise.resolve({ ok: false }));
+		it('should throw a FetchResponseError when the response is not ok', async () => {
+			const response = {
+				ok: false,
+				status: 404,
+				statusText: 'Not Found',
+			};
+			fetchMock.mock.mockImplementation(() => Promise.resolve(response));
 
 			await strict.rejects(
 				async () => await wordResolver.get(feedUrl, 0),
-				FetchError
+				new FetchResponseError(response.status, response.statusText)
 			);
 		});
 
