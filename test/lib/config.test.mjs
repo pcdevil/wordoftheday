@@ -56,7 +56,7 @@ describe('Config', () => {
 	it('should expose sources as a id-config object', () => {
 		const config = new Config(dotenvMock);
 
-		strict.ok(typeof config.sources, 'object');
+		strict.equal(typeof config.sources, 'object');
 	});
 
 	it('should throw a MissingEnvVariableError error when an environment variable is not defined.', () => {
