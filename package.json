@@ -32,7 +32,9 @@
   "homepage": "https://github.com/pcdevil/wordoftheday#readme",
   "dependencies": {
     "dotenv": "^16.3.1",
-    "htmlparser2": "^9.0.0"
+    "htmlparser2": "^9.0.0",
+    "pino": "^8.16.0",
+    "pino-pretty": "^10.2.3"
   },
   "devDependencies": {
     "eslint": "^8.46.0",

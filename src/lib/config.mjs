@@ -11,6 +11,7 @@ export default class Config {
 
 		return {
 			...this.#baseConfig,
+			...this.#createLogConfig(processEnv),
 			...this.#createMastodonConfig(processEnv),
 		};
 	}
@@ -33,6 +34,17 @@ export default class Config {
 					itemIndex: 0,
 					url: 'https://www.thefreedictionary.com/_/WoD/rss.aspx',
 				},
+			},
+		};
+	}
+
+	#createLogConfig (processEnv) {
+		return {
+			log: {
+				filePath: processEnv.LOG_FILE_PATH,
+				level: processEnv.LOG_LEVEL,
+				pretty: processEnv.LOG_PRETTY === 'true',
+				prettyColorize: processEnv.CI !== 'true',
 			},
 		};
 	}
