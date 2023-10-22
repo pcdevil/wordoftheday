@@ -95,6 +95,13 @@ describe('loggerFactory', () => {
 
 		loggerFactory(logConfig, performanceMock, fsMock, pinoMock, pinoPrettyMock);
 
+		strict.equal(fsMock.createWriteStream.mock.calls.length, 1);
+
+		const firstCreateWriteStreamCall = fsMock.createWriteStream.mock.calls[0];
+		strict.deepEqual(firstCreateWriteStreamCall.arguments, [
+			logConfig.filePath,
+		]);
+
 		strict.equal(pinoMock.multistream.mock.calls.length, 1);
 
 		const firstMultistreamCall = pinoMock.multistream.mock.calls[0];

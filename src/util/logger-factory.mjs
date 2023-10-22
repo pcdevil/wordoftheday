@@ -17,10 +17,10 @@ function createCustomLevels (pinoModule) {
 	};
 }
 
-function createFileStream (fsModule, level, path) {
+function createFileStream (fsModule, level, filePath) {
 	return {
 		level,
-		stream: fsModule.createWriteStream(path),
+		stream: fsModule.createWriteStream(filePath),
 	};
 }
 
@@ -92,7 +92,7 @@ export function loggerFactory (logConfig, performanceInterface = globalThis.perf
 
 	const logStreams = [];
 	if (logConfig.filePath) {
-		logStreams.push(createFileStream(fsModule, logConfig.level, logConfig.path));
+		logStreams.push(createFileStream(fsModule, logConfig.level, logConfig.filePath));
 	}
 	if (logConfig.pretty) {
 		logStreams.push(createPrettyStream(pinoPrettyModule, customLevels, logConfig.level, logConfig.prettyColorize));
