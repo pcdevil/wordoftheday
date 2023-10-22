@@ -8,6 +8,7 @@ import {
 
 import MastodonPoster from '#lib/mastodon-poster.mjs';
 import { FetchError, FetchResponseError } from '#util/fetch-response.mjs';
+import { mockLoggerFactory } from '#test/util/logger-factory.test.mjs';
 
 describe('MastodonPoster', () => {
 	const baseUrl = 'https://example.com';
@@ -31,7 +32,7 @@ describe('MastodonPoster', () => {
 		}));
 		setTimeoutMock = mock.fn((callback) => callback());
 
-		mastodonPoster = new MastodonPoster(fetchMock, setTimeoutMock);
+		mastodonPoster = new MastodonPoster(mockLoggerFactory(), fetchMock, setTimeoutMock);
 	});
 
 	describe('post()', () => {

@@ -8,6 +8,7 @@ import {
 
 import WordResolver, { FeedParserError, NoItemError } from '#lib/word-resolver.mjs';
 import { FetchError, FetchResponseError } from '#util/fetch-response.mjs';
+import { mockLoggerFactory } from '#test/util/logger-factory.test.mjs';
 
 function fakeItem (titleSuffix = '') {
 	const link = 'https://www.merriam-webster.com/word-of-the-day/bully pulpit-2023-07-29';
@@ -37,7 +38,7 @@ describe('WordResolver', () => {
 		}));
 		parseFeedMock = mock.fn(() => ({ items: [fakeItem()] }));
 
-		wordResolver = new WordResolver(fetchMock, parseFeedMock);
+		wordResolver = new WordResolver(mockLoggerFactory(), fetchMock, parseFeedMock);
 	});
 
 	describe('get()', () => {

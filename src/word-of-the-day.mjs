@@ -1,20 +1,24 @@
 import Config from '#lib/config.mjs';
 import MastodonPoster from '#lib/mastodon-poster.mjs';
 import WordResolver from '#lib/word-resolver.mjs';
+import { loggerFactory } from '#util/logger-factory.mjs';
 
 export class InvalidSourceName extends Error {}
 
 export default class WordOfTheDay {
 	#config;
+	#logger;
 	#mastodonPoster;
 	#wordResolver;
 
 	constructor (
 		config = new Config(),
-		mastodonPoster = new MastodonPoster(),
-		wordResolver = new WordResolver()
+		logger = loggerFactory(config.log),
+		mastodonPoster = new MastodonPoster(logger),
+		wordResolver = new WordResolver(logger)
 	) {
 		this.#config = config;
+		this.#logger = logger.child({ name: this.constructor.name });
 		this.#mastodonPoster = mastodonPoster;
 		this.#wordResolver = wordResolver;
 	}

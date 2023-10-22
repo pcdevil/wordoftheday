@@ -3,10 +3,12 @@ import { FetchError, assertResponseOk, isClientFetchResponseError } from '#util/
 export default class MastodonPoster {
 	#fetchMethod;
 	#language = 'en-GB';
+	#logger;
 	#setTimeoutMethod;
 	#retryDelay = 30_000; // in milliseconds
 
-	constructor (fetchMethod = globalThis.fetch, setTimeoutMethod = globalThis.setTimeout) {
+	constructor (logger, fetchMethod = globalThis.fetch, setTimeoutMethod = globalThis.setTimeout) {
+		this.#logger = logger.child({ name: this.constructor.name });
 		this.#fetchMethod = fetchMethod;
 		this.#setTimeoutMethod = setTimeoutMethod;
 	}

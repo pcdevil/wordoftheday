@@ -9,6 +9,7 @@ import {
 import MastodonPoster from '#lib/mastodon-poster.mjs';
 import WordResolver from '#lib/word-resolver.mjs';
 import WordOfTheDay, { InvalidSourceName } from '#src/word-of-the-day.mjs';
+import { mockLoggerFactory } from '#test/util/logger-factory.test.mjs';
 
 describe('WordOfTheDay', () => {
 	const sourceName = 'theFreeDictionary';
@@ -36,14 +37,17 @@ describe('WordOfTheDay', () => {
 				},
 			},
 		};
-		mastodonPosterMock = new MastodonPoster();
+
+		const loggerMock = mockLoggerFactory();
+
+		mastodonPosterMock = new MastodonPoster(loggerMock);
 		mock.method(mastodonPosterMock, 'post').mock
 			.mockImplementation(() => Promise.resolve());
-		wordResolverMock = new WordResolver();
+		wordResolverMock = new WordResolver(loggerMock);
 		mock.method(wordResolverMock, 'get').mock
 			.mockImplementation(() => Promise.resolve(wordObject));
 
-		wordOfTheDay = new WordOfTheDay(configMock, mastodonPosterMock, wordResolverMock);
+		wordOfTheDay = new WordOfTheDay(configMock, loggerMock, mastodonPosterMock, wordResolverMock);
 	});
 
 	describe('run()', () => {

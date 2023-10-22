@@ -7,9 +7,11 @@ export class NoItemError extends Error {}
 
 export default class WordResolver {
 	#fetchMethod;
+	#logger;
 	#parseFeedMethod;
 
-	constructor (fetchMethod = globalThis.fetch, parseFeedMethod = parseFeed) {
+	constructor (logger, fetchMethod = globalThis.fetch, parseFeedMethod = parseFeed) {
+		this.#logger = logger.child({ name: this.constructor.name });
 		this.#fetchMethod = fetchMethod;
 		this.#parseFeedMethod = parseFeedMethod;
 	}
