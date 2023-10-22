@@ -17,8 +17,8 @@
     "test:watch": "node --test --watch test"
   },
   "engines": {
-    "node": "^18.17.0",
-    "npm": "^9.6.7"
+    "node": "^18.18.2",
+    "npm": "^9.8.1"
   },
   "repository": {
     "type": "git",
