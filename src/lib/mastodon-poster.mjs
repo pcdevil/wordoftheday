@@ -1,11 +1,13 @@
 import { FetchError, assertResponseOk, isClientFetchResponseError } from '#util/fetch-response.mjs';
 
 export default class MastodonPoster {
+	static language = 'en-GB';
+	static retryCount = 2;
+	static retryDelay = 30_000; // in milliseconds
+
 	#fetchMethod;
-	#language = 'en-GB';
 	#logger;
 	#setTimeoutMethod;
-	#retryDelay = 30_000; // in milliseconds
 
 	constructor (logger, fetchMethod = globalThis.fetch, setTimeoutMethod = globalThis.setTimeout) {
 		this.#logger = logger.child({ name: this.constructor.name });
@@ -13,11 +15,7 @@ export default class MastodonPoster {
 		this.#setTimeoutMethod = setTimeoutMethod;
 	}
 
-	get language () {
-		return this.#language;
-	}
-
-	async post (baseUrl, accessToken, wordObject, hashtag, retryCount = 2) {
+	async post (baseUrl, accessToken, wordObject, hashtag, retryCount = MastodonPoster.retryCount) {
 		const url = this.#createUrl(baseUrl);
 		const status = this.#createStatus(wordObject, hashtag);
 		const options = this.#createOptions(accessToken, status);
@@ -34,14 +32,14 @@ export default class MastodonPoster {
 				throw new FetchError('Status post failed.', { cause: error });
 			}
 
-			await this.#sleep(this.#retryDelay);
+			await this.#retrySleep();
 			await this.post(baseUrl, accessToken, wordObject, hashtag, retryCount - 1);
 		}
 	}
 
 	#createOptions (accessToken, status) {
 		const body = JSON.stringify({
-			language: this.#language,
+			language: MastodonPoster.language,
 			status,
 			visibility: 'public',
 		});
@@ -57,7 +55,7 @@ export default class MastodonPoster {
 	}
 
 	#createStatus (wordObject, hashtag) {
-		const dateString = new Intl.DateTimeFormat(this.#language, { dateStyle: 'long' })
+		const dateString = new Intl.DateTimeFormat(MastodonPoster.language, { dateStyle: 'long' })
 			.format(wordObject.date);
 
 		return [
@@ -73,7 +71,7 @@ export default class MastodonPoster {
 		return new URL('/api/v1/statuses', baseUrl).toString();
 	}
 
-	async #sleep (delay) {
-		return new Promise((resolve) => this.#setTimeoutMethod(() => resolve(), delay));
+	async #retrySleep () {
+		return new Promise((resolve) => this.#setTimeoutMethod(() => resolve(), MastodonPoster.retryDelay));
 	}
 }
