@@ -19,6 +19,10 @@ on:
 
 env:
   GIT_TAG_NAME: stable
+  LOG_FILE_PATH: debug.log
+  LOG_LEVEL: debug
+  LOG_PRETTY: false
+  LOG_PRETTY_COLORIZE: true
   MASTODON_ACCESS_TOKEN: ${{ secrets.MASTODON_ACCESS_TOKEN }}
   MASTODON_BASE_URL: ${{ secrets.MASTODON_BASE_URL }}
   NODE_ENV: 'production'
@@ -41,3 +45,9 @@ jobs:
         run: npm clean-install
       - name: Run application with "${{ inputs.source_name }}" source
         run: npm start -- ${{ inputs.source_name }}
+      - name: Upload logs as artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ inputs.source_name }} run ${{ env.LOG_LEVEL }} log
+          path: ${{ env.LOG_FILE_PATH }}
+          retention-days: 7
