@@ -7,8 +7,8 @@ import {
 } from 'node:test';
 
 import WordResolver, { FeedParserError, NoItemError } from '#lib/word-resolver.mjs';
-import { FetchError, FetchResponseError } from '#util/fetch-response.mjs';
 import { mockLoggerFactory } from '#test/util/logger-factory.test.mjs';
+import { FetchError, FetchResponseError } from '#util/fetch-response.mjs';
 
 function fakeItem (titleSuffix = '') {
 	const link = 'https://www.merriam-webster.com/word-of-the-day/bully pulpit-2023-07-29';
@@ -32,10 +32,12 @@ describe('WordResolver', () => {
 
 	beforeEach(() => {
 		textMock = mock.fn(() => Promise.resolve(feedText));
-		fetchMock = mock.fn(() => Promise.resolve({
-			ok: true,
-			text: textMock,
-		}));
+		fetchMock = mock.fn(() =>
+			Promise.resolve({
+				ok: true,
+				text: textMock,
+			})
+		);
 		parseFeedMock = mock.fn(() => ({ items: [fakeItem()] }));
 
 		wordResolver = new WordResolver(mockLoggerFactory(), fetchMock, parseFeedMock);
@@ -105,7 +107,9 @@ describe('WordResolver', () => {
 
 		it('should throw a FeedParserError when the feed parser throws an error', async () => {
 			const itemCount = 3;
-			parseFeedMock.mock.mockImplementation(() => { throw new Error(); });
+			parseFeedMock.mock.mockImplementation(() => {
+				throw new Error();
+			});
 
 			// retrieve the item after the last one
 			const itemIndex = itemCount + 1;

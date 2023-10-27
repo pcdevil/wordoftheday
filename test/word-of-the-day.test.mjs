@@ -58,7 +58,8 @@ describe('WordOfTheDay', () => {
 
 			const firstCall = wordResolverMock.get.mock.calls[0];
 			strict.deepEqual(firstCall.arguments, [
-				configMock.sources[sourceName].url, configMock.sources[sourceName].itemIndex,
+				configMock.sources[sourceName].url,
+				configMock.sources[sourceName].itemIndex,
 			]);
 		});
 

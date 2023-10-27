@@ -7,8 +7,8 @@ import {
 } from 'node:test';
 
 import MastodonPoster from '#lib/mastodon-poster.mjs';
-import { FetchError, FetchResponseError } from '#util/fetch-response.mjs';
 import { mockLoggerFactory } from '#test/util/logger-factory.test.mjs';
+import { FetchError, FetchResponseError } from '#util/fetch-response.mjs';
 
 describe('MastodonPoster', () => {
 	const baseUrl = 'https://example.com';
@@ -26,10 +26,12 @@ describe('MastodonPoster', () => {
 
 	beforeEach(() => {
 		jsonMock = mock.fn(() => Promise.resolve({}));
-		fetchMock = mock.fn(() => Promise.resolve({
-			json: jsonMock,
-			ok: true,
-		}));
+		fetchMock = mock.fn(() =>
+			Promise.resolve({
+				json: jsonMock,
+				ok: true,
+			})
+		);
 		setTimeoutMock = mock.fn((callback) => callback());
 
 		mastodonPoster = new MastodonPoster(mockLoggerFactory(), fetchMock, setTimeoutMock);
@@ -45,17 +47,20 @@ describe('MastodonPoster', () => {
 
 			// check arguments one by one for better readability and debug
 			strict.equal(url, `${baseUrl}/api/v1/statuses`);
-			strict.deepEqual(options.body, JSON.stringify({
-				language: MastodonPoster.language,
-				status: [
-					`#WordOfTheDay ${hashtag} 13 August 2023`,
-					'',
-					wordObject.word,
-					'',
-					wordObject.url,
-				].join('\n'),
-				visibility: 'public',
-			}));
+			strict.deepEqual(
+				options.body,
+				JSON.stringify({
+					language: MastodonPoster.language,
+					status: [
+						`#WordOfTheDay ${hashtag} 13 August 2023`,
+						'',
+						wordObject.word,
+						'',
+						wordObject.url,
+					].join('\n'),
+					visibility: 'public',
+				})
+			);
 			strict.deepEqual(options.headers, {
 				Authorization: `Bearer ${accessToken}`,
 				'Content-Type': 'application/json',

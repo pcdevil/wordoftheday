@@ -23,6 +23,7 @@
 		"comma-spacing": "off",
 		"comma-style": "off",
 		"computed-property-spacing": "off",
+		"curly": "off",
 		"dot-location": "off",
 		"eol-last": "off",
 		"func-call-spacing": "off",
@@ -63,7 +64,6 @@
 		"wrap-iife": "off",
 		"yield-star-spacing": "off",
 
-		"curly": ["error", "all"],
 		"no-unused-vars": ["error", {
 			"argsIgnorePattern": "^_",
 			"caughtErrorsIgnorePattern": "^_",
