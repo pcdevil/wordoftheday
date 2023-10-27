@@ -21,7 +21,7 @@ export default class MastodonPoster {
 		const options = this.#createOptions(accessToken, status);
 
 		try {
-			const response = await this.#fetchMethod(url, options);
+			const response = await this.#fetchWithMeasure(url, options);
 			assertResponseOk(response);
 		} catch (error) {
 			if (isClientFetchResponseError(error)) {
@@ -32,6 +32,9 @@ export default class MastodonPoster {
 				throw new FetchError('Status post failed.', { cause: error });
 			}
 
+			this.#logger.warn('post failed', {
+				retryCount,
+			});
 			await this.#retrySleep();
 			await this.post(baseUrl, accessToken, wordObject, hashtag, retryCount - 1);
 		}
@@ -69,6 +72,17 @@ export default class MastodonPoster {
 
 	#createUrl (baseUrl) {
 		return new URL('/api/v1/statuses', baseUrl).toString();
+	}
+
+	async #fetchWithMeasure (url, options) {
+		const measureName = `send request`;
+		try {
+			this.#logger.mark(`${measureName} start`);
+			return await this.#fetchMethod(url, options);
+		} finally {
+			this.#logger.mark(`${measureName} end`);
+			this.#logger.measure(measureName, `${measureName} start`, `${measureName} end`);
+		}
 	}
 
 	async #retrySleep () {

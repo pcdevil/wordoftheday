@@ -21,7 +21,7 @@ export default class WordResolver {
 		let items;
 
 		try {
-			const response = await this.#fetchMethod(feedUrl);
+			const response = await this.#fetchWithMeasure(feedUrl);
 
 			assertResponseOk(response);
 
@@ -34,7 +34,7 @@ export default class WordResolver {
 		}
 
 		try {
-			const feed = this.#parseFeedMethod(text);
+			const feed = this.#parseFeedWithMeasure(text);
 			items = feed.items;
 		} catch (error) {
 			throw new FeedParserError('Rss parser call failed.', { cause: error });
@@ -55,5 +55,27 @@ export default class WordResolver {
 			word,
 			url,
 		};
+	}
+
+	async #fetchWithMeasure (feedUrl) {
+		const measureName = 'send request';
+		try {
+			this.#logger.mark(`${measureName} start`);
+			return await this.#fetchMethod(feedUrl);
+		} finally {
+			this.#logger.mark(`${measureName} end`);
+			this.#logger.measure(measureName, `${measureName} start`, `${measureName} end`);
+		}
+	}
+
+	#parseFeedWithMeasure (text) {
+		const measureName = 'parse feed';
+		try {
+			this.#logger.mark(`${measureName} start`);
+			return this.#parseFeedMethod(text);
+		} finally {
+			this.#logger.mark(`${measureName} end`);
+			this.#logger.measure(measureName, `${measureName} start`, `${measureName} end`);
+		}
 	}
 }
