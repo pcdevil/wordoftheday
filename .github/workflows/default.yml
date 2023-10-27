@@ -24,8 +24,10 @@ jobs:
           node-version-file: '.nvmrc'
       - name: Install npm dependencies
         run: npm clean-install
-      - name: Perform code analyzer and format check
+      - name: Perform code analyzer check
         run: npm run lint
+      - name: Perform format check
+        run: npm run style
       - name: Perform tests
         run: npm run test
   publish-tag:

@@ -14,6 +14,8 @@
     "lint": "eslint --ext .js,.mjs --ignore-path .gitignore .",
     "lint:fix": "npm run lint -- --fix",
     "start": "node src/cli.mjs",
+    "style": "dprint check",
+    "style:fix": "dprint fmt",
     "test": "node --test test",
     "test:watch": "node --test --watch test"
   },
@@ -38,6 +40,7 @@
     "pino-pretty": "^10.2.3"
   },
   "devDependencies": {
+    "dprint": "^0.42.2",
     "eslint": "^8.52.0",
     "eslint-config-standard": "^17.1.0",
     "eslint-plugin-import": "^2.29.0",
