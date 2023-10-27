@@ -34,14 +34,14 @@
   "dependencies": {
     "dotenv": "^16.3.1",
     "htmlparser2": "^9.0.0",
-    "pino": "^8.16.0",
+    "pino": "^8.16.1",
     "pino-pretty": "^10.2.3"
   },
   "devDependencies": {
-    "eslint": "^8.46.0",
+    "eslint": "^8.52.0",
     "eslint-config-standard": "^17.1.0",
-    "eslint-plugin-import": "^2.28.0",
-    "eslint-plugin-n": "^16.0.1",
+    "eslint-plugin-import": "^2.29.0",
+    "eslint-plugin-n": "^16.2.0",
     "eslint-plugin-promise": "^6.1.1"
   }
 }
