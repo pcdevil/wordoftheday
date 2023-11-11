@@ -16,6 +16,9 @@ export default class MastodonPoster {
 	}
 
 	async post (baseUrl, accessToken, wordObject, hashtag, retryCount = MastodonPoster.retryCount) {
+		this.#logger.debug('post start', {
+			retryCount,
+		});
 		const url = this.#createUrl(baseUrl);
 		const status = this.#createStatus(wordObject, hashtag);
 		const options = this.#createOptions(accessToken, status);
@@ -23,16 +26,25 @@ export default class MastodonPoster {
 		try {
 			const response = await this.#fetchWithMeasure(url, options);
 			assertResponseOk(response);
+			this.#logger.debug('post successful');
 		} catch (error) {
 			if (isClientFetchResponseError(error)) {
+				this.#logger.warn('post failed with client error, will not retry', {
+					error,
+				});
 				throw error;
 			}
 
 			if (retryCount === 0) {
+				this.#logger.warn('post failed, will not retry', {
+					error,
+				});
 				throw new FetchError('Status post failed.', { cause: error });
 			}
 
-			this.#logger.warn('post failed', {
+			this.#logger.warn('post failed, will retry after delay', {
+				delay: MastodonPoster.retryDelay,
+				error,
 				retryCount,
 			});
 			await this.#retrySleep();

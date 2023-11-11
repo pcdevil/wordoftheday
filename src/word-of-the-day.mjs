@@ -24,14 +24,25 @@ export default class WordOfTheDay {
 	}
 
 	async run (sourceName) {
-		const sourceConfig = this.#getSourceConfig(sourceName);
-		const word = await this.#wordResolver.get(sourceConfig.url, sourceConfig.itemIndex);
-		await this.#mastodonPoster.post(
-			this.#config.mastodon.baseUrl,
-			this.#config.mastodon.accessToken,
-			word,
-			sourceConfig.hashtag
-		);
+		try {
+			this.#logger.debug('run start', {
+				sourceName,
+			});
+			const sourceConfig = this.#getSourceConfig(sourceName);
+			const word = await this.#wordResolver.get(sourceConfig.url, sourceConfig.itemIndex);
+			await this.#mastodonPoster.post(
+				this.#config.mastodon.baseUrl,
+				this.#config.mastodon.accessToken,
+				word,
+				sourceConfig.hashtag
+			);
+			this.#logger.debug('run successful');
+		} catch (error) {
+			this.#logger.warn('run failed', {
+				error,
+			});
+			throw error;
+		}
 	}
 
 	#getSourceConfig (sourceName) {
