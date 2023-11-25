@@ -3,7 +3,7 @@ name: Scheduled Run
 on:
   schedule:
     - cron: '00 08 * * *'
-    - cron: '00 10 * * *'
+    # - cron: '00 10 * * *'
     - cron: '00 12 * * *'
 
 jobs:
@@ -18,9 +18,9 @@ jobs:
         if: ${{ github.event.schedule == '00 08 * * *' }}
         run: echo "SOURCE_NAME=merriamWebster" >> $GITHUB_ENV
 
-      - name: Set SOURCE_NAME to "Oxford Learner's Dictionaries"
-        if: ${{ github.event.schedule == '00 10 * * *' }}
-        run: echo "SOURCE_NAME=oxfordLearnersDictionaries" >> $GITHUB_ENV
+      # - name: Set SOURCE_NAME to "Oxford Learner's Dictionaries"
+      # if: ${{ github.event.schedule == '00 10 * * *' }}
+      #   run: echo "SOURCE_NAME=oxfordLearnersDictionaries" >> $GITHUB_ENV
 
       - name: Set SOURCE_NAME to "The Free Dictionary"
         if: ${{ github.event.schedule == '00 12 * * *' }}
