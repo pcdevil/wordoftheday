@@ -4,6 +4,10 @@
   "description": "A Mastodon \"Word of the Day\" bot.",
   "private": true,
   "type": "module",
+  "files": [
+    "src",
+    "!src/**/*.test.mjs"
+  ],
   "imports": {
     "#lib/*": "./src/lib/*",
     "#src/*": "./src/*",
