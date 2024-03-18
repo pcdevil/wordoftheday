@@ -37,17 +37,17 @@
   },
   "homepage": "https://github.com/pcdevil/wordoftheday#readme",
   "dependencies": {
-    "dotenv": "^16.3.1",
-    "htmlparser2": "^9.0.0",
-    "pino": "^8.16.1",
-    "pino-pretty": "^10.2.3"
+    "dotenv": "^16.4.5",
+    "htmlparser2": "^9.1.0",
+    "pino": "^8.19.0",
+    "pino-pretty": "^10.3.1"
   },
   "devDependencies": {
-    "dprint": "^0.42.2",
-    "eslint": "^8.52.0",
+    "dprint": "~0.45.0",
+    "eslint": "^8.57.0",
     "eslint-config-standard": "^17.1.0",
-    "eslint-plugin-import": "^2.29.0",
-    "eslint-plugin-n": "^16.2.0",
+    "eslint-plugin-import": "^2.29.1",
+    "eslint-plugin-n": "^16.6.2",
     "eslint-plugin-promise": "^6.1.1"
   }
 }
