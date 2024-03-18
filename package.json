@@ -7,7 +7,6 @@
   "imports": {
     "#lib/*": "./src/lib/*",
     "#src/*": "./src/*",
-    "#test/*": "./test/*",
     "#util/*": "./src/util/*"
   },
   "scripts": {
@@ -16,8 +15,8 @@
     "start": "node src/cli.mjs",
     "style": "dprint check",
     "style:fix": "dprint fmt",
-    "test": "node --test test",
-    "test:watch": "node --test --watch test"
+    "test": "node --test 'src/**/*.test.mjs'",
+    "test:watch": "node --test --watch 'src/**/*.test.mjs'"
   },
   "engines": {
     "node": "^21.7.1",

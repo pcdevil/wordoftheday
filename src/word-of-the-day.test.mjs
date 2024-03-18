@@ -9,7 +9,7 @@ import {
 import MastodonPoster from '#lib/mastodon-poster.mjs';
 import WordResolver from '#lib/word-resolver.mjs';
 import WordOfTheDay, { InvalidSourceName } from '#src/word-of-the-day.mjs';
-import { mockLoggerFactory } from '#test/util/logger-factory.test.mjs';
+import { mockLoggerFactory } from '#util/logger-factory.test.mjs';
 
 describe('WordOfTheDay', () => {
 	const sourceName = 'theFreeDictionary';

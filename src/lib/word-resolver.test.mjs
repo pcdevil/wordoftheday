@@ -7,8 +7,8 @@ import {
 } from 'node:test';
 
 import WordResolver, { FeedParserError, NoItemError } from '#lib/word-resolver.mjs';
-import { mockLoggerFactory } from '#test/util/logger-factory.test.mjs';
 import { FetchError, FetchResponseError } from '#util/fetch-response.mjs';
+import { mockLoggerFactory } from '#util/logger-factory.test.mjs';
 
 function fakeItem (titleSuffix = '') {
 	const link = 'https://www.merriam-webster.com/word-of-the-day/bully pulpit-2023-07-29';

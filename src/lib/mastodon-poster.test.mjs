@@ -7,8 +7,8 @@ import {
 } from 'node:test';
 
 import MastodonPoster from '#lib/mastodon-poster.mjs';
-import { mockLoggerFactory } from '#test/util/logger-factory.test.mjs';
 import { FetchError, FetchResponseError } from '#util/fetch-response.mjs';
+import { mockLoggerFactory } from '#util/logger-factory.test.mjs';
 
 describe('MastodonPoster', () => {
 	const baseUrl = 'https://example.com';
