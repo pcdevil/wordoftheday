@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 export class MissingEnvVariableError extends Error {}
 
 export class Config {
-	constructor (dotenvModule = dotenv) {
+	constructor(dotenvModule = dotenv) {
 		const processEnv = {
 			...process.env,
 		};
@@ -16,7 +16,7 @@ export class Config {
 		};
 	}
 
-	get #baseConfig () {
+	get #baseConfig() {
 		return {
 			sources: {
 				merriamWebster: {
@@ -38,7 +38,7 @@ export class Config {
 		};
 	}
 
-	#createLogConfig (processEnv) {
+	#createLogConfig(processEnv) {
 		return {
 			log: {
 				filePath: processEnv.LOG_FILE_PATH,
@@ -49,7 +49,7 @@ export class Config {
 		};
 	}
 
-	#createMastodonConfig (processEnv) {
+	#createMastodonConfig(processEnv) {
 		return {
 			mastodon: {
 				accessToken: this.#getEnvVariableOrThrow(processEnv, 'MASTODON_ACCESS_TOKEN'),
@@ -58,7 +58,7 @@ export class Config {
 		};
 	}
 
-	#getEnvVariableOrThrow (processEnv, variableName) {
+	#getEnvVariableOrThrow(processEnv, variableName) {
 		if (!processEnv[variableName]) {
 			throw new MissingEnvVariableError(`The environment variable "${variableName}" is not defined.`);
 		}

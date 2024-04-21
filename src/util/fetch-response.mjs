@@ -1,14 +1,14 @@
 export class FetchError extends Error {}
 
 export class FetchResponseError extends FetchError {
-	constructor (status, statusText) {
+	constructor(status, statusText) {
 		super(`Fetch failed with ${status} "${statusText}" error.`);
 		this.status = status;
 		this.statusText = statusText;
 	}
 }
 
-export function assertResponseOk (response) {
+export function assertResponseOk(response) {
 	if (!response.ok) {
 		const { status, statusText } = response;
 
@@ -16,6 +16,6 @@ export function assertResponseOk (response) {
 	}
 }
 
-export function isClientFetchResponseError (error) {
+export function isClientFetchResponseError(error) {
 	return error instanceof FetchResponseError && error.status <= 500;
 }

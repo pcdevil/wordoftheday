@@ -2,7 +2,7 @@ import fs from 'fs';
 import pino from 'pino';
 import pinoPretty from 'pino-pretty';
 
-function createCustomLevels (pinoModule) {
+function createCustomLevels(pinoModule) {
 	// set custom log levels based on existing one
 	const relativeLogLevel = pinoModule.levels.values.debug;
 	return {
@@ -17,16 +17,16 @@ function createCustomLevels (pinoModule) {
 	};
 }
 
-function createFileStream (fsModule, level, filePath) {
+function createFileStream(fsModule, level, filePath) {
 	return {
 		level,
 		stream: fsModule.createWriteStream(filePath),
 	};
 }
 
-function createPinoLogHooks (performanceInterface, customLevels) {
+function createPinoLogHooks(performanceInterface, customLevels) {
 	return {
-		logMethod (inputArgs, method, level) {
+		logMethod(inputArgs, method, level) {
 			// handle "mark" logs
 			if (level === customLevels.values.mark) {
 				const [markName] = inputArgs;
@@ -57,7 +57,7 @@ function createPinoLogHooks (performanceInterface, customLevels) {
 	};
 }
 
-function createPinoOptions (performanceInterface, customLevels, level) {
+function createPinoOptions(performanceInterface, customLevels, level) {
 	const options = {
 		base: undefined,
 		customLevels: customLevels.values,
@@ -71,7 +71,7 @@ function createPinoOptions (performanceInterface, customLevels, level) {
 	return options;
 }
 
-function createPrettyStream (pinoPrettyModule, customLevels, level, colorize) {
+function createPrettyStream(pinoPrettyModule, customLevels, level, colorize) {
 	const customColors = Object.entries(customLevels.colors)
 		.map((entry) => entry.join(':'))
 		.join(',');
@@ -87,7 +87,7 @@ function createPrettyStream (pinoPrettyModule, customLevels, level, colorize) {
 	};
 }
 
-export function loggerFactory (logConfig, performanceInterface = globalThis.performance, fsModule = fs, pinoModule = pino, pinoPrettyModule = pinoPretty) {
+export function loggerFactory(logConfig, performanceInterface = globalThis.performance, fsModule = fs, pinoModule = pino, pinoPrettyModule = pinoPretty) {
 	const customLevels = createCustomLevels(pinoModule);
 
 	const logStreams = [];

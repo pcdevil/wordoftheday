@@ -10,13 +10,13 @@ export class WordResolver {
 	#logger;
 	#parseFeedMethod;
 
-	constructor (logger, fetchMethod = globalThis.fetch, parseFeedMethod = parseFeed) {
+	constructor(logger, fetchMethod = globalThis.fetch, parseFeedMethod = parseFeed) {
 		this.#logger = logger.child({ name: this.constructor.name });
 		this.#fetchMethod = fetchMethod;
 		this.#parseFeedMethod = parseFeedMethod;
 	}
 
-	async get (feedUrl, itemIndex) {
+	async get(feedUrl, itemIndex) {
 		let text;
 		let items;
 
@@ -57,7 +57,7 @@ export class WordResolver {
 		};
 	}
 
-	async #fetchWithMeasure (feedUrl) {
+	async #fetchWithMeasure(feedUrl) {
 		const measureName = 'send request';
 		try {
 			this.#logger.mark(`${measureName} start`);
@@ -68,7 +68,7 @@ export class WordResolver {
 		}
 	}
 
-	#parseFeedWithMeasure (text) {
+	#parseFeedWithMeasure(text) {
 		const measureName = 'parse feed';
 		try {
 			this.#logger.mark(`${measureName} start`);

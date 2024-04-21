@@ -9,7 +9,7 @@ import {
 import { loggerFactory } from '#util';
 
 // expose a mocked logger for other test modules
-export function mockLoggerFactory () {
+export function mockLoggerFactory() {
 	return {
 		// child logger creation
 		child: mock.fn(() => mockLoggerFactory()),

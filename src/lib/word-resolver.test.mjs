@@ -10,7 +10,7 @@ import { FeedParserError, NoItemError, WordResolver } from '#lib';
 import { FetchError, FetchResponseError } from '#util';
 import { mockLoggerFactory } from '#util/logger-factory.test.mjs';
 
-function fakeItem (titleSuffix = '') {
+function fakeItem(titleSuffix = '') {
 	const link = 'https://www.merriam-webster.com/word-of-the-day/bully pulpit-2023-07-29';
 	const title = `bully pulpit${titleSuffix}`;
 	const pubDate = new Date('Sat, 29 Jul 2023 01:00:01 -0400');

@@ -9,13 +9,13 @@ export class MastodonPoster {
 	#logger;
 	#setTimeoutMethod;
 
-	constructor (logger, fetchMethod = globalThis.fetch, setTimeoutMethod = globalThis.setTimeout) {
+	constructor(logger, fetchMethod = globalThis.fetch, setTimeoutMethod = globalThis.setTimeout) {
 		this.#logger = logger.child({ name: this.constructor.name });
 		this.#fetchMethod = fetchMethod;
 		this.#setTimeoutMethod = setTimeoutMethod;
 	}
 
-	async post (baseUrl, accessToken, wordObject, hashtag, retryCount = MastodonPoster.retryCount) {
+	async post(baseUrl, accessToken, wordObject, hashtag, retryCount = MastodonPoster.retryCount) {
 		this.#logger.debug('post start', {
 			retryCount,
 		});
@@ -52,7 +52,7 @@ export class MastodonPoster {
 		}
 	}
 
-	#createOptions (accessToken, status) {
+	#createOptions(accessToken, status) {
 		const body = JSON.stringify({
 			language: MastodonPoster.language,
 			status,
@@ -69,7 +69,7 @@ export class MastodonPoster {
 		};
 	}
 
-	#createStatus (wordObject, hashtag) {
+	#createStatus(wordObject, hashtag) {
 		const dateString = new Intl.DateTimeFormat(MastodonPoster.language, { dateStyle: 'long' })
 			.format(wordObject.date);
 
@@ -82,11 +82,11 @@ export class MastodonPoster {
 		].join('\n');
 	}
 
-	#createUrl (baseUrl) {
+	#createUrl(baseUrl) {
 		return new URL('/api/v1/statuses', baseUrl).toString();
 	}
 
-	async #fetchWithMeasure (url, options) {
+	async #fetchWithMeasure(url, options) {
 		const measureName = `send request`;
 		try {
 			this.#logger.mark(`${measureName} start`);
@@ -97,7 +97,7 @@ export class MastodonPoster {
 		}
 	}
 
-	async #retrySleep () {
+	async #retrySleep() {
 		return new Promise((resolve) => this.#setTimeoutMethod(() => resolve(), MastodonPoster.retryDelay));
 	}
 }

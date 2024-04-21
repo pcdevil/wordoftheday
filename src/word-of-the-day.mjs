@@ -9,7 +9,7 @@ export class WordOfTheDay {
 	#mastodonPoster;
 	#wordResolver;
 
-	constructor (
+	constructor(
 		config = new Config(),
 		logger = loggerFactory(config.log),
 		mastodonPoster = new MastodonPoster(logger),
@@ -21,7 +21,7 @@ export class WordOfTheDay {
 		this.#wordResolver = wordResolver;
 	}
 
-	async run (sourceName) {
+	async run(sourceName) {
 		try {
 			this.#logger.debug('run start', {
 				sourceName,
@@ -43,7 +43,7 @@ export class WordOfTheDay {
 		}
 	}
 
-	#getSourceConfig (sourceName) {
+	#getSourceConfig(sourceName) {
 		if (!this.#config.sources[sourceName]) {
 			throw new InvalidSourceNameError(`Referenced source "${sourceName}" is not configured.`);
 		}
