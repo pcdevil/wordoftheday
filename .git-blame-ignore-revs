@@ -1,0 +1,7 @@
+# List of git commits to ignore during annotate (aka `git blame`)
+#
+# To use it locally, set it as repository configuration via:
+# `git config --local --add blame.ignoreRevsFile .git-blame-ignore-revs`
+
+# style update
+53648fe0ce5c3a0d55d32be3368c36a736d6461f
