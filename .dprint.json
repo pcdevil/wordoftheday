@@ -8,7 +8,7 @@
 	"plugins": [
 		"https://plugins.dprint.dev/json-0.19.2.wasm",
 		"https://plugins.dprint.dev/markdown-0.16.4.wasm",
-		"https://plugins.dprint.dev/typescript-0.88.3.wasm"
+		"https://plugins.dprint.dev/typescript-0.90.3.wasm"
 	],
 
 	"lineWidth": 160,
@@ -26,6 +26,7 @@
 
 	"typescript": {
 		"preferSingleLine": false,
+		"quoteProps": "asNeeded",
 		"quoteStyle": "preferSingle",
 
 		"exportDeclaration.sortNamedExports": "caseSensitive",
@@ -33,18 +34,12 @@
 		"module.sortExportDeclarations": "caseSensitive",
 		"module.sortImportDeclarations": "caseSensitive",
 
-		"constructor.spaceBeforeParentheses": true,
-		"functionDeclaration.spaceBeforeParentheses": true,
-		"functionExpression.spaceBeforeParentheses": true,
-		"getAccessor.spaceBeforeParentheses": true,
-		"method.spaceBeforeParentheses": true,
-		"setAccessor.spaceBeforeParentheses": true,
-
 		"arguments.trailingCommas": "never",
 		"parameters.trailingCommas": "never",
 
 		"arrowFunction.useParentheses": "force",
 
-		"useBraces": "always"
+		"useBraces": "always",
+		"ifStatement.useBraces": "whenNotSingleLine"
 	}
 }
