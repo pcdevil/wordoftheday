@@ -1,4 +1,4 @@
-import { FetchError, assertResponseOk, isClientFetchResponseError } from '#util';
+import { RequestError, assertResponseOk, isClientResponseError } from '#util';
 
 export class MastodonPoster {
 	static language = 'en-GB';
@@ -28,7 +28,7 @@ export class MastodonPoster {
 			assertResponseOk(response);
 			this.#logger.debug('post successful');
 		} catch (error) {
-			if (isClientFetchResponseError(error)) {
+			if (isClientResponseError(error)) {
 				this.#logger.warn('post failed with client error, will not retry', {
 					error,
 				});
@@ -39,7 +39,7 @@ export class MastodonPoster {
 				this.#logger.warn('post failed, will not retry', {
 					error,
 				});
-				throw new FetchError('Status post failed.', { cause: error });
+				throw new RequestError('Status post failed.', { cause: error });
 			}
 
 			this.#logger.warn('post failed, will retry after delay', {

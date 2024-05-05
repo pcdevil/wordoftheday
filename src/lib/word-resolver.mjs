@@ -1,6 +1,6 @@
 import { parseFeed } from 'htmlparser2';
 
-import { FetchError, assertResponseOk } from '#util';
+import { RequestError, assertResponseOk } from '#util';
 
 export class FeedParserError extends Error {}
 export class NoItemError extends Error {}
@@ -27,10 +27,10 @@ export class WordResolver {
 
 			text = await response.text();
 		} catch (error) {
-			if (error instanceof FetchError) {
+			if (error instanceof RequestError) {
 				throw error;
 			}
-			throw new FetchError('Feed get failed.', { cause: error });
+			throw new RequestError('Feed get failed.', { cause: error });
 		}
 
 		try {

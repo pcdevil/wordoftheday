@@ -7,7 +7,7 @@ import {
 } from 'node:test';
 
 import { FeedParserError, NoItemError, WordResolver } from '#lib';
-import { FetchError, FetchResponseError } from '#util';
+import { RequestError, ResponseError } from '#util';
 import { mockLoggerFactory } from '#util/logger-factory.test.mjs';
 
 function fakeItem(titleSuffix = '') {
@@ -82,16 +82,16 @@ describe('WordResolver', () => {
 			});
 		});
 
-		it('should throw a FetchError when the fetch method throws an error', async () => {
+		it('should throw a RequestError when the fetch method throws an error', async () => {
 			fetchMock.mock.mockImplementation(() => Promise.reject(new Error()));
 
 			await strict.rejects(
 				async () => await wordResolver.get(feedUrl, 0),
-				FetchError
+				RequestError
 			);
 		});
 
-		it('should throw a FetchResponseError when the response is not ok', async () => {
+		it('should throw a ResponseError when the response is not ok', async () => {
 			const response = {
 				ok: false,
 				status: 404,
@@ -101,7 +101,7 @@ describe('WordResolver', () => {
 
 			await strict.rejects(
 				async () => await wordResolver.get(feedUrl, 0),
-				new FetchResponseError(response.status, response.statusText)
+				new ResponseError(response.status, response.statusText)
 			);
 		});
 

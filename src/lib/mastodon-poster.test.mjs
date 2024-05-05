@@ -7,7 +7,7 @@ import {
 } from 'node:test';
 
 import { MastodonPoster } from '#lib';
-import { FetchError, FetchResponseError } from '#util';
+import { RequestError, ResponseError } from '#util';
 import { mockLoggerFactory } from '#util/logger-factory.test.mjs';
 
 describe('MastodonPoster', () => {
@@ -93,18 +93,18 @@ describe('MastodonPoster', () => {
 			}
 		});
 
-		it('should throw a FetchError when the fetch method throws an error even after retries', async () => {
+		it('should throw a RequestError when the fetch method throws an error even after retries', async () => {
 			for (let callIndex = 0; callIndex < (MastodonPoster.retryCount + 1); ++callIndex) {
 				fetchMock.mock.mockImplementationOnce(() => Promise.reject(new Error()), callIndex);
 			}
 
 			await strict.rejects(
 				async () => await mastodonPoster.post(baseUrl, accessToken, wordObject, hashtag),
-				FetchError
+				RequestError
 			);
 		});
 
-		it('should throw a FetchResponseError without retry when the response is not ok with client error', async () => {
+		it('should throw a ResponseError without retry when the response is not ok with client error', async () => {
 			const response = {
 				ok: false,
 				status: 404,
@@ -114,7 +114,7 @@ describe('MastodonPoster', () => {
 
 			await strict.rejects(
 				async () => await mastodonPoster.post(baseUrl, accessToken, wordObject, hashtag),
-				new FetchResponseError(response.status, response.statusText)
+				new ResponseError(response.status, response.statusText)
 			);
 
 			strict.equal(setTimeoutMock.mock.calls.length, 0);

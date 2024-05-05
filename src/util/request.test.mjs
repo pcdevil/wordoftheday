@@ -5,14 +5,14 @@ import {
 } from 'node:test';
 
 import {
-	FetchError,
-	FetchResponseError,
+	RequestError,
+	ResponseError,
 	assertResponseOk,
-	isClientFetchResponseError,
+	isClientResponseError,
 } from '#util';
 
 describe('assertResponseOk', () => {
-	it('should throw a FetchResponseError when the response is not ok', () => {
+	it('should throw a ResponseError when the response is not ok', () => {
 		const response = {
 			ok: false,
 			status: 418,
@@ -22,29 +22,29 @@ describe('assertResponseOk', () => {
 
 		strict.throws(
 			() => assertResponseOk(response),
-			new FetchResponseError(response.status, response.statusText)
+			new ResponseError(response.status, response.statusText)
 		);
 	});
 });
 
-describe('isClientFetchResponseError', () => {
+describe('isClientResponseError', () => {
 	it('should return true when the status of the fetch response error is below 500', () => {
-		const error = new FetchResponseError(404, 'Not Found');
-		const result = isClientFetchResponseError(error);
+		const error = new ResponseError(404, 'Not Found');
+		const result = isClientResponseError(error);
 
 		strict.ok(result);
 	});
 
 	it('should return false when the status of the fetch response error is above 500', () => {
-		const error = new FetchResponseError(504, 'Gateway Timeout');
-		const result = isClientFetchResponseError(error);
+		const error = new ResponseError(504, 'Gateway Timeout');
+		const result = isClientResponseError(error);
 
 		strict.equal(result, false);
 	});
 
 	it('should return false when the error is not a fetch response error', () => {
-		const error = new FetchError();
-		const result = isClientFetchResponseError(error);
+		const error = new RequestError();
+		const result = isClientResponseError(error);
 
 		strict.equal(result, false);
 	});
