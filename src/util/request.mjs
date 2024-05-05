@@ -21,3 +21,14 @@ export function assertResponseOk(response) {
 export function isClientResponseError(error) {
 	return error instanceof ResponseError && error.status <= 500;
 }
+
+export async function requestWithMeasure(url, options, logger, fetchMethod = globalThis.fetch) {
+	const measureName = `request`;
+	try {
+		logger.mark(`${measureName} start`);
+		return await fetchMethod(url, options);
+	} finally {
+		logger.mark(`${measureName} end`);
+		logger.measure(measureName, `${measureName} start`, `${measureName} end`);
+	}
+}

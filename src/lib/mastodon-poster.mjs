@@ -1,17 +1,17 @@
-import { RequestError, assertResponseOk, isClientResponseError } from '#util';
+import { RequestError, assertResponseOk, isClientResponseError, requestWithMeasure } from '#util';
 
 export class MastodonPoster {
 	static language = 'en-GB';
 	static retryCount = 2;
 	static retryDelay = 30_000; // in milliseconds
 
-	#fetchMethod;
 	#logger;
+	#requestWithMeasureMethod;
 	#setTimeoutMethod;
 
-	constructor(logger, fetchMethod = globalThis.fetch, setTimeoutMethod = globalThis.setTimeout) {
+	constructor(logger, requestWithMeasureMethod = requestWithMeasure, setTimeoutMethod = globalThis.setTimeout) {
 		this.#logger = logger.child({ name: this.constructor.name });
-		this.#fetchMethod = fetchMethod;
+		this.#requestWithMeasureMethod = requestWithMeasureMethod;
 		this.#setTimeoutMethod = setTimeoutMethod;
 	}
 
@@ -24,7 +24,7 @@ export class MastodonPoster {
 		const options = this.#createOptions(accessToken, status);
 
 		try {
-			const response = await this.#fetchWithMeasure(url, options);
+			const response = await this.#requestWithMeasureMethod(url, options, this.#logger);
 			assertResponseOk(response);
 			this.#logger.debug('post successful');
 		} catch (error) {
@@ -84,17 +84,6 @@ export class MastodonPoster {
 
 	#createUrl(baseUrl) {
 		return new URL('/api/v1/statuses', baseUrl).toString();
-	}
-
-	async #fetchWithMeasure(url, options) {
-		const measureName = `send request`;
-		try {
-			this.#logger.mark(`${measureName} start`);
-			return await this.#fetchMethod(url, options);
-		} finally {
-			this.#logger.mark(`${measureName} end`);
-			this.#logger.measure(measureName, `${measureName} start`, `${measureName} end`);
-		}
 	}
 
 	async #retrySleep() {

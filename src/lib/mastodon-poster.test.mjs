@@ -19,14 +19,14 @@ describe('MastodonPoster', () => {
 		url: 'https://www.oxfordlearnersdictionaries.com/definition/english/corroborate',
 		word: 'corroborate',
 	};
-	let fetchMock;
 	let jsonMock;
+	let requestWithMeasureMock;
 	let setTimeoutMock;
 	let mastodonPoster;
 
 	beforeEach(() => {
 		jsonMock = mock.fn(() => Promise.resolve({}));
-		fetchMock = mock.fn(() =>
+		requestWithMeasureMock = mock.fn(() =>
 			Promise.resolve({
 				json: jsonMock,
 				ok: true,
@@ -34,16 +34,16 @@ describe('MastodonPoster', () => {
 		);
 		setTimeoutMock = mock.fn((callback) => callback());
 
-		mastodonPoster = new MastodonPoster(mockLoggerFactory(), fetchMock, setTimeoutMock);
+		mastodonPoster = new MastodonPoster(mockLoggerFactory(), requestWithMeasureMock, setTimeoutMock);
 	});
 
 	describe('post()', () => {
-		it('should properly call the fetch method', async () => {
+		it('should properly call the requestWithMeasure method', async () => {
 			await mastodonPoster.post(baseUrl, accessToken, wordObject, hashtag);
 
-			strict.equal(fetchMock.mock.calls.length, 1);
+			strict.equal(requestWithMeasureMock.mock.calls.length, 1);
 
-			const [url, options] = fetchMock.mock.calls[0].arguments;
+			const [url, options] = requestWithMeasureMock.mock.calls[0].arguments;
 
 			// check arguments one by one for better readability and debug
 			strict.equal(url, `${baseUrl}/api/v1/statuses`);
@@ -68,19 +68,19 @@ describe('MastodonPoster', () => {
 			strict.equal(options.method, 'POST');
 		});
 
-		it('should re-call fetch when the retry count is above zero and the fetch method throws an error', async () => {
+		it('should re-call requestWithMeasure when the retry count is above zero and the requestWithMeasure method throws an error', async () => {
 			for (let callIndex = 0; callIndex < MastodonPoster.retryCount; ++callIndex) {
-				fetchMock.mock.mockImplementationOnce(() => Promise.reject(new Error()), callIndex);
+				requestWithMeasureMock.mock.mockImplementationOnce(() => Promise.reject(new Error()), callIndex);
 			}
 
 			await mastodonPoster.post(baseUrl, accessToken, wordObject, hashtag);
 
-			strict.equal(fetchMock.mock.calls.length, MastodonPoster.retryCount + 1);
+			strict.equal(requestWithMeasureMock.mock.calls.length, MastodonPoster.retryCount + 1);
 		});
 
-		it('should wait for the retry delay before every fetch re-call', async () => {
+		it('should wait for the retry delay before every requestWithMeasure re-call', async () => {
 			for (let callIndex = 0; callIndex < MastodonPoster.retryCount; ++callIndex) {
-				fetchMock.mock.mockImplementationOnce(() => Promise.reject(new Error()), callIndex);
+				requestWithMeasureMock.mock.mockImplementationOnce(() => Promise.reject(new Error()), callIndex);
 			}
 
 			await mastodonPoster.post(baseUrl, accessToken, wordObject, hashtag);
@@ -93,9 +93,9 @@ describe('MastodonPoster', () => {
 			}
 		});
 
-		it('should throw a RequestError when the fetch method throws an error even after retries', async () => {
+		it('should throw a RequestError when the requestWithMeasure method throws an error even after retries', async () => {
 			for (let callIndex = 0; callIndex < (MastodonPoster.retryCount + 1); ++callIndex) {
-				fetchMock.mock.mockImplementationOnce(() => Promise.reject(new Error()), callIndex);
+				requestWithMeasureMock.mock.mockImplementationOnce(() => Promise.reject(new Error()), callIndex);
 			}
 
 			await strict.rejects(
@@ -110,7 +110,7 @@ describe('MastodonPoster', () => {
 				status: 404,
 				statusText: 'Not Found',
 			};
-			fetchMock.mock.mockImplementation(() => Promise.resolve(response));
+			requestWithMeasureMock.mock.mockImplementation(() => Promise.resolve(response));
 
 			await strict.rejects(
 				async () => await mastodonPoster.post(baseUrl, accessToken, wordObject, hashtag),

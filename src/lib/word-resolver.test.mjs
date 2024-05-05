@@ -26,13 +26,13 @@ describe('WordResolver', () => {
 	const feedUrl = 'https://example.com/rss2';
 	const feedText = '<rss><channel></channel></rss>';
 	let textMock;
-	let fetchMock;
 	let parseFeedMock;
+	let requestWithMeasureMock;
 	let wordResolver;
 
 	beforeEach(() => {
 		textMock = mock.fn(() => Promise.resolve(feedText));
-		fetchMock = mock.fn(() =>
+		requestWithMeasureMock = mock.fn(() =>
 			Promise.resolve({
 				ok: true,
 				text: textMock,
@@ -40,17 +40,20 @@ describe('WordResolver', () => {
 		);
 		parseFeedMock = mock.fn(() => ({ items: [fakeItem()] }));
 
-		wordResolver = new WordResolver(mockLoggerFactory(), fetchMock, parseFeedMock);
+		wordResolver = new WordResolver(mockLoggerFactory(), requestWithMeasureMock, parseFeedMock);
 	});
 
 	describe('get()', () => {
-		it('should properly call the fetch method', async () => {
+		it('should properly call the requestWithMeasure method', async () => {
 			await wordResolver.get(feedUrl, 0);
 
-			strict.equal(fetchMock.mock.calls.length, 1);
+			strict.equal(requestWithMeasureMock.mock.calls.length, 1);
 
-			const firstCall = fetchMock.mock.calls[0];
-			strict.deepEqual(firstCall.arguments, [feedUrl]);
+			const [url, options] = requestWithMeasureMock.mock.calls[0].arguments;
+
+			// check arguments one by one for better readability and debug
+			strict.deepEqual(url, feedUrl);
+			strict.deepEqual(options, {});
 		});
 
 		it('should parse the response feed', async () => {
@@ -82,8 +85,8 @@ describe('WordResolver', () => {
 			});
 		});
 
-		it('should throw a RequestError when the fetch method throws an error', async () => {
-			fetchMock.mock.mockImplementation(() => Promise.reject(new Error()));
+		it('should throw a RequestError when the requestWithMeasure method throws an error', async () => {
+			requestWithMeasureMock.mock.mockImplementation(() => Promise.reject(new Error()));
 
 			await strict.rejects(
 				async () => await wordResolver.get(feedUrl, 0),
@@ -97,7 +100,7 @@ describe('WordResolver', () => {
 				status: 404,
 				statusText: 'Not Found',
 			};
-			fetchMock.mock.mockImplementation(() => Promise.resolve(response));
+			requestWithMeasureMock.mock.mockImplementation(() => Promise.resolve(response));
 
 			await strict.rejects(
 				async () => await wordResolver.get(feedUrl, 0),

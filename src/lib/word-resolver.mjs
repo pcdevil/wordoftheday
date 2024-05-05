@@ -1,18 +1,18 @@
 import { parseFeed } from 'htmlparser2';
 
-import { NamedError, RequestError, assertResponseOk } from '#util';
+import { NamedError, RequestError, assertResponseOk, requestWithMeasure } from '#util';
 
 export class FeedParserError extends NamedError {}
 export class NoItemError extends NamedError {}
 
 export class WordResolver {
-	#fetchMethod;
 	#logger;
 	#parseFeedMethod;
+	#requestWithMeasureMethod;
 
-	constructor(logger, fetchMethod = globalThis.fetch, parseFeedMethod = parseFeed) {
+	constructor(logger, requestWithMeasureMethod = requestWithMeasure, parseFeedMethod = parseFeed) {
 		this.#logger = logger.child({ name: this.constructor.name });
-		this.#fetchMethod = fetchMethod;
+		this.#requestWithMeasureMethod = requestWithMeasureMethod;
 		this.#parseFeedMethod = parseFeedMethod;
 	}
 
@@ -21,7 +21,7 @@ export class WordResolver {
 		let items;
 
 		try {
-			const response = await this.#fetchWithMeasure(feedUrl);
+			const response = await this.#requestWithMeasureMethod(feedUrl, {}, this.#logger);
 
 			assertResponseOk(response);
 
@@ -55,17 +55,6 @@ export class WordResolver {
 			word,
 			url,
 		};
-	}
-
-	async #fetchWithMeasure(feedUrl) {
-		const measureName = 'send request';
-		try {
-			this.#logger.mark(`${measureName} start`);
-			return await this.#fetchMethod(feedUrl);
-		} finally {
-			this.#logger.mark(`${measureName} end`);
-			this.#logger.measure(measureName, `${measureName} start`, `${measureName} end`);
-		}
 	}
 
 	#parseFeedWithMeasure(text) {
