@@ -1,7 +1,7 @@
 import { Config, MastodonPoster, WordResolver } from '#lib';
-import { loggerFactory } from '#util';
+import { NamedError, loggerFactory } from '#util';
 
-export class InvalidSourceNameError extends Error {}
+export class InvalidSourceNameError extends NamedError {}
 
 export class WordOfTheDay {
 	#config;

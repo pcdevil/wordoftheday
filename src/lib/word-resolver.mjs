@@ -1,9 +1,9 @@
 import { parseFeed } from 'htmlparser2';
 
-import { RequestError, assertResponseOk } from '#util';
+import { NamedError, RequestError, assertResponseOk } from '#util';
 
-export class FeedParserError extends Error {}
-export class NoItemError extends Error {}
+export class FeedParserError extends NamedError {}
+export class NoItemError extends NamedError {}
 
 export class WordResolver {
 	#fetchMethod;

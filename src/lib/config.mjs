@@ -1,6 +1,8 @@
 import dotenv from 'dotenv';
 
-export class MissingEnvVariableError extends Error {}
+import { NamedError } from '#util';
+
+export class MissingEnvVariableError extends NamedError {}
 
 export class Config {
 	constructor(dotenvModule = dotenv) {

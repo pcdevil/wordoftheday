@@ -1,4 +1,6 @@
-export class RequestError extends Error {}
+import { NamedError } from '#util';
+
+export class RequestError extends NamedError {}
 
 export class ResponseError extends RequestError {
 	constructor(status, statusText) {
