@@ -1,28 +1,37 @@
 import { NamedError } from '#util';
 
-export class RequestError extends NamedError {}
+export class RequestError extends NamedError {
+	constructor(message, options = {}) {
+		const { cause, status, statusText } = options ?? {};
 
-export class ResponseError extends RequestError {
-	constructor(status, statusText) {
-		super(`Request failed with ${status} "${statusText}" error.`);
+		const superOptions = cause ? { cause } : {};
+		super(message, superOptions);
+
 		this.status = status;
 		this.statusText = statusText;
 	}
 }
 
-export function assertResponseOk(response) {
+export const DEFAULT_REQUEST_RETRY_COUNT = 2;
+
+export const REQUEST_RETRY_DELAY = 30_000; // in milliseconds
+
+function assertResponseOk(response) {
 	if (!response.ok) {
 		const { status, statusText } = response;
 
-		throw new ResponseError(status, statusText);
+		throw new RequestError(`Request failed with ${status} "${statusText}" error.`, {
+			status,
+			statusText,
+		});
 	}
 }
 
-export function isClientResponseError(error) {
-	return error instanceof ResponseError && error.status <= 500;
+function isClientResponseError(error) {
+	return error instanceof RequestError && error.status <= 500;
 }
 
-export async function requestWithMeasure(url, options, logger, fetchMethod = globalThis.fetch) {
+async function requestWithMeasure(url, options, logger, fetchMethod = globalThis.fetch) {
 	const measureName = `request`;
 	try {
 		logger.mark(`${measureName} start`);
@@ -31,4 +40,45 @@ export async function requestWithMeasure(url, options, logger, fetchMethod = glo
 		logger.mark(`${measureName} end`);
 		logger.measure(measureName, `${measureName} start`, `${measureName} end`);
 	}
+}
+
+export async function request(
+	url,
+	options,
+	logger,
+	retryCount = DEFAULT_REQUEST_RETRY_COUNT,
+	fetchMethod = globalThis.fetch,
+	setTimeoutMethod = globalThis.setTimeout
+) {
+	try {
+		const response = await requestWithMeasure(url, options, logger, fetchMethod);
+		assertResponseOk(response);
+
+		logger.debug('request successful');
+
+		return response;
+	} catch (error) {
+		if (isClientResponseError(error)) {
+			logger.warn('request failed with client error, will not retry', { error });
+			throw error;
+		}
+
+		if (retryCount === 0) {
+			logger.warn('request failed, will not retry', { error });
+			throw new RequestError('Request failed.', { cause: error });
+		}
+
+		logger.warn('request failed, will retry after delay', {
+			delay: REQUEST_RETRY_DELAY,
+			error,
+			retryCount,
+		});
+
+		await retrySleep(setTimeoutMethod);
+		await request(url, options, logger, retryCount - 1, fetchMethod, setTimeoutMethod);
+	}
+}
+
+async function retrySleep(setTimeoutMethod) {
+	return new Promise((resolve) => setTimeoutMethod(() => resolve(), REQUEST_RETRY_DELAY));
 }

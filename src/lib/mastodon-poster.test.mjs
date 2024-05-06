@@ -7,7 +7,6 @@ import {
 } from 'node:test';
 
 import { MastodonPoster } from '#lib';
-import { RequestError, ResponseError } from '#util';
 import { mockLoggerFactory } from '#util/logger-factory.test.mjs';
 
 describe('MastodonPoster', () => {
@@ -20,30 +19,28 @@ describe('MastodonPoster', () => {
 		word: 'corroborate',
 	};
 	let jsonMock;
-	let requestWithMeasureMock;
-	let setTimeoutMock;
+	let requestMock;
 	let mastodonPoster;
 
 	beforeEach(() => {
 		jsonMock = mock.fn(() => Promise.resolve({}));
-		requestWithMeasureMock = mock.fn(() =>
+		requestMock = mock.fn(() =>
 			Promise.resolve({
 				json: jsonMock,
 				ok: true,
 			})
 		);
-		setTimeoutMock = mock.fn((callback) => callback());
 
-		mastodonPoster = new MastodonPoster(mockLoggerFactory(), requestWithMeasureMock, setTimeoutMock);
+		mastodonPoster = new MastodonPoster(mockLoggerFactory(), requestMock);
 	});
 
 	describe('post()', () => {
-		it('should properly call the requestWithMeasure method', async () => {
+		it('should properly call the request method', async () => {
 			await mastodonPoster.post(baseUrl, accessToken, wordObject, hashtag);
 
-			strict.equal(requestWithMeasureMock.mock.calls.length, 1);
+			strict.equal(requestMock.mock.calls.length, 1);
 
-			const [url, options] = requestWithMeasureMock.mock.calls[0].arguments;
+			const [url, options] = requestMock.mock.calls[0].arguments;
 
 			// check arguments one by one for better readability and debug
 			strict.equal(url, `${baseUrl}/api/v1/statuses`);
@@ -66,58 +63,6 @@ describe('MastodonPoster', () => {
 				'Content-Type': 'application/json',
 			});
 			strict.equal(options.method, 'POST');
-		});
-
-		it('should re-call requestWithMeasure when the retry count is above zero and the requestWithMeasure method throws an error', async () => {
-			for (let callIndex = 0; callIndex < MastodonPoster.retryCount; ++callIndex) {
-				requestWithMeasureMock.mock.mockImplementationOnce(() => Promise.reject(new Error()), callIndex);
-			}
-
-			await mastodonPoster.post(baseUrl, accessToken, wordObject, hashtag);
-
-			strict.equal(requestWithMeasureMock.mock.calls.length, MastodonPoster.retryCount + 1);
-		});
-
-		it('should wait for the retry delay before every requestWithMeasure re-call', async () => {
-			for (let callIndex = 0; callIndex < MastodonPoster.retryCount; ++callIndex) {
-				requestWithMeasureMock.mock.mockImplementationOnce(() => Promise.reject(new Error()), callIndex);
-			}
-
-			await mastodonPoster.post(baseUrl, accessToken, wordObject, hashtag);
-
-			strict.equal(setTimeoutMock.mock.calls.length, MastodonPoster.retryCount);
-
-			for (const call of setTimeoutMock.mock.calls) {
-				const [_callback, delay] = call.arguments;
-				strict.equal(delay, MastodonPoster.retryDelay);
-			}
-		});
-
-		it('should throw a RequestError when the requestWithMeasure method throws an error even after retries', async () => {
-			for (let callIndex = 0; callIndex < (MastodonPoster.retryCount + 1); ++callIndex) {
-				requestWithMeasureMock.mock.mockImplementationOnce(() => Promise.reject(new Error()), callIndex);
-			}
-
-			await strict.rejects(
-				async () => await mastodonPoster.post(baseUrl, accessToken, wordObject, hashtag),
-				RequestError
-			);
-		});
-
-		it('should throw a ResponseError without retry when the response is not ok with client error', async () => {
-			const response = {
-				ok: false,
-				status: 404,
-				statusText: 'Not Found',
-			};
-			requestWithMeasureMock.mock.mockImplementation(() => Promise.resolve(response));
-
-			await strict.rejects(
-				async () => await mastodonPoster.post(baseUrl, accessToken, wordObject, hashtag),
-				new ResponseError(response.status, response.statusText)
-			);
-
-			strict.equal(setTimeoutMock.mock.calls.length, 0);
 		});
 	});
 });

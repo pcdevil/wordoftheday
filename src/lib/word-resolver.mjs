@@ -1,6 +1,6 @@
 import { parseFeed } from 'htmlparser2';
 
-import { NamedError, RequestError, assertResponseOk, requestWithMeasure } from '#util';
+import { NamedError, request } from '#util';
 
 export class FeedParserError extends NamedError {}
 export class NoItemError extends NamedError {}
@@ -8,30 +8,19 @@ export class NoItemError extends NamedError {}
 export class WordResolver {
 	#logger;
 	#parseFeedMethod;
-	#requestWithMeasureMethod;
+	#requestMethod;
 
-	constructor(logger, requestWithMeasureMethod = requestWithMeasure, parseFeedMethod = parseFeed) {
+	constructor(logger, requestMethod = request, parseFeedMethod = parseFeed) {
 		this.#logger = logger.child({ name: this.constructor.name });
-		this.#requestWithMeasureMethod = requestWithMeasureMethod;
+		this.#requestMethod = requestMethod;
 		this.#parseFeedMethod = parseFeedMethod;
 	}
 
 	async get(feedUrl, itemIndex) {
-		let text;
 		let items;
 
-		try {
-			const response = await this.#requestWithMeasureMethod(feedUrl, {}, this.#logger);
-
-			assertResponseOk(response);
-
-			text = await response.text();
-		} catch (error) {
-			if (error instanceof RequestError) {
-				throw error;
-			}
-			throw new RequestError('Feed get failed.', { cause: error });
-		}
+		const response = await this.#requestMethod(feedUrl, {}, this.#logger);
+		const text = await response.text();
 
 		try {
 			const feed = this.#parseFeedWithMeasure(text);

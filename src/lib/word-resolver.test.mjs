@@ -7,7 +7,6 @@ import {
 } from 'node:test';
 
 import { FeedParserError, NoItemError, WordResolver } from '#lib';
-import { RequestError, ResponseError } from '#util';
 import { mockLoggerFactory } from '#util/logger-factory.test.mjs';
 
 function fakeItem(titleSuffix = '') {
@@ -27,12 +26,12 @@ describe('WordResolver', () => {
 	const feedText = '<rss><channel></channel></rss>';
 	let textMock;
 	let parseFeedMock;
-	let requestWithMeasureMock;
+	let requestMock;
 	let wordResolver;
 
 	beforeEach(() => {
 		textMock = mock.fn(() => Promise.resolve(feedText));
-		requestWithMeasureMock = mock.fn(() =>
+		requestMock = mock.fn(() =>
 			Promise.resolve({
 				ok: true,
 				text: textMock,
@@ -40,16 +39,16 @@ describe('WordResolver', () => {
 		);
 		parseFeedMock = mock.fn(() => ({ items: [fakeItem()] }));
 
-		wordResolver = new WordResolver(mockLoggerFactory(), requestWithMeasureMock, parseFeedMock);
+		wordResolver = new WordResolver(mockLoggerFactory(), requestMock, parseFeedMock);
 	});
 
 	describe('get()', () => {
-		it('should properly call the requestWithMeasure method', async () => {
+		it('should properly call the request method', async () => {
 			await wordResolver.get(feedUrl, 0);
 
-			strict.equal(requestWithMeasureMock.mock.calls.length, 1);
+			strict.equal(requestMock.mock.calls.length, 1);
 
-			const [url, options] = requestWithMeasureMock.mock.calls[0].arguments;
+			const [url, options] = requestMock.mock.calls[0].arguments;
 
 			// check arguments one by one for better readability and debug
 			strict.deepEqual(url, feedUrl);
@@ -83,29 +82,6 @@ describe('WordResolver', () => {
 				url: encodeURI(link),
 				word: title,
 			});
-		});
-
-		it('should throw a RequestError when the requestWithMeasure method throws an error', async () => {
-			requestWithMeasureMock.mock.mockImplementation(() => Promise.reject(new Error()));
-
-			await strict.rejects(
-				async () => await wordResolver.get(feedUrl, 0),
-				RequestError
-			);
-		});
-
-		it('should throw a ResponseError when the response is not ok', async () => {
-			const response = {
-				ok: false,
-				status: 404,
-				statusText: 'Not Found',
-			};
-			requestWithMeasureMock.mock.mockImplementation(() => Promise.resolve(response));
-
-			await strict.rejects(
-				async () => await wordResolver.get(feedUrl, 0),
-				new ResponseError(response.status, response.statusText)
-			);
 		});
 
 		it('should throw a FeedParserError when the feed parser throws an error', async () => {
