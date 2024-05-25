@@ -38,12 +38,16 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          cache: 'npm'
+          cache: 'pnpm'
           node-version-file: '.nvmrc'
-      - name: Install npm dependencies
-        run: npm clean-install
+      - name: Setup pnpm
+        run: |
+          corepack enable
+          corepack install
+      - name: Install pnpm dependencies
+        run: pnpm install
       - name: Run application with "${{ inputs.source_name }}" source
-        run: npm start -- ${{ inputs.source_name }}
+        run: pnpm start -- ${{ inputs.source_name }}
       - name: Upload logs as artifact
         uses: actions/upload-artifact@v4
         with:

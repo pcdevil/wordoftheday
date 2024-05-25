@@ -20,16 +20,20 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          cache: 'npm'
+          cache: 'pnpm'
           node-version-file: '.nvmrc'
-      - name: Install npm dependencies
-        run: npm clean-install
+      - name: Setup pnpm
+        run: |
+          corepack enable
+          corepack install
+      - name: Install pnpm dependencies
+        run: pnpm install
       - name: Perform code analyzer check
-        run: npm run lint
+        run: pnpm run lint
       - name: Perform format check
-        run: npm run style
+        run: pnpm run style
       - name: Perform tests
-        run: npm run test
+        run: pnpm run test
   publish-tag:
     name: Publish tag
     if: ${{ github.event_name == 'push' && github.ref_name == 'main' }}
