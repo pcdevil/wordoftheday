@@ -2,5 +2,8 @@
 	"recommendations": [
 		"dbaeumer.vscode-eslint",
 		"dprint.dprint",
+		"editorconfig.editorconfig",
+		"github.vscode-github-actions",
+		"mikestead.dotenv",
 	],
 }
