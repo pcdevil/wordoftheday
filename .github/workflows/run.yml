@@ -38,12 +38,17 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          cache: 'pnpm'
           node-version-file: '.nvmrc'
       - name: Setup pnpm
         run: |
           corepack enable
           corepack install
+      - name: Setup pnpm cache
+        uses: actions/cache@v4
+        key: ${{ runner.os }}-pnpm-store-${{ hashFiles('pnpm-lock.yaml') }}
+        path: ${{ env.STORE_PATH }}
+        restore-keys: |
+          ${{ runner.os }}-pnpm-store
       - name: Install pnpm dependencies
         run: pnpm install
       - name: Run application with "${{ inputs.source_name }}" source
