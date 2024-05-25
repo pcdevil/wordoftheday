@@ -40,15 +40,22 @@ jobs:
         with:
           node-version-file: '.nvmrc'
       - name: Setup pnpm
+        shell: bash
         run: |
           corepack enable
           corepack install
+      - name: Get pnpm store directory
+        id: pnpm_store
+        shell: bash
+        run: |
+          echo "path=$(pnpm store path --silent)" >> "$GITHUB_OUTPUT"
       - name: Setup pnpm cache
         uses: actions/cache@v4
-        key: ${{ runner.os }}-pnpm-store-${{ hashFiles('pnpm-lock.yaml') }}
-        path: ${{ env.STORE_PATH }}
-        restore-keys: |
-          ${{ runner.os }}-pnpm-store
+        with:
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('pnpm-lock.yaml') }}
+          path: ${{ steps.pnpm_store.outputs.path }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store
       - name: Install pnpm dependencies
         run: pnpm install
       - name: Run application with "${{ inputs.source_name }}" source
