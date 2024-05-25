@@ -17,12 +17,12 @@
   },
   "scripts": {
     "lint": "eslint --ext .js,.mjs --ignore-path .gitignore .",
-    "lint:fix": "npm run lint -- --fix",
+    "lint:fix": "pnpm run lint --fix",
     "start": "node src/cli.mjs",
     "style": "dprint check",
     "style:fix": "dprint fmt",
-    "test": "node --test 'src/**/*.test.mjs'",
-    "test:watch": "node --test --watch 'src/**/*.test.mjs'"
+    "test": "node --test",
+    "test:watch": "pnpm run test --watch"
   },
   "engines": {
     "node": "^21.7.1",
