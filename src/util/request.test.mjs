@@ -6,13 +6,13 @@ import {
 	mock,
 } from 'node:test';
 
+import { mockLoggerFactory } from '#test';
 import {
 	DEFAULT_REQUEST_RETRY_COUNT,
 	REQUEST_RETRY_DELAY,
 	RequestError,
 	request,
 } from '#util';
-import { mockLoggerFactory } from '#util/logger-factory.test.mjs';
 
 describe('request()', () => {
 	const url = 'https://example.com';

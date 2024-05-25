@@ -8,7 +8,7 @@ import {
 
 import { MastodonPoster, WordResolver } from '#lib';
 import { InvalidSourceNameError, WordOfTheDay } from '#src/word-of-the-day.mjs';
-import { mockLoggerFactory } from '#util/logger-factory.test.mjs';
+import { mockLoggerFactory } from '#test';
 
 describe('WordOfTheDay', () => {
 	const sourceName = 'theFreeDictionary';

@@ -12,6 +12,8 @@
     "#lib": "./src/lib/index.mjs",
     "#lib/*": "./src/lib/*",
     "#src/*": "./src/*",
+    "#test": "./src/test/index.mjs",
+    "#test/*": "./src/test/*",
     "#util": "./src/util/index.mjs",
     "#util/*": "./src/util/*"
   },
