@@ -59,7 +59,7 @@ jobs:
       - name: Install pnpm dependencies
         run: pnpm install
       - name: Run application with "${{ inputs.source_name }}" source
-        run: pnpm start -- ${{ inputs.source_name }}
+        run: pnpm start ${{ inputs.source_name }}
       - name: Upload logs as artifact
         uses: actions/upload-artifact@v4
         with:
