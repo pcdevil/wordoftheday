@@ -41,11 +41,11 @@ jobs:
       - name: Install pnpm dependencies
         run: pnpm install
       - name: Perform code analyzer check
-        run: pnpm run lint
+        run: pnpm lint
       - name: Perform format check
-        run: pnpm run style
+        run: pnpm style
       - name: Perform tests
-        run: pnpm run test
+        run: pnpm test
   publish-tag:
     name: Publish tag
     if: ${{ github.event_name == 'push' && github.ref_name == 'main' }}
