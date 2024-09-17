@@ -1,6 +1,6 @@
 import dotenv from 'dotenv';
-
-import { NamedError } from '#util';
+// project imports
+import { NamedError } from '#util/named-error.mjs';
 
 export class MissingEnvVariableError extends NamedError {}
 

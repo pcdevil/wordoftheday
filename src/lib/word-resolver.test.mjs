@@ -5,9 +5,9 @@ import {
 	it,
 	mock,
 } from 'node:test';
-
-import { FeedParserError, NoItemError, WordResolver } from '#lib';
-import { mockLoggerFactory } from '#test';
+// project imports
+import { mockLoggerFactory } from '#src/test/mock-logger-factory.mjs';
+import { FeedParserError, NoItemError, WordResolver } from './word-resolver.mjs';
 
 function fakeItem(titleSuffix = '') {
 	const link = 'https://www.merriam-webster.com/word-of-the-day/bully pulpit-2023-07-29';

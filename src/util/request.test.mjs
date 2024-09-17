@@ -5,14 +5,14 @@ import {
 	it,
 	mock,
 } from 'node:test';
-
-import { mockLoggerFactory } from '#test';
+// project imports
+import { mockLoggerFactory } from '#test/mock-logger-factory.mjs';
 import {
 	DEFAULT_REQUEST_RETRY_COUNT,
 	REQUEST_RETRY_DELAY,
 	RequestError,
 	request,
-} from '#util';
+} from './request.mjs';
 
 describe('request()', () => {
 	const url = 'https://example.com';

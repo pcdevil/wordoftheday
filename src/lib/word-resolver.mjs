@@ -1,6 +1,7 @@
 import { parseFeed } from 'htmlparser2';
-
-import { NamedError, request } from '#util';
+// project imports
+import { NamedError } from '#src/util/named-error.mjs';
+import { request } from '#src/util/request.mjs';
 
 export class FeedParserError extends NamedError {}
 export class NoItemError extends NamedError {}

@@ -5,10 +5,11 @@ import {
 	it,
 	mock,
 } from 'node:test';
-
-import { MastodonPoster, WordResolver } from '#lib';
-import { InvalidSourceNameError, WordOfTheDay } from '#src/word-of-the-day.mjs';
-import { mockLoggerFactory } from '#test';
+// project imports
+import { MastodonPoster } from '#lib/mastodon-poster.mjs';
+import { WordResolver } from '#lib/word-resolver.mjs';
+import { mockLoggerFactory } from '#test/mock-logger-factory.mjs';
+import { InvalidSourceNameError, WordOfTheDay } from './word-of-the-day.mjs';
 
 describe('WordOfTheDay', () => {
 	const sourceName = 'theFreeDictionary';

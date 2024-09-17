@@ -1,4 +1,4 @@
-import { request } from '#util';
+import { request } from '#util/request.mjs';
 
 export class MastodonPoster {
 	static language = 'en-GB';

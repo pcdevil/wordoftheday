@@ -5,8 +5,8 @@ import {
 	it,
 	mock,
 } from 'node:test';
-
-import { loggerFactory } from '#util';
+// project imports
+import { loggerFactory } from './logger-factory.mjs';
 
 describe('loggerFactory', () => {
 	let fsMock;

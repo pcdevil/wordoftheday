@@ -5,9 +5,9 @@ import {
 	it,
 	mock,
 } from 'node:test';
-
-import { MastodonPoster } from '#lib';
-import { mockLoggerFactory } from '#test';
+// project imports
+import { mockLoggerFactory } from '#test/mock-logger-factory.mjs';
+import { MastodonPoster } from './mastodon-poster.mjs';
 
 describe('MastodonPoster', () => {
 	const baseUrl = 'https://example.com';
