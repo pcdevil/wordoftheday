@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 // project imports
 import { mockLoggerFactory } from '#test/mock-logger-factory.mjs';
-import { MastodonPoster } from './mastodon-poster.mjs';
+import { MastodonPoster, UndefinedArgumentError } from './mastodon-poster.mjs';
 
 describe('MastodonPoster', () => {
 	const baseUrl = 'https://example.com';
@@ -52,6 +52,14 @@ describe('MastodonPoster', () => {
 				},
 				expect.any(Object)
 			);
+		});
+
+		it('should throw an error when the baseUrl is not defined', async () => {
+			await expect(mastodonPoster.post('', accessToken, wordObject, hashtag)).rejects.toThrowError(UndefinedArgumentError);
+		});
+
+		it('should throw an error when the accessToken is not defined', async () => {
+			await expect(mastodonPoster.post(baseUrl, '', wordObject, hashtag)).rejects.toThrowError(UndefinedArgumentError);
 		});
 	});
 });

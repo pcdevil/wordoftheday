@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 // project imports
-import { Config, MissingEnvVariableError } from './config.mjs';
+import { Config } from './config.mjs';
 
 describe('Config', () => {
 	const envVariables = {
@@ -58,11 +58,5 @@ describe('Config', () => {
 		const config = new Config(dotenvMock);
 
 		expect(config.log.prettyColorize).toBeFalsy();
-	});
-
-	it('should throw a MissingEnvVariableError error when an environment variable is not defined.', () => {
-		dotenvMock.config.mockReturnValue();
-
-		expect(() => new Config(dotenvMock)).toThrowError(MissingEnvVariableError);
 	});
 });

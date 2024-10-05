@@ -1,4 +1,7 @@
+import { NamedError } from '#util/named-error.mjs';
 import { request } from '#util/request.mjs';
+
+export class UndefinedArgumentError extends NamedError {}
 
 export class MastodonPoster {
 	static language = 'en-GB';
@@ -12,6 +15,9 @@ export class MastodonPoster {
 	}
 
 	async post(baseUrl, accessToken, wordObject, hashtag) {
+		if (!baseUrl) throw new UndefinedArgumentError(`The baseUrl argument is not defined.`);
+		if (!accessToken) throw new UndefinedArgumentError(`The accessToken argument is not defined.`);
+
 		const url = this.#createUrl(baseUrl);
 		const status = this.#createStatus(wordObject, hashtag);
 		const options = this.#createOptions(accessToken, status);
