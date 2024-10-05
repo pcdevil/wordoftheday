@@ -1,0 +1,17 @@
+name: "Source: Merriam-Webster"
+
+on:
+  schedule:
+    - cron: '00 08 * * *'
+  workflow_dispatch:
+
+jobs:
+  run:
+    name: Trigger run workflow
+    uses: ./.github/workflows/run.yml
+    with:
+      source_name: "Merriam-Webster"
+      source_url: "https://www.merriam-webster.com/wotd/feed/rss2"
+      source_item_index: 0
+      source_post_hashtag: "#MerriamWebster"
+    secrets: inherit

@@ -3,19 +3,21 @@ on:
   workflow_call:
     inputs:
       source_name:
-        description: "Source site name"
+        description: "Name of the source"
         required: true
         type: string
-  workflow_dispatch:
-    inputs:
-      source_name:
-        description: "Source site name"
+      source_url:
+        description: "RSS feed Url for the source"
         required: true
-        type: choice
-        options:
-          - 'merriamWebster'
-          - 'oxfordLearnersDictionaries'
-          - 'theFreeDictionary'
+        type: string
+      source_item_index:
+        description: "Index of the latest item in the returned RSS feed"
+        required: true
+        type: number
+      source_post_hashtag:
+        description: "Hashtag to add to the post"
+        default: ""
+        type: string
 
 env:
   GIT_TAG_NAME: stable
@@ -25,6 +27,11 @@ env:
   MASTODON_ACCESS_TOKEN: ${{ secrets.MASTODON_ACCESS_TOKEN }}
   MASTODON_BASE_URL: ${{ secrets.MASTODON_BASE_URL }}
   NODE_ENV: 'production'
+
+  SOURCE_NAME: ${{ inputs.source_name }}
+  SOURCE_URL: ${{ inputs.source_url }}
+  SOURCE_ITEM_INDEX: ${{ inputs.source_item_index }}
+  SOURCE_POST_HASHTAG: ${{ inputs.source_post_hashtag }}
 
 jobs:
   run:
@@ -58,11 +65,11 @@ jobs:
             ${{ runner.os }}-pnpm-store
       - name: Install pnpm dependencies
         run: pnpm install
-      - name: Run application with "${{ inputs.source_name }}" source
-        run: pnpm start ${{ inputs.source_name }}
+      - name: Run application for "${{ env.SOURCE_NAME }}" source
+        run: pnpm start
       - name: Upload logs as artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ inputs.source_name }} run ${{ env.LOG_LEVEL }} log
+          name: "${{ env.SOURCE_NAME }} run ${{ env.LOG_LEVEL }} log"
           path: ${{ env.LOG_FILE_PATH }}
           retention-days: 7
