@@ -8,22 +8,11 @@ export class Config {
 		dotenvModule.config({ processEnv });
 
 		return {
-			sources: {
-				merriamWebster: {
-					hashtag: '#MerriamWebster',
-					itemIndex: 0,
-					url: 'https://www.merriam-webster.com/wotd/feed/rss2',
-				},
-				oxfordLearnersDictionaries: {
-					hashtag: '#OxfordLearnersDictionaries',
-					itemIndex: -1,
-					url: 'https://feeds.feedburner.com/OLD-WordOfTheDay',
-				},
-				theFreeDictionary: {
-					hashtag: '#TheFreeDictionary',
-					itemIndex: 0,
-					url: 'https://www.thefreedictionary.com/_/WoD/rss.aspx',
-				},
+			source: {
+				name: processEnv.SOURCE_NAME,
+				url: processEnv.SOURCE_URL,
+				itemIndex: parseInt(processEnv.SOURCE_ITEM_INDEX, 10),
+				postHashtag: processEnv.SOURCE_POST_HASHTAG,
 			},
 
 			log: {

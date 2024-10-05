@@ -3,10 +3,9 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { MastodonPoster } from '#lib/mastodon-poster.mjs';
 import { WordResolver } from '#lib/word-resolver.mjs';
 import { mockLoggerFactory } from '#test/mock-logger-factory.mjs';
-import { InvalidSourceNameError, WordOfTheDay } from './word-of-the-day.mjs';
+import { WordOfTheDay } from './word-of-the-day.mjs';
 
 describe('WordOfTheDay', () => {
-	const sourceName = 'theFreeDictionary';
 	const wordObject = {
 		date: new Date('2023-08-16T05:00:00.000Z'),
 		url: 'https://www.thefreedictionary.com/punctilious',
@@ -23,12 +22,11 @@ describe('WordOfTheDay', () => {
 				accessToken: 'eSbzh2R7x5JTNqpOe9oZSFf-Uf7jJyXIqHquSSACeYo',
 				baseUrl: 'https://mastodon.social',
 			},
-			sources: {
-				[sourceName]: {
-					hashtag: '#TheFreeDictionary',
-					itemIndex: 0,
-					url: 'https://www.thefreedictionary.com/_/WoD/rss.aspx',
-				},
+			source: {
+				name: 'The Free Dictionary',
+				url: 'https://www.thefreedictionary.com/_/WoD/rss.aspx',
+				itemIndex: 0,
+				postHashtag: '#TheFreeDictionary',
 			},
 		};
 
@@ -45,22 +43,18 @@ describe('WordOfTheDay', () => {
 
 	describe('run()', () => {
 		it('should post the word retrieved to the configured mastodon', async () => {
-			await wordOfTheDay.run(sourceName);
+			await wordOfTheDay.run();
 
 			expect(wordResolverMock.get).toHaveBeenCalledWith(
-				configMock.sources[sourceName].url,
-				configMock.sources[sourceName].itemIndex
+				configMock.source.url,
+				configMock.source.itemIndex
 			);
 			expect(mastodonPosterMock.post).toHaveBeenCalledWith(
 				configMock.mastodon.baseUrl,
 				configMock.mastodon.accessToken,
 				wordObject,
-				configMock.sources[sourceName].hashtag
+				configMock.source.postHashtag
 			);
-		});
-
-		it('should throw an InvalidSourceNameError when the given source name is invalid', async () => {
-			await expect(wordOfTheDay.run(sourceName + 'NotExisting')).rejects.toThrowError(InvalidSourceNameError);
 		});
 	});
 });

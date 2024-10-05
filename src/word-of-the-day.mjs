@@ -2,9 +2,6 @@ import { Config } from '#lib/config.mjs';
 import { MastodonPoster } from '#lib/mastodon-poster.mjs';
 import { WordResolver } from '#lib/word-resolver.mjs';
 import { loggerFactory } from '#util/logger-factory.mjs';
-import { NamedError } from '#util/named-error.mjs';
-
-export class InvalidSourceNameError extends NamedError {}
 
 export class WordOfTheDay {
 	#config;
@@ -24,18 +21,17 @@ export class WordOfTheDay {
 		this.#wordResolver = wordResolver;
 	}
 
-	async run(sourceName) {
+	async run() {
 		try {
 			this.#logger.debug('run start', {
-				sourceName,
+				sourceName: this.#config.source.name,
 			});
-			const sourceConfig = this.#getSourceConfig(sourceName);
-			const word = await this.#wordResolver.get(sourceConfig.url, sourceConfig.itemIndex);
+			const word = await this.#wordResolver.get(this.#config.source.url, this.#config.source.itemIndex);
 			await this.#mastodonPoster.post(
 				this.#config.mastodon.baseUrl,
 				this.#config.mastodon.accessToken,
 				word,
-				sourceConfig.hashtag
+				this.#config.source.postHashtag
 			);
 			this.#logger.debug('run successful');
 		} catch (error) {
@@ -44,13 +40,5 @@ export class WordOfTheDay {
 			});
 			throw error;
 		}
-	}
-
-	#getSourceConfig(sourceName) {
-		if (!this.#config.sources[sourceName]) {
-			throw new InvalidSourceNameError(`Referenced source "${sourceName}" is not configured.`);
-		}
-
-		return this.#config.sources[sourceName];
 	}
 }
