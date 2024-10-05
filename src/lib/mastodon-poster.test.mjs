@@ -54,6 +54,30 @@ describe('MastodonPoster', () => {
 			);
 		});
 
+		it('should handle when the hashtag is omitted', async () => {
+			await mastodonPoster.post(baseUrl, accessToken, wordObject);
+
+			expect(requestMock).toHaveBeenCalledWith(
+				expect.any(String),
+				{
+					body: JSON.stringify({
+						language: MastodonPoster.language,
+						status: [
+							`#WordOfTheDay 13 August 2023`,
+							'',
+							wordObject.word,
+							'',
+							wordObject.url,
+						].join('\n'),
+						visibility: 'public',
+					}),
+					headers: expect.any(Object),
+					method: expect.any(String),
+				},
+				expect.any(Object)
+			);
+		});
+
 		it('should throw an error when the baseUrl is not defined', async () => {
 			await expect(mastodonPoster.post('', accessToken, wordObject, hashtag)).rejects.toThrowError(UndefinedArgumentError);
 		});

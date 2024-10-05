@@ -46,8 +46,10 @@ export class MastodonPoster {
 		const dateString = new Intl.DateTimeFormat(MastodonPoster.language, { dateStyle: 'long' })
 			.format(wordObject.date);
 
+		const hashtags = `#WordOfTheDay ${hashtag ?? ''}`.trim();
+
 		return [
-			`#WordOfTheDay ${hashtag} ${dateString}`,
+			`${hashtags} ${dateString}`,
 			'', // empty line
 			wordObject.word,
 			'', // empty line
