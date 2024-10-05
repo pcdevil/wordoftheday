@@ -1,10 +1,4 @@
-import { strict } from 'node:assert';
-import {
-	beforeEach,
-	describe,
-	it,
-	mock,
-} from 'node:test';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 // project imports
 import { MastodonPoster } from '#lib/mastodon-poster.mjs';
 import { WordResolver } from '#lib/word-resolver.mjs';
@@ -41,47 +35,32 @@ describe('WordOfTheDay', () => {
 		const loggerMock = mockLoggerFactory();
 
 		mastodonPosterMock = new MastodonPoster(loggerMock);
-		mock.method(mastodonPosterMock, 'post').mock
-			.mockImplementation(() => Promise.resolve());
+		vi.spyOn(mastodonPosterMock, 'post').mockResolvedValue();
+
 		wordResolverMock = new WordResolver(loggerMock);
-		mock.method(wordResolverMock, 'get').mock
-			.mockImplementation(() => Promise.resolve(wordObject));
+		vi.spyOn(wordResolverMock, 'get').mockResolvedValue(wordObject);
 
 		wordOfTheDay = new WordOfTheDay(configMock, loggerMock, mastodonPosterMock, wordResolverMock);
 	});
 
 	describe('run()', () => {
-		it('should get the word from the configured feed', async () => {
+		it('should post the word retrieved to the configured mastodon', async () => {
 			await wordOfTheDay.run(sourceName);
 
-			strict.equal(wordResolverMock.get.mock.calls.length, 1);
-
-			const firstCall = wordResolverMock.get.mock.calls[0];
-			strict.deepEqual(firstCall.arguments, [
+			expect(wordResolverMock.get).toHaveBeenCalledWith(
 				configMock.sources[sourceName].url,
-				configMock.sources[sourceName].itemIndex,
-			]);
-		});
-
-		it('should post the fetched word to the configured mastodon', async () => {
-			await wordOfTheDay.run(sourceName);
-
-			strict.equal(mastodonPosterMock.post.mock.calls.length, 1);
-
-			const firstCall = mastodonPosterMock.post.mock.calls[0];
-			strict.deepEqual(firstCall.arguments, [
+				configMock.sources[sourceName].itemIndex
+			);
+			expect(mastodonPosterMock.post).toHaveBeenCalledWith(
 				configMock.mastodon.baseUrl,
 				configMock.mastodon.accessToken,
 				wordObject,
-				configMock.sources[sourceName].hashtag,
-			]);
+				configMock.sources[sourceName].hashtag
+			);
 		});
 
 		it('should throw an InvalidSourceNameError when the given source name is invalid', async () => {
-			await strict.rejects(
-				async () => await wordOfTheDay.run(sourceName + 'NotExisting'),
-				InvalidSourceNameError
-			);
+			await expect(wordOfTheDay.run(sourceName + 'NotExisting')).rejects.toThrowError(InvalidSourceNameError);
 		});
 	});
 });

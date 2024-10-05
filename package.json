@@ -20,8 +20,7 @@
     "start": "node src/cli.mjs",
     "style": "dprint check",
     "style:fix": "dprint fmt",
-    "test": "node --test",
-    "test:watch": "pnpm run test --watch"
+    "test": "vitest"
   },
   "engines": {
     "node": "^21.7.1",
@@ -50,6 +49,7 @@
     "eslint-config-standard": "^17.1.0",
     "eslint-plugin-import": "^2.29.1",
     "eslint-plugin-n": "^16.6.2",
-    "eslint-plugin-promise": "^6.4.0"
+    "eslint-plugin-promise": "^6.4.0",
+    "vitest": "^2.1.2"
   }
 }

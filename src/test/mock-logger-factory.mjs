@@ -1,20 +1,18 @@
-import {
-	mock,
-} from 'node:test';
+import { vi } from 'vitest';
 
 export function mockLoggerFactory() {
 	return {
 		// child logger creation
-		child: mock.fn(() => mockLoggerFactory()),
+		child: vi.fn(() => mockLoggerFactory()),
 		// built-in pino log methods
-		debug: mock.fn(),
-		error: mock.fn(),
-		fatal: mock.fn(),
-		info: mock.fn(),
-		trace: mock.fn(),
-		warn: mock.fn(),
+		debug: vi.fn(),
+		error: vi.fn(),
+		fatal: vi.fn(),
+		info: vi.fn(),
+		trace: vi.fn(),
+		warn: vi.fn(),
 		// custom log methods
-		mark: mock.fn(),
-		measure: mock.fn(),
+		mark: vi.fn(),
+		measure: vi.fn(),
 	};
 }
