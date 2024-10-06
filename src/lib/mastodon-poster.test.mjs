@@ -1,13 +1,14 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 // project imports
+import { UndefinedConfigError, config } from '#lib/config.mjs';
 import { mockLoggerFactory } from '#test/mock-logger-factory.mjs';
-import { MastodonPoster, UndefinedArgumentError } from './mastodon-poster.mjs';
+import { MastodonPoster } from './mastodon-poster.mjs';
 
 describe('MastodonPoster', () => {
-	const baseUrl = 'https://example.com';
-	const accessToken = 'generated access token';
-	const hashtag = '#OxfordLearnersDictionaries';
-	const wordObject = {
+	const baseUrlMock = 'https://example.com';
+	const accessTokenMock = 'generated access token';
+	const postHashtagMock = '#OxfordLearnersDictionaries';
+	const wordObjectMock = {
 		date: new Date('2023-08-13T01:00:00.000Z'),
 		url: 'https://www.oxfordlearnersdictionaries.com/definition/english/corroborate',
 		word: 'corroborate',
@@ -17,6 +18,10 @@ describe('MastodonPoster', () => {
 	let mastodonPoster;
 
 	beforeEach(() => {
+		vi.spyOn(config.mastodon, 'baseUrl', 'get').mockReturnValue(baseUrlMock);
+		vi.spyOn(config.mastodon, 'accessToken', 'get').mockReturnValue(accessTokenMock);
+		vi.spyOn(config.source, 'postHashtag', 'get').mockReturnValue(postHashtagMock);
+
 		jsonMock = vi.fn().mockResolvedValue({});
 		requestMock = vi.fn().mockResolvedValue({
 			json: jsonMock,
@@ -28,24 +33,24 @@ describe('MastodonPoster', () => {
 
 	describe('post()', () => {
 		it('should call the request method', async () => {
-			await mastodonPoster.post(baseUrl, accessToken, wordObject, hashtag);
+			await mastodonPoster.post(wordObjectMock);
 
 			expect(requestMock).toHaveBeenCalledWith(
-				`${baseUrl}/api/v1/statuses`,
+				`${baseUrlMock}/api/v1/statuses`,
 				{
 					body: JSON.stringify({
 						language: MastodonPoster.language,
 						status: [
-							`#WordOfTheDay ${hashtag} 13 August 2023`,
+							`#WordOfTheDay ${postHashtagMock} 13 August 2023`,
 							'',
-							wordObject.word,
+							wordObjectMock.word,
 							'',
-							wordObject.url,
+							wordObjectMock.url,
 						].join('\n'),
 						visibility: 'public',
 					}),
 					headers: {
-						Authorization: `Bearer ${accessToken}`,
+						Authorization: `Bearer ${accessTokenMock}`,
 						'Content-Type': 'application/json',
 					},
 					method: 'POST',
@@ -54,8 +59,9 @@ describe('MastodonPoster', () => {
 			);
 		});
 
-		it('should handle when the hashtag is omitted', async () => {
-			await mastodonPoster.post(baseUrl, accessToken, wordObject);
+		it('should handle when the source.postHashtag config is not defined', async () => {
+			vi.spyOn(config.source, 'postHashtag', 'get').mockReturnValue(undefined);
+			await mastodonPoster.post(wordObjectMock);
 
 			expect(requestMock).toHaveBeenCalledWith(
 				expect.any(String),
@@ -65,9 +71,9 @@ describe('MastodonPoster', () => {
 						status: [
 							`#WordOfTheDay 13 August 2023`,
 							'',
-							wordObject.word,
+							wordObjectMock.word,
 							'',
-							wordObject.url,
+							wordObjectMock.url,
 						].join('\n'),
 						visibility: 'public',
 					}),
@@ -78,12 +84,16 @@ describe('MastodonPoster', () => {
 			);
 		});
 
-		it('should throw an error when the baseUrl is not defined', async () => {
-			await expect(mastodonPoster.post('', accessToken, wordObject, hashtag)).rejects.toThrowError(UndefinedArgumentError);
+		it('should throw an error when the mastodon.baseUrl config is not defined', async () => {
+			vi.spyOn(config.mastodon, 'baseUrl', 'get').mockReturnValue(undefined);
+
+			await expect(mastodonPoster.post('', accessTokenMock, wordObjectMock, postHashtagMock)).rejects.toThrowError(UndefinedConfigError);
 		});
 
-		it('should throw an error when the accessToken is not defined', async () => {
-			await expect(mastodonPoster.post(baseUrl, '', wordObject, hashtag)).rejects.toThrowError(UndefinedArgumentError);
+		it('should throw an error when the mastodon.accessToken config is not defined', async () => {
+			vi.spyOn(config.mastodon, 'accessToken', 'get').mockReturnValue(undefined);
+
+			await expect(mastodonPoster.post(baseUrlMock, '', wordObjectMock, postHashtagMock)).rejects.toThrowError(UndefinedConfigError);
 		});
 	});
 });

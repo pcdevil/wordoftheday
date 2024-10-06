@@ -11,25 +11,11 @@ describe('WordOfTheDay', () => {
 		url: 'https://www.thefreedictionary.com/punctilious',
 		word: 'punctilious',
 	};
-	let configMock;
 	let mastodonPosterMock;
 	let wordResolverMock;
 	let wordOfTheDay;
 
 	beforeEach(() => {
-		configMock = {
-			mastodon: {
-				accessToken: 'eSbzh2R7x5JTNqpOe9oZSFf-Uf7jJyXIqHquSSACeYo',
-				baseUrl: 'https://mastodon.social',
-			},
-			source: {
-				name: 'The Free Dictionary',
-				url: 'https://www.thefreedictionary.com/_/WoD/rss.aspx',
-				itemIndex: 0,
-				postHashtag: '#TheFreeDictionary',
-			},
-		};
-
 		const loggerMock = mockLoggerFactory();
 
 		mastodonPosterMock = new MastodonPoster(loggerMock);
@@ -38,23 +24,15 @@ describe('WordOfTheDay', () => {
 		wordResolverMock = new WordResolver(loggerMock);
 		vi.spyOn(wordResolverMock, 'get').mockResolvedValue(wordObject);
 
-		wordOfTheDay = new WordOfTheDay(configMock, loggerMock, mastodonPosterMock, wordResolverMock);
+		wordOfTheDay = new WordOfTheDay(loggerMock, mastodonPosterMock, wordResolverMock);
 	});
 
 	describe('run()', () => {
 		it('should post the word retrieved to the configured mastodon', async () => {
 			await wordOfTheDay.run();
 
-			expect(wordResolverMock.get).toHaveBeenCalledWith(
-				configMock.source.url,
-				configMock.source.itemIndex
-			);
-			expect(mastodonPosterMock.post).toHaveBeenCalledWith(
-				configMock.mastodon.baseUrl,
-				configMock.mastodon.accessToken,
-				wordObject,
-				configMock.source.postHashtag
-			);
+			expect(wordResolverMock.get).toHaveBeenCalled();
+			expect(mastodonPosterMock.post).toHaveBeenCalledWith(wordObject);
 		});
 	});
 });

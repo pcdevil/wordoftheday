@@ -1,31 +1,25 @@
-import dotenv from 'dotenv';
+import { NamedError } from '#util/named-error.mjs';
 
-export class Config {
-	constructor(dotenvModule = dotenv) {
-		const processEnv = {
-			...process.env,
-		};
-		dotenvModule.config({ processEnv });
+export class UndefinedConfigError extends NamedError {}
 
-		return {
-			source: {
-				name: processEnv.SOURCE_NAME,
-				url: processEnv.SOURCE_URL,
-				itemIndex: parseInt(processEnv.SOURCE_ITEM_INDEX, 10),
-				postHashtag: processEnv.SOURCE_POST_HASHTAG,
-			},
+export const config = {
+	source: {
+		name: process.env.SOURCE_NAME,
+		url: process.env.SOURCE_URL,
+		itemIndex: parseInt(process.env.SOURCE_ITEM_INDEX, 10),
+		postHashtag: process.env.SOURCE_POST_HASHTAG,
+	},
 
-			log: {
-				filePath: processEnv.LOG_FILE_PATH,
-				level: processEnv.LOG_LEVEL,
-				pretty: processEnv.LOG_PRETTY === 'true',
-				prettyColorize: processEnv.CI !== 'true',
-			},
+	log: {
+		filePath: process.env.LOG_FILE_PATH,
+		level: process.env.LOG_LEVEL,
+		pretty: process.env.LOG_PRETTY === 'true',
+		prettyColorize: process.env.CI !== 'true',
+	},
 
-			mastodon: {
-				accessToken: processEnv.MASTODON_ACCESS_TOKEN,
-				baseUrl: processEnv.MASTODON_BASE_URL,
-			},
-		};
-	}
-}
+	mastodon: {
+		accessToken: process.env.MASTODON_ACCESS_TOKEN,
+		baseUrl: process.env.MASTODON_BASE_URL,
+	},
+};
+Object.freeze(config);

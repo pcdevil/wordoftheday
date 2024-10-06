@@ -1,7 +1,5 @@
-import { NamedError } from '#util/named-error.mjs';
+import { UndefinedConfigError, config } from '#lib/config.mjs';
 import { request } from '#util/request.mjs';
-
-export class UndefinedArgumentError extends NamedError {}
 
 export class MastodonPoster {
 	static language = 'en-GB';
@@ -14,18 +12,18 @@ export class MastodonPoster {
 		this.#requestMethod = requestMethod;
 	}
 
-	async post(baseUrl, accessToken, wordObject, hashtag) {
-		if (!baseUrl) throw new UndefinedArgumentError(`The baseUrl argument is not defined.`);
-		if (!accessToken) throw new UndefinedArgumentError(`The accessToken argument is not defined.`);
+	async post(wordObject) {
+		if (!config.mastodon.baseUrl) throw new UndefinedConfigError(`The mastodon.baseUrl config variable is not defined.`);
+		if (!config.mastodon.accessToken) throw new UndefinedConfigError(`The mastodon.accessToken config variable is not defined.`);
 
-		const url = this.#createUrl(baseUrl);
-		const status = this.#createStatus(wordObject, hashtag);
-		const options = this.#createOptions(accessToken, status);
+		const url = this.#createUrl(config.mastodon.baseUrl);
+		const status = this.#createStatus(wordObject);
+		const options = this.#createOptions(status);
 
 		await this.#requestMethod(url, options, this.#logger);
 	}
 
-	#createOptions(accessToken, status) {
+	#createOptions(status) {
 		const body = JSON.stringify({
 			language: MastodonPoster.language,
 			status,
@@ -35,18 +33,18 @@ export class MastodonPoster {
 		return {
 			body,
 			headers: {
-				Authorization: `Bearer ${accessToken}`,
+				Authorization: `Bearer ${config.mastodon.accessToken}`,
 				'Content-Type': 'application/json',
 			},
 			method: 'POST',
 		};
 	}
 
-	#createStatus(wordObject, hashtag) {
+	#createStatus(wordObject) {
 		const dateString = new Intl.DateTimeFormat(MastodonPoster.language, { dateStyle: 'long' })
 			.format(wordObject.date);
 
-		const hashtags = `#WordOfTheDay ${hashtag ?? ''}`.trim();
+		const hashtags = `#WordOfTheDay ${config.source.postHashtag ?? ''}`.trim();
 
 		return [
 			`${hashtags} ${dateString}`,
