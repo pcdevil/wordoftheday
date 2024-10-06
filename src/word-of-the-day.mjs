@@ -9,13 +9,11 @@ export class WordOfTheDay {
 	#wordResolver;
 
 	constructor(
-		logger = loggerFactory(config.log),
-		mastodonPoster = new MastodonPoster(logger),
-		wordResolver = new WordResolver(logger)
+		logger = loggerFactory(config.log)
 	) {
 		this.#logger = logger.child({ name: this.constructor.name });
-		this.#mastodonPoster = mastodonPoster;
-		this.#wordResolver = wordResolver;
+		this.#mastodonPoster = new MastodonPoster(logger);
+		this.#wordResolver = new WordResolver(logger);
 	}
 
 	async run() {

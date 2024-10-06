@@ -5,11 +5,9 @@ export class MastodonPoster {
 	static language = 'en-GB';
 
 	#logger;
-	#requestMethod;
 
-	constructor(logger, requestMethod = request) {
+	constructor(logger) {
 		this.#logger = logger.child({ name: this.constructor.name });
-		this.#requestMethod = requestMethod;
 	}
 
 	async post(wordObject) {
@@ -20,7 +18,7 @@ export class MastodonPoster {
 		const status = this.#createStatus(wordObject);
 		const options = this.#createOptions(status);
 
-		await this.#requestMethod(url, options, this.#logger);
+		await request(url, options, this.#logger);
 	}
 
 	#createOptions(status) {

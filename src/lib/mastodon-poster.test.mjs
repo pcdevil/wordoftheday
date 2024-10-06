@@ -4,6 +4,13 @@ import { UndefinedConfigError, config } from '#lib/config.mjs';
 import { mockLoggerFactory } from '#test/mock-logger-factory.mjs';
 import { MastodonPoster } from './mastodon-poster.mjs';
 
+const mocks = vi.hoisted(() => ({
+	request: vi.fn(),
+}));
+vi.mock('#util/request.mjs', () => ({
+	request: mocks.request,
+}));
+
 describe('MastodonPoster', () => {
 	const baseUrlMock = 'https://example.com';
 	const accessTokenMock = 'generated access token';
@@ -14,7 +21,6 @@ describe('MastodonPoster', () => {
 		word: 'corroborate',
 	};
 	let jsonMock;
-	let requestMock;
 	let mastodonPoster;
 
 	beforeEach(() => {
@@ -23,19 +29,19 @@ describe('MastodonPoster', () => {
 		vi.spyOn(config.source, 'postHashtag', 'get').mockReturnValue(postHashtagMock);
 
 		jsonMock = vi.fn().mockResolvedValue({});
-		requestMock = vi.fn().mockResolvedValue({
+		mocks.request.mockResolvedValue({
 			json: jsonMock,
 			ok: true,
 		});
 
-		mastodonPoster = new MastodonPoster(mockLoggerFactory(), requestMock);
+		mastodonPoster = new MastodonPoster(mockLoggerFactory());
 	});
 
 	describe('post()', () => {
 		it('should call the request method', async () => {
 			await mastodonPoster.post(wordObjectMock);
 
-			expect(requestMock).toHaveBeenCalledWith(
+			expect(mocks.request).toHaveBeenCalledWith(
 				`${baseUrlMock}/api/v1/statuses`,
 				{
 					body: JSON.stringify({
@@ -63,7 +69,7 @@ describe('MastodonPoster', () => {
 			vi.spyOn(config.source, 'postHashtag', 'get').mockReturnValue(undefined);
 			await mastodonPoster.post(wordObjectMock);
 
-			expect(requestMock).toHaveBeenCalledWith(
+			expect(mocks.request).toHaveBeenCalledWith(
 				expect.any(String),
 				{
 					body: JSON.stringify({

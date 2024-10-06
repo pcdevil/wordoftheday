@@ -9,13 +9,9 @@ export class NoItemError extends NamedError {}
 
 export class WordResolver {
 	#logger;
-	#parseFeedMethod;
-	#requestMethod;
 
-	constructor(logger, requestMethod = request, parseFeedMethod = parseFeed) {
+	constructor(logger) {
 		this.#logger = logger.child({ name: this.constructor.name });
-		this.#requestMethod = requestMethod;
-		this.#parseFeedMethod = parseFeedMethod;
 	}
 
 	async get() {
@@ -24,7 +20,7 @@ export class WordResolver {
 
 		let items;
 
-		const response = await this.#requestMethod(config.source.url, {}, this.#logger);
+		const response = await request(config.source.url, {}, this.#logger);
 		const text = await response.text();
 
 		try {
@@ -55,7 +51,7 @@ export class WordResolver {
 		const measureName = 'parse feed';
 		try {
 			this.#logger.mark(`${measureName} start`);
-			return this.#parseFeedMethod(text);
+			return parseFeed(text);
 		} finally {
 			this.#logger.mark(`${measureName} end`);
 			this.#logger.measure(measureName, `${measureName} start`, `${measureName} end`);

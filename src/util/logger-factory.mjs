@@ -1,10 +1,10 @@
-import fs from 'fs';
+import { createWriteStream } from 'node:fs';
 import pino from 'pino';
 import pinoPretty from 'pino-pretty';
 
-function createCustomLevels(pinoModule) {
+function createCustomLevels() {
 	// set custom log levels based on existing one
-	const relativeLogLevel = pinoModule.levels.values.debug;
+	const relativeLogLevel = pino.levels.values.debug;
 	return {
 		colors: {
 			mark: 'blue',
@@ -17,27 +17,27 @@ function createCustomLevels(pinoModule) {
 	};
 }
 
-function createFileStream(fsModule, level, filePath) {
+function createFileStream(level, filePath) {
 	return {
 		level,
-		stream: fsModule.createWriteStream(filePath),
+		stream: createWriteStream(filePath),
 	};
 }
 
-function createPinoLogHooks(performanceInterface, customLevels) {
+function createPinoLogHooks(customLevels) {
 	return {
 		logMethod(inputArgs, method, level) {
 			// handle "mark" logs
 			if (level === customLevels.values.mark) {
 				const [markName] = inputArgs;
-				performanceInterface.mark(markName);
+				performance.mark(markName);
 				return method.apply(this, [markName]);
 			}
 
 			// handle "measure" logs
 			if (level === customLevels.values.measure) {
 				const [measureName, startMark, endMark] = inputArgs;
-				const { duration, startTime } = performanceInterface.measure(measureName, startMark, endMark);
+				const { duration, startTime } = performance.measure(measureName, startMark, endMark);
 				const measure = {
 					duration,
 					startTime,
@@ -57,11 +57,11 @@ function createPinoLogHooks(performanceInterface, customLevels) {
 	};
 }
 
-function createPinoOptions(performanceInterface, customLevels, level) {
+function createPinoOptions(customLevels, level) {
 	const options = {
 		base: undefined,
 		customLevels: customLevels.values,
-		hooks: createPinoLogHooks(performanceInterface, customLevels),
+		hooks: createPinoLogHooks(customLevels),
 	};
 
 	if (level !== undefined) {
@@ -71,14 +71,14 @@ function createPinoOptions(performanceInterface, customLevels, level) {
 	return options;
 }
 
-function createPrettyStream(pinoPrettyModule, customLevels, level, colorize) {
+function createPrettyStream(customLevels, level, colorize) {
 	const customColors = Object.entries(customLevels.colors)
 		.map((entry) => entry.join(':'))
 		.join(',');
 
 	return {
 		level,
-		stream: pinoPrettyModule({
+		stream: pinoPretty({
 			colorize,
 			customColors,
 			customLevels: customLevels.values,
@@ -87,20 +87,20 @@ function createPrettyStream(pinoPrettyModule, customLevels, level, colorize) {
 	};
 }
 
-export function loggerFactory(logConfig, performanceInterface = globalThis.performance, fsModule = fs, pinoModule = pino, pinoPrettyModule = pinoPretty) {
-	const customLevels = createCustomLevels(pinoModule);
+export function loggerFactory(logConfig) {
+	const customLevels = createCustomLevels();
 
 	const logStreams = [];
 	if (logConfig.filePath) {
-		logStreams.push(createFileStream(fsModule, logConfig.level, logConfig.filePath));
+		logStreams.push(createFileStream(logConfig.level, logConfig.filePath));
 	}
 	if (logConfig.pretty) {
-		logStreams.push(createPrettyStream(pinoPrettyModule, customLevels, logConfig.level, logConfig.prettyColorize));
+		logStreams.push(createPrettyStream(customLevels, logConfig.level, logConfig.prettyColorize));
 	}
 
 	const multistream = logStreams.length
-		? pinoModule.multistream(logStreams)
+		? pino.multistream(logStreams)
 		: undefined;
 
-	return pinoModule(createPinoOptions(performanceInterface, customLevels, logConfig.level), multistream);
+	return pino(createPinoOptions(customLevels, logConfig.level), multistream);
 }

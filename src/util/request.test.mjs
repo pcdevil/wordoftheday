@@ -23,12 +23,13 @@ describe('request()', () => {
 			status: 200,
 			statusText: 'OK',
 		};
-		fetchMock = vi.fn().mockResolvedValue(responseMock);
-		setTimeoutMock = vi.fn().mockImplementation((callback) => callback());
+		fetchMock = vi.spyOn(globalThis, 'fetch').mockResolvedValue(responseMock);
+
+		setTimeoutMock = vi.spyOn(globalThis, 'setTimeout').mockImplementation((callback) => callback());
 	});
 
 	it('should call the fetch method and return the response', async () => {
-		const response = await request(url, options, mockLoggerFactory(), 0, fetchMock, setTimeoutMock);
+		const response = await request(url, options, mockLoggerFactory());
 
 		expect(fetchMock).toHaveBeenCalledWith(url, options);
 		expect(response).toBe(responseMock);
@@ -39,7 +40,7 @@ describe('request()', () => {
 			fetchMock.mockRejectedValueOnce(new Error());
 		}
 
-		const response = await request(url, options, mockLoggerFactory(), DEFAULT_REQUEST_RETRY_COUNT, fetchMock, setTimeoutMock);
+		const response = await request(url, options, mockLoggerFactory(), DEFAULT_REQUEST_RETRY_COUNT);
 
 		expect(fetchMock).toHaveBeenCalledTimes(DEFAULT_REQUEST_RETRY_COUNT + 1);
 		expect(setTimeoutMock).toHaveBeenCalledTimes(DEFAULT_REQUEST_RETRY_COUNT);
@@ -54,7 +55,7 @@ describe('request()', () => {
 			statusText: 'Not Found',
 		});
 
-		await expect(request(url, options, mockLoggerFactory(), 2, fetchMock, setTimeoutMock)).rejects.toThrowError(RequestError);
+		await expect(request(url, options, mockLoggerFactory(), 2)).rejects.toThrowError(RequestError);
 		expect(setTimeoutMock).not.toHaveBeenCalled();
 	});
 });

@@ -4,6 +4,17 @@ import { config } from '#lib/config.mjs';
 import { mockLoggerFactory } from '#src/test/mock-logger-factory.mjs';
 import { FeedParserError, NoItemError, WordResolver } from './word-resolver.mjs';
 
+const mocks = vi.hoisted(() => ({
+	parseFeed: vi.fn(),
+	request: vi.fn(),
+}));
+vi.mock('#util/request.mjs', () => ({
+	request: mocks.request,
+}));
+vi.mock('htmlparser2', () => ({
+	parseFeed: mocks.parseFeed,
+}));
+
 function fakeItem(suffix = '') {
 	const link = `https://www.merriam-webster.com/word-of-the-day/bully+pulpit-2023-07-29_${suffix}`;
 	const title = `bully pulpit${suffix}`;
@@ -22,8 +33,6 @@ describe('WordResolver', () => {
 	const feedTextMock = '<rss><channel></channel></rss>';
 	let itemsMock;
 	let textMock;
-	let parseFeedMock;
-	let requestMock;
 	let wordResolver;
 
 	beforeEach(() => {
@@ -31,23 +40,23 @@ describe('WordResolver', () => {
 		vi.spyOn(config.source, 'itemIndex', 'get').mockReturnValue(itemIndexMock);
 
 		textMock = vi.fn().mockResolvedValue(feedTextMock);
-		requestMock = vi.fn().mockResolvedValue({
+		mocks.request.mockResolvedValue({
 			ok: true,
 			text: textMock,
 		});
 
 		itemsMock = Array.from({ length: 3 }, (_value, index) => fakeItem(index));
-		parseFeedMock = vi.fn().mockReturnValue({ items: itemsMock });
+		mocks.parseFeed.mockReturnValue({ items: itemsMock });
 
-		wordResolver = new WordResolver(mockLoggerFactory(), requestMock, parseFeedMock);
+		wordResolver = new WordResolver(mockLoggerFactory());
 	});
 
 	describe('get()', () => {
 		it('should return the word object', async () => {
 			const wordObject = await wordResolver.get();
 
-			expect(requestMock).toHaveBeenCalledWith(urlMock, {}, expect.any(Object));
-			expect(parseFeedMock).toBeCalledWith(feedTextMock);
+			expect(mocks.request).toHaveBeenCalledWith(urlMock, {}, expect.any(Object));
+			expect(mocks.parseFeed).toBeCalledWith(feedTextMock);
 			expect(wordObject).toEqual({
 				date: itemsMock[itemIndexMock].pubDate,
 				url: encodeURI(itemsMock[itemIndexMock].link),
@@ -60,8 +69,8 @@ describe('WordResolver', () => {
 
 			const wordObject = await wordResolver.get();
 
-			expect(requestMock).toHaveBeenCalledWith(urlMock, {}, expect.any(Object));
-			expect(parseFeedMock).toBeCalledWith(feedTextMock);
+			expect(mocks.request).toHaveBeenCalledWith(urlMock, {}, expect.any(Object));
+			expect(mocks.parseFeed).toBeCalledWith(feedTextMock);
 			expect(wordObject).toEqual({
 				date: itemsMock[2].pubDate,
 				url: encodeURI(itemsMock[2].link),
@@ -70,7 +79,7 @@ describe('WordResolver', () => {
 		});
 
 		it('should throw a FeedParserError when the feed parser throws an error', async () => {
-			parseFeedMock.mockImplementation(() => {
+			mocks.parseFeed.mockImplementation(() => {
 				throw new Error();
 			});
 

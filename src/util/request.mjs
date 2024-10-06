@@ -31,11 +31,11 @@ function isClientResponseError(error) {
 	return error instanceof RequestError && error.status <= 500;
 }
 
-async function requestWithMeasure(url, options, logger, fetchMethod = globalThis.fetch) {
+async function requestWithMeasure(url, options, logger) {
 	const measureName = `request`;
 	try {
 		logger.mark(`${measureName} start`);
-		return await fetchMethod(url, options);
+		return await fetch(url, options);
 	} finally {
 		logger.mark(`${measureName} end`);
 		logger.measure(measureName, `${measureName} start`, `${measureName} end`);
@@ -46,12 +46,10 @@ export async function request(
 	url,
 	options,
 	logger,
-	retryCount = DEFAULT_REQUEST_RETRY_COUNT,
-	fetchMethod = globalThis.fetch,
-	setTimeoutMethod = globalThis.setTimeout
+	retryCount = DEFAULT_REQUEST_RETRY_COUNT
 ) {
 	try {
-		const response = await requestWithMeasure(url, options, logger, fetchMethod);
+		const response = await requestWithMeasure(url, options, logger);
 		assertResponseOk(response);
 
 		logger.debug('request successful');
@@ -74,11 +72,11 @@ export async function request(
 			retryCount,
 		});
 
-		await retrySleep(setTimeoutMethod);
-		return await request(url, options, logger, retryCount - 1, fetchMethod, setTimeoutMethod);
+		await retrySleep();
+		return await request(url, options, logger, retryCount - 1);
 	}
 }
 
-async function retrySleep(setTimeoutMethod) {
-	return new Promise((resolve) => setTimeoutMethod(() => resolve(), REQUEST_RETRY_DELAY));
+async function retrySleep() {
+	return new Promise((resolve) => setTimeout(() => resolve(), REQUEST_RETRY_DELAY));
 }

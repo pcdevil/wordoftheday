@@ -2,30 +2,43 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 // project imports
 import { loggerFactory } from './logger-factory.mjs';
 
+const mocks = vi.hoisted(() => ({
+	createWriteStream: vi.fn(),
+	pino: vi.fn(),
+	pinoPretty: vi.fn(),
+}));
+vi.mock('node:fs', () => ({
+	createWriteStream: mocks.createWriteStream,
+}));
+vi.mock('pino', () => ({
+	default: mocks.pino,
+	pino: mocks.pino,
+}));
+vi.mock('pino-pretty', () => ({
+	default: mocks.pinoPretty,
+	pinoPretty: mocks.pinoPretty,
+}));
+
 describe('loggerFactory', () => {
-	let fsMock;
 	let loggerMock;
 	let performanceMock;
-	let pinoMock;
-	let pinoPrettyMock;
 
 	beforeEach(() => {
+		loggerMock = {};
+
 		performanceMock = {
 			mark: vi.fn(),
 			measure: vi.fn(),
 		};
-		fsMock = {
-			createWriteStream: vi.fn(),
-		};
-		loggerMock = {};
-		pinoMock = vi.fn().mockReturnValue(loggerMock);
-		pinoMock.levels = {
+		vi.spyOn(globalThis, 'performance', 'get').mockReturnValue(performanceMock);
+
+		mocks.pino.mockReturnValue(loggerMock);
+		mocks.pino.levels = {
 			values: {
 				debug: 42,
 			},
 		};
-		pinoMock.multistream = vi.fn();
-		pinoPrettyMock = vi.fn();
+		mocks.pino.multistream = vi.fn();
 	});
 
 	it('should create and return a logger based on the config', () => {
@@ -34,14 +47,14 @@ describe('loggerFactory', () => {
 			// empty config
 		};
 
-		const logger = loggerFactory(logConfig, performanceMock, fsMock, pinoMock, pinoPrettyMock);
+		const logger = loggerFactory(logConfig);
 
-		expect(pinoMock).toHaveBeenCalledWith(
+		expect(mocks.pino).toHaveBeenCalledWith(
 			{
 				base: undefined,
 				customLevels: {
-					mark: pinoMock.levels.values.debug + 1,
-					measure: pinoMock.levels.values.debug + 2,
+					mark: mocks.pino.levels.values.debug + 1,
+					measure: mocks.pino.levels.values.debug + 2,
 				},
 				hooks: {
 					logMethod: expect.any(Function),
@@ -50,74 +63,74 @@ describe('loggerFactory', () => {
 			},
 			undefined
 		);
-		expect(pinoMock.multistream).not.toHaveBeenCalled();
+		expect(mocks.pino.multistream).not.toHaveBeenCalled();
 		expect(logger).toBe(loggerMock);
 	});
 
 	it('should create a file stream when the file path is defined', () => {
 		const writeStreamMock = {};
-		fsMock.createWriteStream.mockReturnValue(writeStreamMock);
+		mocks.createWriteStream.mockReturnValue(writeStreamMock);
 
 		const streamMock = {};
-		pinoMock.multistream.mockReturnValue(streamMock);
+		mocks.pino.multistream.mockReturnValue(streamMock);
 
 		const logConfig = {
 			filePath: '/tmp/test.log',
 			level: 'warn',
 		};
 
-		loggerFactory(logConfig, performanceMock, fsMock, pinoMock, pinoPrettyMock);
+		loggerFactory(logConfig);
 
-		expect(fsMock.createWriteStream).toHaveBeenCalledWith(logConfig.filePath);
-		expect(pinoMock.multistream).toHaveBeenCalledWith([
+		expect(mocks.createWriteStream).toHaveBeenCalledWith(logConfig.filePath);
+		expect(mocks.pino.multistream).toHaveBeenCalledWith([
 			{ level: logConfig.level, stream: writeStreamMock },
 		]);
-		expect(pinoMock).toHaveBeenCalledWith(expect.anything(), streamMock);
+		expect(mocks.pino).toHaveBeenCalledWith(expect.anything(), streamMock);
 	});
 
 	it('should create a pretty pino stream when it is enabled', () => {
 		const pinoPrettyStreamMock = {};
-		pinoPrettyMock.mockReturnValue(pinoPrettyStreamMock);
+		mocks.pinoPretty.mockReturnValue(pinoPrettyStreamMock);
 
 		const streamMock = {};
-		pinoMock.multistream.mockReturnValue(streamMock);
+		mocks.pino.multistream.mockReturnValue(streamMock);
 
 		const logConfig = {
 			pretty: true,
 			prettyColorize: true,
 		};
 
-		loggerFactory(logConfig, performanceMock, fsMock, pinoMock, pinoPrettyMock);
+		loggerFactory(logConfig);
 
-		expect(pinoPrettyMock).toHaveBeenCalledWith({
+		expect(mocks.pinoPretty).toHaveBeenCalledWith({
 			colorize: true,
 			customColors: 'mark:blue,measure:blue',
 			customLevels: {
-				mark: pinoMock.levels.values.debug + 1,
-				measure: pinoMock.levels.values.debug + 2,
+				mark: mocks.pino.levels.values.debug + 1,
+				measure: mocks.pino.levels.values.debug + 2,
 			},
 			useOnlyCustomProps: false,
 		});
-		expect(pinoMock.multistream).toHaveBeenCalledWith([
+		expect(mocks.pino.multistream).toHaveBeenCalledWith([
 			{ level: logConfig.level, stream: pinoPrettyStreamMock },
 		]);
 	});
 
 	it('should turn off color output when the prettyColorize config is false', () => {
 		const pinoPrettyStreamMock = {};
-		pinoPrettyMock.mockReturnValue(pinoPrettyStreamMock);
+		mocks.pinoPretty.mockReturnValue(pinoPrettyStreamMock);
 
 		const streamMock = {};
-		pinoMock.multistream.mockReturnValue(streamMock);
+		mocks.pino.multistream.mockReturnValue(streamMock);
 
 		const logConfig = {
 			pretty: true,
 			prettyColorize: false,
 		};
 
-		loggerFactory(logConfig, performanceMock, fsMock, pinoMock, pinoPrettyMock);
+		loggerFactory(logConfig);
 
-		expect(pinoPrettyMock).toHaveBeenCalledWith(expect.objectContaining({ colorize: false }));
+		expect(mocks.pinoPretty).toHaveBeenCalledWith(expect.objectContaining({ colorize: false }));
 	});
 
 	describe('logMethod hook', () => {
@@ -131,9 +144,9 @@ describe('loggerFactory', () => {
 		beforeEach(() => {
 			logMethodMock = vi.fn();
 
-			loggerFactory(logConfig, performanceMock, fsMock, pinoMock, pinoPrettyMock);
+			loggerFactory(logConfig);
 
-			const [optionsArg] = pinoMock.mock.calls[0];
+			const [optionsArg] = mocks.pino.mock.calls[0];
 			customLevels = optionsArg.customLevels;
 			logMethodHook = optionsArg.hooks.logMethod;
 		});

@@ -1,9 +1,22 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 // project imports
-import { MastodonPoster } from '#lib/mastodon-poster.mjs';
-import { WordResolver } from '#lib/word-resolver.mjs';
 import { mockLoggerFactory } from '#test/mock-logger-factory.mjs';
 import { WordOfTheDay } from './word-of-the-day.mjs';
+
+const mocks = vi.hoisted(() => ({
+	mastodonPoster: {
+		post: vi.fn(),
+	},
+	wordResolver: {
+		get: vi.fn(),
+	},
+}));
+vi.mock('#lib/mastodon-poster.mjs', () => ({
+	MastodonPoster: vi.fn().mockReturnValue(mocks.mastodonPoster),
+}));
+vi.mock('#lib/word-resolver.mjs', () => ({
+	WordResolver: vi.fn().mockReturnValue(mocks.wordResolver),
+}));
 
 describe('WordOfTheDay', () => {
 	const wordObject = {
@@ -11,28 +24,22 @@ describe('WordOfTheDay', () => {
 		url: 'https://www.thefreedictionary.com/punctilious',
 		word: 'punctilious',
 	};
-	let mastodonPosterMock;
-	let wordResolverMock;
 	let wordOfTheDay;
 
 	beforeEach(() => {
 		const loggerMock = mockLoggerFactory();
 
-		mastodonPosterMock = new MastodonPoster(loggerMock);
-		vi.spyOn(mastodonPosterMock, 'post').mockResolvedValue();
+		mocks.wordResolver.get.mockResolvedValue(wordObject);
 
-		wordResolverMock = new WordResolver(loggerMock);
-		vi.spyOn(wordResolverMock, 'get').mockResolvedValue(wordObject);
-
-		wordOfTheDay = new WordOfTheDay(loggerMock, mastodonPosterMock, wordResolverMock);
+		wordOfTheDay = new WordOfTheDay(loggerMock);
 	});
 
 	describe('run()', () => {
 		it('should post the word retrieved to the configured mastodon', async () => {
 			await wordOfTheDay.run();
 
-			expect(wordResolverMock.get).toHaveBeenCalled();
-			expect(mastodonPosterMock.post).toHaveBeenCalledWith(wordObject);
+			expect(mocks.wordResolver.get).toHaveBeenCalled();
+			expect(mocks.mastodonPoster.post).toHaveBeenCalledWith(wordObject);
 		});
 	});
 });
