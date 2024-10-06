@@ -75,7 +75,7 @@ export async function request(
 		});
 
 		await retrySleep(setTimeoutMethod);
-		await request(url, options, logger, retryCount - 1, fetchMethod, setTimeoutMethod);
+		return await request(url, options, logger, retryCount - 1, fetchMethod, setTimeoutMethod);
 	}
 }
 

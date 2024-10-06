@@ -14,7 +14,6 @@ describe('request()', () => {
 		method: 'GET',
 	};
 	let fetchMock;
-	let jsonMock;
 	let responseMock;
 	let setTimeoutMock;
 
@@ -24,30 +23,28 @@ describe('request()', () => {
 			status: 200,
 			statusText: 'OK',
 		};
-		jsonMock = vi.fn().mockResolvedValue(responseMock);
-		fetchMock = vi.fn().mockResolvedValue({
-			json: jsonMock,
-			ok: true,
-		});
+		fetchMock = vi.fn().mockResolvedValue(responseMock);
 		setTimeoutMock = vi.fn().mockImplementation((callback) => callback());
 	});
 
 	it('should call the fetch method and return the response', async () => {
-		await request(url, options, mockLoggerFactory(), 0, fetchMock, setTimeoutMock);
+		const response = await request(url, options, mockLoggerFactory(), 0, fetchMock, setTimeoutMock);
 
 		expect(fetchMock).toHaveBeenCalledWith(url, options);
+		expect(response).toBe(responseMock);
 	});
 
-	it('should retry the request when the fetch method throws an error', async () => {
+	it('should retry the request and return the response when the fetch method throws an error', async () => {
 		for (let callIndex = 0; callIndex < DEFAULT_REQUEST_RETRY_COUNT; ++callIndex) {
 			fetchMock.mockRejectedValueOnce(new Error());
 		}
 
-		await request(url, options, mockLoggerFactory(), DEFAULT_REQUEST_RETRY_COUNT, fetchMock, setTimeoutMock);
+		const response = await request(url, options, mockLoggerFactory(), DEFAULT_REQUEST_RETRY_COUNT, fetchMock, setTimeoutMock);
 
 		expect(fetchMock).toHaveBeenCalledTimes(DEFAULT_REQUEST_RETRY_COUNT + 1);
 		expect(setTimeoutMock).toHaveBeenCalledTimes(DEFAULT_REQUEST_RETRY_COUNT);
 		expect(setTimeoutMock).toHaveBeenCalledWith(expect.any(Function), REQUEST_RETRY_DELAY);
+		expect(response).toBe(responseMock);
 	});
 
 	it('should throw a RequestError without retry when the response is not ok with client error', async () => {
