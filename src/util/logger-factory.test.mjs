@@ -3,23 +3,30 @@ import pino from 'pino';
 import pinoPretty from 'pino-pretty';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 // project imports
+import { config } from '#lib/config.mjs';
 import { loggerFactory } from './logger-factory.mjs';
 
 vi.mock('node:fs');
 vi.mock('pino');
 vi.mock('pino-pretty');
+vi.mock('#lib/config.mjs');
 const mocks = {
+	config: vi.mocked(config),
 	createWriteStream: vi.mocked(createWriteStream),
 	pino: vi.mocked(pino),
 	pinoPretty: vi.mocked(pinoPretty),
 };
 
 describe('loggerFactory', () => {
-	let loggerMock;
+	let pinoLoggerMock;
 	let performanceMock;
 
 	beforeEach(() => {
-		loggerMock = {};
+		vi.spyOn(mocks.config, 'log', 'get').mockReturnValue({
+			level: 'warn',
+		});
+
+		pinoLoggerMock = {};
 
 		performanceMock = {
 			mark: vi.fn(),
@@ -27,7 +34,7 @@ describe('loggerFactory', () => {
 		};
 		vi.spyOn(globalThis, 'performance', 'get').mockReturnValue(performanceMock);
 
-		mocks.pino.mockReturnValue(loggerMock);
+		mocks.pino.mockReturnValue(pinoLoggerMock);
 		mocks.pino.levels = {
 			values: {
 				debug: 42,
@@ -37,12 +44,7 @@ describe('loggerFactory', () => {
 	});
 
 	it('should create and return a logger based on the config', () => {
-		const logConfig = {
-			level: 'warn',
-			// empty config
-		};
-
-		const logger = loggerFactory(logConfig);
+		const logger = loggerFactory();
 
 		expect(mocks.pino).toHaveBeenCalledWith(
 			{
@@ -54,31 +56,28 @@ describe('loggerFactory', () => {
 				hooks: {
 					logMethod: expect.any(Function),
 				},
-				level: logConfig.level,
+				level: mocks.config.log.level,
 			},
 			undefined
 		);
 		expect(mocks.pino.multistream).not.toHaveBeenCalled();
-		expect(logger).toBe(loggerMock);
+		expect(logger).toBe(pinoLoggerMock);
 	});
 
 	it('should create a file stream when the file path is defined', () => {
+		mocks.config.log.filePath = '/tmp/test.log';
+
 		const writeStreamMock = {};
 		mocks.createWriteStream.mockReturnValue(writeStreamMock);
 
 		const streamMock = {};
 		mocks.pino.multistream.mockReturnValue(streamMock);
 
-		const logConfig = {
-			filePath: '/tmp/test.log',
-			level: 'warn',
-		};
+		loggerFactory();
 
-		loggerFactory(logConfig);
-
-		expect(mocks.createWriteStream).toHaveBeenCalledWith(logConfig.filePath);
+		expect(mocks.createWriteStream).toHaveBeenCalledWith(mocks.config.log.filePath);
 		expect(mocks.pino.multistream).toHaveBeenCalledWith([
-			{ level: logConfig.level, stream: writeStreamMock },
+			{ level: mocks.config.log.level, stream: writeStreamMock },
 		]);
 		expect(mocks.pino).toHaveBeenCalledWith(expect.anything(), streamMock);
 	});
@@ -90,12 +89,10 @@ describe('loggerFactory', () => {
 		const streamMock = {};
 		mocks.pino.multistream.mockReturnValue(streamMock);
 
-		const logConfig = {
-			pretty: true,
-			prettyColorize: true,
-		};
+		mocks.config.log.pretty = true;
+		mocks.config.log.prettyColorize = true;
 
-		loggerFactory(logConfig);
+		loggerFactory();
 
 		expect(mocks.pinoPretty).toHaveBeenCalledWith({
 			colorize: true,
@@ -107,7 +104,7 @@ describe('loggerFactory', () => {
 			useOnlyCustomProps: false,
 		});
 		expect(mocks.pino.multistream).toHaveBeenCalledWith([
-			{ level: logConfig.level, stream: pinoPrettyStreamMock },
+			{ level: mocks.config.log.level, stream: pinoPrettyStreamMock },
 		]);
 	});
 
@@ -118,20 +115,15 @@ describe('loggerFactory', () => {
 		const streamMock = {};
 		mocks.pino.multistream.mockReturnValue(streamMock);
 
-		const logConfig = {
-			pretty: true,
-			prettyColorize: false,
-		};
+		mocks.config.log.pretty = true;
+		mocks.config.log.prettyColorize = false;
 
-		loggerFactory(logConfig);
+		loggerFactory();
 
 		expect(mocks.pinoPretty).toHaveBeenCalledWith(expect.objectContaining({ colorize: false }));
 	});
 
 	describe('logMethod hook', () => {
-		const logConfig = {
-			level: 'trace',
-		};
 		let logMethodMock;
 		let customLevels;
 		let logMethodHook;
@@ -139,7 +131,9 @@ describe('loggerFactory', () => {
 		beforeEach(() => {
 			logMethodMock = vi.fn();
 
-			loggerFactory(logConfig);
+			mocks.config.log.level = 'trace';
+
+			loggerFactory();
 
 			const [optionsArg] = mocks.pino.mock.calls[0];
 			customLevels = optionsArg.customLevels;

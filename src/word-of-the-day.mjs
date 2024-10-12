@@ -9,7 +9,7 @@ export class WordOfTheDay {
 	#wordResolver;
 
 	constructor(
-		logger = loggerFactory(config.log)
+		logger = loggerFactory()
 	) {
 		this.#logger = logger.child({ name: this.constructor.name });
 		this.#mastodonPoster = new MastodonPoster(logger);

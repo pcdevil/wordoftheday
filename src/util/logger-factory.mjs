@@ -1,6 +1,8 @@
 import { createWriteStream } from 'node:fs';
 import pino from 'pino';
 import pinoPretty from 'pino-pretty';
+// project imports
+import { config } from '#lib/config.mjs';
 
 function createCustomLevels() {
 	// set custom log levels based on existing one
@@ -14,13 +16,6 @@ function createCustomLevels() {
 			mark: relativeLogLevel + 1,
 			measure: relativeLogLevel + 2,
 		},
-	};
-}
-
-function createFileStream(level, filePath) {
-	return {
-		level,
-		stream: createWriteStream(filePath),
 	};
 }
 
@@ -71,36 +66,37 @@ function createPinoOptions(customLevels, level) {
 	return options;
 }
 
-function createPrettyStream(customLevels, level, colorize) {
-	const customColors = Object.entries(customLevels.colors)
-		.map((entry) => entry.join(':'))
-		.join(',');
-
-	return {
-		level,
-		stream: pinoPretty({
-			colorize,
-			customColors,
-			customLevels: customLevels.values,
-			useOnlyCustomProps: false,
-		}),
-	};
-}
-
-export function loggerFactory(logConfig) {
+export function loggerFactory() {
 	const customLevels = createCustomLevels();
 
 	const logStreams = [];
-	if (logConfig.filePath) {
-		logStreams.push(createFileStream(logConfig.level, logConfig.filePath));
+
+	if (config.log.filePath) {
+		logStreams.push({
+			level: config.log.level,
+			stream: createWriteStream(config.log.filePath),
+		});
 	}
-	if (logConfig.pretty) {
-		logStreams.push(createPrettyStream(customLevels, logConfig.level, logConfig.prettyColorize));
+
+	if (config.log.pretty) {
+		const customColors = Object.entries(customLevels.colors)
+			.map((entry) => entry.join(':'))
+			.join(',');
+
+		logStreams.push({
+			level: config.log.level,
+			stream: pinoPretty({
+				colorize: config.log.prettyColorize,
+				customColors,
+				customLevels: customLevels.values,
+				useOnlyCustomProps: false,
+			}),
+		});
 	}
 
 	const multistream = logStreams.length
 		? pino.multistream(logStreams)
 		: undefined;
 
-	return pino(createPinoOptions(customLevels, logConfig.level), multistream);
+	return pino(createPinoOptions(customLevels, config.log.level), multistream);
 }
