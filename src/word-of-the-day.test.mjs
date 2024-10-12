@@ -1,22 +1,16 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 // project imports
+import { MastodonPoster } from '#lib/mastodon-poster.mjs';
+import { WordResolver } from '#lib/word-resolver.mjs';
 import { mockLoggerFactory } from '#test/mock-logger-factory.mjs';
 import { WordOfTheDay } from './word-of-the-day.mjs';
 
-const mocks = vi.hoisted(() => ({
-	mastodonPoster: {
-		post: vi.fn(),
-	},
-	wordResolver: {
-		get: vi.fn(),
-	},
-}));
-vi.mock('#lib/mastodon-poster.mjs', () => ({
-	MastodonPoster: vi.fn().mockReturnValue(mocks.mastodonPoster),
-}));
-vi.mock('#lib/word-resolver.mjs', () => ({
-	WordResolver: vi.fn().mockReturnValue(mocks.wordResolver),
-}));
+vi.mock('#lib/mastodon-poster.mjs');
+vi.mock('#lib/word-resolver.mjs');
+const mocks = {
+	MastodonPoster: vi.mocked(MastodonPoster),
+	WordResolver: vi.mocked(WordResolver),
+};
 
 describe('WordOfTheDay', () => {
 	const wordObject = {
@@ -29,7 +23,7 @@ describe('WordOfTheDay', () => {
 	beforeEach(() => {
 		const loggerMock = mockLoggerFactory();
 
-		mocks.wordResolver.get.mockResolvedValue(wordObject);
+		mocks.WordResolver.prototype.get.mockResolvedValue(wordObject);
 
 		wordOfTheDay = new WordOfTheDay(loggerMock);
 	});
@@ -38,8 +32,10 @@ describe('WordOfTheDay', () => {
 		it('should post the word retrieved to the configured mastodon', async () => {
 			await wordOfTheDay.run();
 
-			expect(mocks.wordResolver.get).toHaveBeenCalled();
-			expect(mocks.mastodonPoster.post).toHaveBeenCalledWith(wordObject);
+			const [wordResolverMock] = mocks.WordResolver.mock.instances;
+			expect(wordResolverMock.get).toHaveBeenCalled();
+			const [mastodonPosterMock] = mocks.MastodonPoster.mock.instances;
+			expect(mastodonPosterMock.post).toHaveBeenCalledWith(wordObject);
 		});
 	});
 });

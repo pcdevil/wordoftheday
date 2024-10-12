@@ -1,19 +1,17 @@
+import { parseFeed } from 'htmlparser2';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 // project imports
 import { config } from '#lib/config.mjs';
-import { mockLoggerFactory } from '#src/test/mock-logger-factory.mjs';
+import { mockLoggerFactory } from '#test/mock-logger-factory.mjs';
+import { request } from '#util/request.mjs';
 import { FeedParserError, NoItemError, WordResolver } from './word-resolver.mjs';
 
-const mocks = vi.hoisted(() => ({
-	parseFeed: vi.fn(),
-	request: vi.fn(),
-}));
-vi.mock('#util/request.mjs', () => ({
-	request: mocks.request,
-}));
-vi.mock('htmlparser2', () => ({
-	parseFeed: mocks.parseFeed,
-}));
+vi.mock('htmlparser2');
+vi.mock('#util/request.mjs');
+const mocks = {
+	parseFeed: vi.mocked(parseFeed),
+	request: vi.mocked(request),
+};
 
 function fakeItem(suffix = '') {
 	const link = `https://www.merriam-webster.com/word-of-the-day/bully+pulpit-2023-07-29_${suffix}`;

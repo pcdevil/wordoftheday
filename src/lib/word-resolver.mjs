@@ -1,8 +1,8 @@
 import { parseFeed } from 'htmlparser2';
 // project imports
 import { UndefinedConfigError, config } from '#lib/config.mjs';
-import { NamedError } from '#src/util/named-error.mjs';
-import { request } from '#src/util/request.mjs';
+import { NamedError } from '#util/named-error.mjs';
+import { request } from '#util/request.mjs';
 
 export class FeedParserError extends NamedError {}
 export class NoItemError extends NamedError {}

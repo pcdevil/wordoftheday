@@ -2,14 +2,13 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 // project imports
 import { UndefinedConfigError, config } from '#lib/config.mjs';
 import { mockLoggerFactory } from '#test/mock-logger-factory.mjs';
+import { request } from '#util/request.mjs';
 import { MastodonPoster } from './mastodon-poster.mjs';
 
-const mocks = vi.hoisted(() => ({
-	request: vi.fn(),
-}));
-vi.mock('#util/request.mjs', () => ({
-	request: mocks.request,
-}));
+vi.mock('#util/request.mjs');
+const mocks = {
+	request: vi.mocked(request),
+};
 
 describe('MastodonPoster', () => {
 	const baseUrlMock = 'https://example.com';

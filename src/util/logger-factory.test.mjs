@@ -1,23 +1,18 @@
+import { createWriteStream } from 'node:fs';
+import pino from 'pino';
+import pinoPretty from 'pino-pretty';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 // project imports
 import { loggerFactory } from './logger-factory.mjs';
 
-const mocks = vi.hoisted(() => ({
-	createWriteStream: vi.fn(),
-	pino: vi.fn(),
-	pinoPretty: vi.fn(),
-}));
-vi.mock('node:fs', () => ({
-	createWriteStream: mocks.createWriteStream,
-}));
-vi.mock('pino', () => ({
-	default: mocks.pino,
-	pino: mocks.pino,
-}));
-vi.mock('pino-pretty', () => ({
-	default: mocks.pinoPretty,
-	pinoPretty: mocks.pinoPretty,
-}));
+vi.mock('node:fs');
+vi.mock('pino');
+vi.mock('pino-pretty');
+const mocks = {
+	createWriteStream: vi.mocked(createWriteStream),
+	pino: vi.mocked(pino),
+	pinoPretty: vi.mocked(pinoPretty),
+};
 
 describe('loggerFactory', () => {
 	let loggerMock;
