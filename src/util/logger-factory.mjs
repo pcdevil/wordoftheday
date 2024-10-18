@@ -2,7 +2,7 @@ import { createWriteStream } from 'node:fs';
 import pino from 'pino';
 import pinoPretty from 'pino-pretty';
 // project imports
-import { config } from '#lib/config.mjs';
+import { config } from '#src/lib/config.mjs';
 
 function createCustomLevels() {
 	// set custom log levels based on existing one

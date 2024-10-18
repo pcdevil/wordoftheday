@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 // project imports
-import { mockLoggerFactory } from '#test/mock-logger-factory.mjs';
+import { mockLoggerFactory } from '#src/test/mock-logger-factory.mjs';
 import {
 	DEFAULT_REQUEST_RETRY_COUNT,
 	REQUEST_RETRY_DELAY,

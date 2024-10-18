@@ -1,7 +1,7 @@
-import { config } from '#lib/config.mjs';
-import { MastodonPoster } from '#lib/mastodon-poster.mjs';
-import { WordResolver } from '#lib/word-resolver.mjs';
-import { loggerFactory } from '#util/logger-factory.mjs';
+import { config } from '#src/lib/config.mjs';
+import { MastodonPoster } from '#src/lib/mastodon-poster.mjs';
+import { WordResolver } from '#src/lib/word-resolver.mjs';
+import { loggerFactory } from '#src/util/logger-factory.mjs';
 
 export class WordOfTheDay {
 	#logger;

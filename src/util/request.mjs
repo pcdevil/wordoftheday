@@ -1,4 +1,4 @@
-import { NamedError } from '#util/named-error.mjs';
+import { NamedError } from '#src/util/named-error.mjs';
 
 export class RequestError extends NamedError {
 	constructor(message, options = {}) {

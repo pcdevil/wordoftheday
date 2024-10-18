@@ -1,12 +1,12 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 // project imports
-import { UndefinedConfigError, config } from '#lib/config.mjs';
-import { mockLoggerFactory } from '#test/mock-logger-factory.mjs';
-import { request } from '#util/request.mjs';
+import { UndefinedConfigError, config } from '#src/lib/config.mjs';
+import { mockLoggerFactory } from '#src/test/mock-logger-factory.mjs';
+import { request } from '#src/util/request.mjs';
 import { MastodonPoster } from './mastodon-poster.mjs';
 
-vi.mock('#lib/config.mjs');
-vi.mock('#util/request.mjs');
+vi.mock('#src/lib/config.mjs');
+vi.mock('#src/util/request.mjs');
 const mocks = {
 	config: vi.mocked(config),
 	request: vi.mocked(request),

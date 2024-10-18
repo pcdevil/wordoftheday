@@ -9,10 +9,7 @@
     "!src/**/*.test.mjs"
   ],
   "imports": {
-    "#lib/*": "./src/lib/*",
-    "#src/*": "./src/*",
-    "#test/*": "./src/test/*",
-    "#util/*": "./src/util/*"
+    "#src/*": "./src/*"
   },
   "scripts": {
     "lint": "eslint --ext .js,.mjs --ignore-path .gitignore .",

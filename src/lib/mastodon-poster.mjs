@@ -1,5 +1,5 @@
-import { UndefinedConfigError, config } from '#lib/config.mjs';
-import { request } from '#util/request.mjs';
+import { UndefinedConfigError, config } from '#src/lib/config.mjs';
+import { request } from '#src/util/request.mjs';
 
 export class MastodonPoster {
 	static language = 'en-GB';

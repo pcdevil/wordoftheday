@@ -1,12 +1,12 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 // project imports
-import { MastodonPoster } from '#lib/mastodon-poster.mjs';
-import { WordResolver } from '#lib/word-resolver.mjs';
-import { mockLoggerFactory } from '#test/mock-logger-factory.mjs';
+import { MastodonPoster } from '#src/lib/mastodon-poster.mjs';
+import { WordResolver } from '#src/lib/word-resolver.mjs';
+import { mockLoggerFactory } from '#src/test/mock-logger-factory.mjs';
 import { WordOfTheDay } from './word-of-the-day.mjs';
 
-vi.mock('#lib/mastodon-poster.mjs');
-vi.mock('#lib/word-resolver.mjs');
+vi.mock('#src/lib/mastodon-poster.mjs');
+vi.mock('#src/lib/word-resolver.mjs');
 const mocks = {
 	MastodonPoster: vi.mocked(MastodonPoster),
 	WordResolver: vi.mocked(WordResolver),

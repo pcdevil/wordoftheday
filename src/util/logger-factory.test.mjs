@@ -3,13 +3,13 @@ import pino from 'pino';
 import pinoPretty from 'pino-pretty';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 // project imports
-import { config } from '#lib/config.mjs';
+import { config } from '#src/lib/config.mjs';
 import { loggerFactory } from './logger-factory.mjs';
 
 vi.mock('node:fs');
 vi.mock('pino');
 vi.mock('pino-pretty');
-vi.mock('#lib/config.mjs');
+vi.mock('#src/lib/config.mjs');
 const mocks = {
 	config: vi.mocked(config),
 	createWriteStream: vi.mocked(createWriteStream),
