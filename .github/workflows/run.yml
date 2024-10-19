@@ -14,7 +14,7 @@ on:
         description: "Index of the latest item in the returned RSS feed"
         required: true
         type: number
-      source_post_hashtag:
+      post_hashtag:
         description: "Hashtag to add to the post"
         default: ""
         type: string
@@ -31,7 +31,8 @@ env:
   SOURCE_NAME: ${{ inputs.source_name }}
   SOURCE_URL: ${{ inputs.source_url }}
   SOURCE_ITEM_INDEX: ${{ inputs.source_item_index }}
-  SOURCE_POST_HASHTAG: ${{ inputs.source_post_hashtag }}
+  POST_HASHTAG: ${{ inputs.post_hashtag }}
+  POST_LANGUAGE: 'en-GB'
 
 jobs:
   run:

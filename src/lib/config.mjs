@@ -7,7 +7,11 @@ export const config = {
 		name: process.env.SOURCE_NAME,
 		url: process.env.SOURCE_URL,
 		itemIndex: parseInt(process.env.SOURCE_ITEM_INDEX, 10),
-		postHashtag: process.env.SOURCE_POST_HASHTAG,
+	},
+
+	post: {
+		hashtag: process.env.POST_HASHTAG ?? 'en-GB',
+		language: process.env.POST_LANGUAGE,
 	},
 
 	log: {

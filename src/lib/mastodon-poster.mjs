@@ -3,8 +3,6 @@ import { getLogger } from '#src/util/logger.mjs';
 import { request } from '#src/util/request.mjs';
 
 export class MastodonPoster {
-	static language = 'en-GB';
-
 	#logger;
 
 	constructor() {
@@ -24,7 +22,7 @@ export class MastodonPoster {
 
 	#createOptions(status) {
 		const body = JSON.stringify({
-			language: MastodonPoster.language,
+			language: config.post.language,
 			status,
 			visibility: 'public',
 		});
@@ -40,10 +38,10 @@ export class MastodonPoster {
 	}
 
 	#createStatus(wordObject) {
-		const dateString = new Intl.DateTimeFormat(MastodonPoster.language, { dateStyle: 'long' })
+		const dateString = new Intl.DateTimeFormat(config.post.language, { dateStyle: 'long' })
 			.format(wordObject.date);
 
-		const hashtags = `#WordOfTheDay ${config.source.postHashtag ?? ''}`.trim();
+		const hashtags = `#WordOfTheDay ${config.post.hashtag ?? ''}`.trim();
 
 		return [
 			`${hashtags} ${dateString}`,

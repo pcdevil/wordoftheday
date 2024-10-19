@@ -25,8 +25,9 @@ describe('MastodonPoster', () => {
 			baseUrl: 'https://example.com',
 			accessToken: 'generated access token',
 		});
-		vi.spyOn(mocks.config, 'source', 'get').mockReturnValue({
-			postHashtag: '#OxfordLearnersDictionaries',
+		vi.spyOn(mocks.config, 'post', 'get').mockReturnValue({
+			hashtag: '#OxfordLearnersDictionaries',
+			language: 'en-GB',
 		});
 
 		jsonMock = vi.fn().mockResolvedValue({});
@@ -46,9 +47,9 @@ describe('MastodonPoster', () => {
 				`${mocks.config.mastodon.baseUrl}/api/v1/statuses`,
 				{
 					body: JSON.stringify({
-						language: MastodonPoster.language,
+						language: mocks.config.post.language,
 						status: [
-							`#WordOfTheDay ${mocks.config.source.postHashtag} 13 August 2023`,
+							`#WordOfTheDay ${mocks.config.post.hashtag} 13 August 2023`,
 							'',
 							wordObjectMock.word,
 							'',
@@ -67,7 +68,7 @@ describe('MastodonPoster', () => {
 		});
 
 		it('should handle when the source.postHashtag config is not defined', async () => {
-			mocks.config.source.postHashtag = undefined;
+			mocks.config.post.hashtag = undefined;
 
 			await mastodonPoster.post(wordObjectMock);
 
@@ -75,7 +76,7 @@ describe('MastodonPoster', () => {
 				expect.any(String),
 				{
 					body: JSON.stringify({
-						language: MastodonPoster.language,
+						language: mocks.config.post.language,
 						status: [
 							`#WordOfTheDay 13 August 2023`,
 							'',
