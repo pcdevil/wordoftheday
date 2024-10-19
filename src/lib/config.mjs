@@ -12,6 +12,7 @@ export const config = {
 	post: {
 		hashtag: process.env.POST_HASHTAG ?? 'en-GB',
 		language: process.env.POST_LANGUAGE,
+		visibility: process.env.POST_VISIBILITY ?? 'public',
 	},
 
 	log: {

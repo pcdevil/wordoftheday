@@ -24,7 +24,7 @@ export class MastodonPoster {
 		const body = JSON.stringify({
 			language: config.post.language,
 			status,
-			visibility: 'public',
+			visibility: config.post.visibility,
 		});
 
 		return {

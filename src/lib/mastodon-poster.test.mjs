@@ -28,6 +28,7 @@ describe('MastodonPoster', () => {
 		vi.spyOn(mocks.config, 'post', 'get').mockReturnValue({
 			hashtag: '#OxfordLearnersDictionaries',
 			language: 'en-GB',
+			visibility: 'unlisted',
 		});
 
 		jsonMock = vi.fn().mockResolvedValue({});
@@ -55,7 +56,7 @@ describe('MastodonPoster', () => {
 							'',
 							wordObjectMock.url,
 						].join('\n'),
-						visibility: 'public',
+						visibility: mocks.config.post.visibility,
 					}),
 					headers: {
 						Authorization: `Bearer ${mocks.config.mastodon.accessToken}`,
@@ -84,7 +85,7 @@ describe('MastodonPoster', () => {
 							'',
 							wordObjectMock.url,
 						].join('\n'),
-						visibility: 'public',
+						visibility: mocks.config.post.visibility,
 					}),
 					headers: expect.any(Object),
 					method: expect.any(String),

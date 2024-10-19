@@ -33,6 +33,7 @@ env:
   SOURCE_ITEM_INDEX: ${{ inputs.source_item_index }}
   POST_HASHTAG: ${{ inputs.post_hashtag }}
   POST_LANGUAGE: 'en-GB'
+  POST_VISIBILITY: 'public'
 
 jobs:
   run:
