@@ -4,6 +4,26 @@ import pinoPretty from 'pino-pretty';
 // project imports
 import { config } from '#src/lib/config.mjs';
 
+let mainLogger;
+const namedLoggers = new Map();
+
+export function getLogger(name) {
+	mainLogger ??= createLogger();
+	if (!name) return mainLogger;
+
+	if (namedLoggers.has(name)) return namedLoggers.get(name);
+
+	const namedLogger = mainLogger.child({ name });
+	namedLoggers.set(name, namedLogger);
+
+	return namedLogger;
+}
+
+export function clearLoggers() {
+	mainLogger = undefined;
+	namedLoggers.clear();
+}
+
 function createCustomLevels() {
 	// set custom log levels based on existing one
 	const relativeLogLevel = pino.levels.values.debug;
@@ -66,7 +86,7 @@ function createPinoOptions(customLevels, level) {
 	return options;
 }
 
-export function loggerFactory() {
+function createLogger() {
 	const customLevels = createCustomLevels();
 
 	const logStreams = [];

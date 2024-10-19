@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 // project imports
-import { mockLoggerFactory } from '#src/test/mock-logger-factory.mjs';
+import { mockLogger } from '#src/vitest/logger.mock.mjs';
 import {
 	DEFAULT_REQUEST_RETRY_COUNT,
 	REQUEST_RETRY_DELAY,
@@ -29,7 +29,7 @@ describe('request()', () => {
 	});
 
 	it('should call the fetch method and return the response', async () => {
-		const response = await request(url, options, mockLoggerFactory());
+		const response = await request(url, options, mockLogger());
 
 		expect(fetchMock).toHaveBeenCalledWith(url, options);
 		expect(response).toBe(responseMock);
@@ -40,7 +40,7 @@ describe('request()', () => {
 			fetchMock.mockRejectedValueOnce(new Error());
 		}
 
-		const response = await request(url, options, mockLoggerFactory(), DEFAULT_REQUEST_RETRY_COUNT);
+		const response = await request(url, options, mockLogger(), DEFAULT_REQUEST_RETRY_COUNT);
 
 		expect(fetchMock).toHaveBeenCalledTimes(DEFAULT_REQUEST_RETRY_COUNT + 1);
 		expect(setTimeoutMock).toHaveBeenCalledTimes(DEFAULT_REQUEST_RETRY_COUNT);
@@ -55,7 +55,7 @@ describe('request()', () => {
 			statusText: 'Not Found',
 		});
 
-		await expect(request(url, options, mockLoggerFactory(), 2)).rejects.toThrowError(RequestError);
+		await expect(request(url, options, mockLogger(), 2)).rejects.toThrowError(RequestError);
 		expect(setTimeoutMock).not.toHaveBeenCalled();
 	});
 });

@@ -1,19 +1,18 @@
 import { config } from '#src/lib/config.mjs';
 import { MastodonPoster } from '#src/lib/mastodon-poster.mjs';
 import { WordResolver } from '#src/lib/word-resolver.mjs';
-import { loggerFactory } from '#src/util/logger-factory.mjs';
+import { getLogger } from '#src/util/logger.mjs';
 
 export class WordOfTheDay {
 	#logger;
 	#mastodonPoster;
 	#wordResolver;
 
-	constructor(
-		logger = loggerFactory()
-	) {
-		this.#logger = logger.child({ name: this.constructor.name });
-		this.#mastodonPoster = new MastodonPoster(logger);
-		this.#wordResolver = new WordResolver(logger);
+	constructor() {
+		this.#logger = getLogger(this.constructor.name);
+
+		this.#mastodonPoster = new MastodonPoster();
+		this.#wordResolver = new WordResolver();
 	}
 
 	async run() {

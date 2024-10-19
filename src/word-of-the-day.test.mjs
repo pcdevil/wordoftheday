@@ -2,7 +2,6 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 // project imports
 import { MastodonPoster } from '#src/lib/mastodon-poster.mjs';
 import { WordResolver } from '#src/lib/word-resolver.mjs';
-import { mockLoggerFactory } from '#src/test/mock-logger-factory.mjs';
 import { WordOfTheDay } from './word-of-the-day.mjs';
 
 vi.mock('#src/lib/mastodon-poster.mjs');
@@ -21,11 +20,9 @@ describe('WordOfTheDay', () => {
 	let wordOfTheDay;
 
 	beforeEach(() => {
-		const loggerMock = mockLoggerFactory();
-
 		mocks.WordResolver.prototype.get.mockResolvedValue(wordObject);
 
-		wordOfTheDay = new WordOfTheDay(loggerMock);
+		wordOfTheDay = new WordOfTheDay();
 	});
 
 	describe('run()', () => {

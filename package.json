@@ -6,7 +6,8 @@
   "type": "module",
   "files": [
     "src",
-    "!src/**/*.test.mjs"
+    "!src/**/*.test.mjs",
+    "!src/vitest/**/*"
   ],
   "imports": {
     "#src/*": "./src/*"

@@ -2,7 +2,6 @@ import { parseFeed } from 'htmlparser2';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 // project imports
 import { config } from '#src/lib/config.mjs';
-import { mockLoggerFactory } from '#src/test/mock-logger-factory.mjs';
 import { request } from '#src/util/request.mjs';
 import { FeedParserError, NoItemError, WordResolver } from './word-resolver.mjs';
 
@@ -48,7 +47,7 @@ describe('WordResolver', () => {
 		itemsMock = Array.from({ length: 3 }, (_value, index) => fakeItem(index));
 		mocks.parseFeed.mockReturnValue({ items: itemsMock });
 
-		wordResolver = new WordResolver(mockLoggerFactory());
+		wordResolver = new WordResolver();
 	});
 
 	describe('get()', () => {

@@ -1,4 +1,5 @@
 import { UndefinedConfigError, config } from '#src/lib/config.mjs';
+import { getLogger } from '#src/util/logger.mjs';
 import { request } from '#src/util/request.mjs';
 
 export class MastodonPoster {
@@ -6,8 +7,8 @@ export class MastodonPoster {
 
 	#logger;
 
-	constructor(logger) {
-		this.#logger = logger.child({ name: this.constructor.name });
+	constructor() {
+		this.#logger = getLogger(this.constructor.name);
 	}
 
 	async post(wordObject) {

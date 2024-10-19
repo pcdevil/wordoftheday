@@ -1,7 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 // project imports
 import { UndefinedConfigError, config } from '#src/lib/config.mjs';
-import { mockLoggerFactory } from '#src/test/mock-logger-factory.mjs';
 import { request } from '#src/util/request.mjs';
 import { MastodonPoster } from './mastodon-poster.mjs';
 
@@ -36,7 +35,7 @@ describe('MastodonPoster', () => {
 			ok: true,
 		});
 
-		mastodonPoster = new MastodonPoster(mockLoggerFactory());
+		mastodonPoster = new MastodonPoster();
 	});
 
 	describe('post()', () => {

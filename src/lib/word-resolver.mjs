@@ -1,6 +1,7 @@
 import { parseFeed } from 'htmlparser2';
 // project imports
 import { UndefinedConfigError, config } from '#src/lib/config.mjs';
+import { getLogger } from '#src/util/logger.mjs';
 import { NamedError } from '#src/util/named-error.mjs';
 import { request } from '#src/util/request.mjs';
 
@@ -10,8 +11,8 @@ export class NoItemError extends NamedError {}
 export class WordResolver {
 	#logger;
 
-	constructor(logger) {
-		this.#logger = logger.child({ name: this.constructor.name });
+	constructor() {
+		this.#logger = getLogger(this.constructor.name);
 	}
 
 	async get() {

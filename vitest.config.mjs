@@ -8,6 +8,10 @@ export default defineConfig({
 			'./.tmp/**',
 			'./.vscode/**',
 			'./assets/**',
+			'./src/vitest/**',
+		],
+		setupFiles: [
+			'./src/vitest/logger.mock.mjs',
 		],
 
 		clearMocks: true,

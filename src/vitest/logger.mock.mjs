@@ -1,9 +1,9 @@
 import { vi } from 'vitest';
 
-export function mockLoggerFactory() {
+export function mockLogger() {
 	return {
 		// child logger creation
-		child: vi.fn(() => mockLoggerFactory()),
+		child: vi.fn(() => mockLogger()),
 		// built-in pino log methods
 		debug: vi.fn(),
 		error: vi.fn(),
@@ -16,3 +16,8 @@ export function mockLoggerFactory() {
 		measure: vi.fn(),
 	};
 }
+
+vi.mock('#src/util/logger.mjs', () => ({
+	getLogger: vi.fn().mockImplementation(() => mockLogger()),
+	clearLoggers: vi.fn(),
+}));
