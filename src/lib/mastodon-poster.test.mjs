@@ -95,7 +95,7 @@ describe('MastodonPoster', () => {
 		it('should throw an error when the mastodon.baseUrl config is not defined', async () => {
 			mocks.config.mastodon.baseUrl = undefined;
 
-			await expect(mastodonPoster.post('', mocks.config.mastodon.accessToken, wordObjectMock, mocks.config.source.postHashtag)).rejects.toThrowError(
+			await expect(mastodonPoster.post(wordObjectMock)).rejects.toThrowError(
 				UndefinedConfigError
 			);
 		});
@@ -103,7 +103,7 @@ describe('MastodonPoster', () => {
 		it('should throw an error when the mastodon.accessToken config is not defined', async () => {
 			mocks.config.mastodon.accessToken = undefined;
 
-			await expect(mastodonPoster.post(config.mastodon.baseUrl, '', wordObjectMock, mocks.config.source.postHashtag)).rejects.toThrowError(
+			await expect(mastodonPoster.post(wordObjectMock)).rejects.toThrowError(
 				UndefinedConfigError
 			);
 		});
