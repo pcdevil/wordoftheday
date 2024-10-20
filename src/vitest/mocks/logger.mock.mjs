@@ -16,8 +16,3 @@ export function mockLogger() {
 		measure: vi.fn(),
 	};
 }
-
-vi.mock('#src/util/logger.mjs', () => ({
-	getLogger: vi.fn().mockImplementation(() => mockLogger()),
-	clearLoggers: vi.fn(),
-}));

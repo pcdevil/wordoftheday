@@ -42,6 +42,7 @@
     "pino-pretty": "^10.3.1"
   },
   "devDependencies": {
+    "@faker-js/faker": "^9.0.3",
     "dprint": "~0.47.2",
     "eslint": "^8.57.0",
     "eslint-config-standard": "^17.1.0",

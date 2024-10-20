@@ -4,6 +4,8 @@ import pinoPretty from 'pino-pretty';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 // project imports
 import { config } from '#src/lib/config.mjs';
+import { mockLogger } from '#src/vitest/mocks/logger.mock.mjs';
+import { mockPerformance } from '#src/vitest/mocks/performance.mock.mjs';
 import { clearLoggers, getLogger } from './logger.mjs';
 
 vi.mock('node:fs');
@@ -29,14 +31,9 @@ describe('getLogger', () => {
 			level: 'warn',
 		});
 
-		pinoLoggerMock = {
-			child: vi.fn(),
-		};
+		pinoLoggerMock = mockLogger();
 
-		performanceMock = {
-			mark: vi.fn(),
-			measure: vi.fn(),
-		};
+		performanceMock = mockPerformance();
 		vi.spyOn(globalThis, 'performance', 'get').mockReturnValue(performanceMock);
 
 		mocks.pino.mockReturnValue(pinoLoggerMock);
@@ -73,7 +70,7 @@ describe('getLogger', () => {
 
 	it('should create a named child when a name parameter is passed', () => {
 		const name = 'test';
-		const pinoChildLoggerMock = {};
+		const pinoChildLoggerMock = mockLogger();
 		pinoLoggerMock.child.mockReturnValue(pinoChildLoggerMock);
 
 		const namedLogger = getLogger(name);
@@ -84,7 +81,7 @@ describe('getLogger', () => {
 
 	it('should not create a new instance when called repeatedly with a name parameter', () => {
 		const name = 'test';
-		const pinoChildLoggerMock = {};
+		const pinoChildLoggerMock = mockLogger();
 		pinoLoggerMock.child.mockReturnValue(pinoChildLoggerMock);
 
 		// ensure it's called once

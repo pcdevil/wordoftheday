@@ -1,6 +1,8 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 // project imports
-import { mockLogger } from '#src/vitest/logger.mock.mjs';
+import { fakeRequestOptions, fakeRequestUrl } from '#src/vitest/fakers/request.faker.mjs';
+import { mockLogger } from '#src/vitest/mocks/logger.mock.mjs';
+import { mockNotFoundResponse, mockTextResponse } from '#src/vitest/mocks/response.mock.mjs';
 import {
 	DEFAULT_REQUEST_RETRY_COUNT,
 	REQUEST_RETRY_DELAY,
@@ -9,29 +11,26 @@ import {
 } from './request.mjs';
 
 describe('request()', () => {
-	const url = 'https://example.com';
-	const options = {
-		method: 'GET',
-	};
+	let testUrl;
+	let testOptions;
 	let fetchMock;
 	let responseMock;
 	let setTimeoutMock;
 
 	beforeEach(() => {
-		responseMock = {
-			ok: true,
-			status: 200,
-			statusText: 'OK',
-		};
+		testUrl = fakeRequestUrl();
+		testOptions = fakeRequestOptions();
+
+		responseMock = mockTextResponse();
 		fetchMock = vi.spyOn(globalThis, 'fetch').mockResolvedValue(responseMock);
 
 		setTimeoutMock = vi.spyOn(globalThis, 'setTimeout').mockImplementation((callback) => callback());
 	});
 
 	it('should call the fetch method and return the response', async () => {
-		const response = await request(url, options, mockLogger());
+		const response = await request(testUrl, testOptions, mockLogger());
 
-		expect(fetchMock).toHaveBeenCalledWith(url, options);
+		expect(fetchMock).toHaveBeenCalledWith(testUrl, testOptions);
 		expect(response).toBe(responseMock);
 	});
 
@@ -40,7 +39,7 @@ describe('request()', () => {
 			fetchMock.mockRejectedValueOnce(new Error());
 		}
 
-		const response = await request(url, options, mockLogger(), DEFAULT_REQUEST_RETRY_COUNT);
+		const response = await request(testUrl, testOptions, mockLogger(), DEFAULT_REQUEST_RETRY_COUNT);
 
 		expect(fetchMock).toHaveBeenCalledTimes(DEFAULT_REQUEST_RETRY_COUNT + 1);
 		expect(setTimeoutMock).toHaveBeenCalledTimes(DEFAULT_REQUEST_RETRY_COUNT);
@@ -49,13 +48,9 @@ describe('request()', () => {
 	});
 
 	it('should throw a RequestError without retry when the response is not ok with client error', async () => {
-		fetchMock.mockResolvedValue({
-			ok: false,
-			status: 404,
-			statusText: 'Not Found',
-		});
+		fetchMock.mockResolvedValue(mockNotFoundResponse());
 
-		await expect(request(url, options, mockLogger(), 2)).rejects.toThrowError(RequestError);
+		await expect(request(testUrl, testOptions, mockLogger(), 2)).rejects.toThrowError(RequestError);
 		expect(setTimeoutMock).not.toHaveBeenCalled();
 	});
 });

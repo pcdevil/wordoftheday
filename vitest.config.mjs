@@ -11,7 +11,7 @@ export default defineConfig({
 			'./src/vitest/**',
 		],
 		setupFiles: [
-			'./src/vitest/logger.mock.mjs',
+			'./src/vitest/logger.setup.mjs',
 		],
 
 		clearMocks: true,

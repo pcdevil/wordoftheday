@@ -3,6 +3,9 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 // project imports
 import { config } from '#src/lib/config.mjs';
 import { request } from '#src/util/request.mjs';
+import { fakeSourceConfig } from '#src/vitest/fakers/config.faker.mjs';
+import { fakeFeedItems } from '#src/vitest/fakers/feed-item.faker.mjs';
+import { mockTextResponse } from '#src/vitest/mocks/response.mock.mjs';
 import { FeedParserError, NoItemError, WordResolver } from './word-resolver.mjs';
 
 vi.mock('htmlparser2');
@@ -14,60 +17,40 @@ const mocks = {
 	request: vi.mocked(request),
 };
 
-function fakeItem(suffix = '') {
-	const link = `https://www.merriam-webster.com/word-of-the-day/bully+pulpit-2023-07-29_${suffix}`;
-	const title = `bully pulpit${suffix}`;
-	const pubDate = new Date('Sat, 29 Jul 2023 01:00:01 -0400');
-
-	return {
-		link,
-		pubDate,
-		title,
-	};
-}
-
 describe('WordResolver', () => {
-	const feedTextMock = '<rss><channel></channel></rss>';
-	let itemsMock;
-	let textMock;
+	const testFeedText = '<rss><channel></channel></rss>';
+	let testFeedItems;
 	let wordResolver;
 
 	beforeEach(() => {
-		vi.spyOn(mocks.config, 'source', 'get').mockReturnValue({
-			url: 'https://example.com/rss2',
-			itemIndex: 1,
-		});
+		vi.spyOn(mocks.config, 'source', 'get').mockReturnValue(fakeSourceConfig());
 
-		textMock = vi.fn().mockResolvedValue(feedTextMock);
-		mocks.request.mockResolvedValue({
-			ok: true,
-			text: textMock,
-		});
+		mocks.request.mockResolvedValue(mockTextResponse(testFeedText));
 
-		itemsMock = Array.from({ length: 3 }, (_value, index) => fakeItem(index));
-		mocks.parseFeed.mockReturnValue({ items: itemsMock });
+		testFeedItems = fakeFeedItems(mocks.config.source.itemIndex + 2);
+		mocks.parseFeed.mockReturnValue({ items: testFeedItems });
 
 		wordResolver = new WordResolver();
 	});
 
 	describe('get()', () => {
 		it('should return the word object', async () => {
-			const targetItemMock = itemsMock[mocks.config.source.itemIndex];
+			const testFeedItem = testFeedItems[mocks.config.source.itemIndex];
 
 			const wordObject = await wordResolver.get();
 
 			expect(mocks.request).toHaveBeenCalledWith(mocks.config.source.url, {}, expect.any(Object));
-			expect(mocks.parseFeed).toBeCalledWith(feedTextMock);
+			expect(mocks.parseFeed).toBeCalledWith(testFeedText);
 			expect(wordObject).toEqual({
-				date: targetItemMock.pubDate,
-				url: encodeURI(targetItemMock.link),
-				word: targetItemMock.title,
+				date: testFeedItem.pubDate,
+				url: encodeURI(testFeedItem.link),
+				word: testFeedItem.title,
 			});
 		});
 
 		it('should return the word object when the source.itemIndex config is negative', async () => {
 			mocks.config.source.itemIndex = -1;
-			const targetItemMock = itemsMock[2];
+			const targetItemMock = testFeedItems.at(-1);
 
 			const wordObject = await wordResolver.get();
 
@@ -87,7 +70,7 @@ describe('WordResolver', () => {
 		});
 
 		it('should throw a NoItemError when the requested item index is not available', async () => {
-			mocks.config.source.itemIndex = itemsMock.length;
+			mocks.config.source.itemIndex = testFeedItems.length;
 
 			await expect(wordResolver.get()).rejects.toThrowError(NoItemError);
 		});
