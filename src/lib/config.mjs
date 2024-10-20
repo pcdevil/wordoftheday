@@ -10,8 +10,8 @@ export const config = {
 	},
 
 	post: {
-		hashtag: process.env.POST_HASHTAG ?? 'en-GB',
-		language: process.env.POST_LANGUAGE,
+		hashtag: process.env.POST_HASHTAG,
+		language: process.env.POST_LANGUAGE ?? 'en-GB',
 		visibility: process.env.POST_VISIBILITY ?? 'public',
 	},
 
