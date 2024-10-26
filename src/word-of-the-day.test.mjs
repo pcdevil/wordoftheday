@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 // project imports
 import { MastodonPoster } from '#src/lib/mastodon-poster.mjs';
 import { WordResolver } from '#src/lib/word-resolver.mjs';
+import { fakeWordObject } from '#src/vitest/fakers/word-object.faker.mjs';
 import { WordOfTheDay } from './word-of-the-day.mjs';
 
 vi.mock('#src/lib/mastodon-poster.mjs');
@@ -12,15 +13,12 @@ const mocks = {
 };
 
 describe('WordOfTheDay', () => {
-	const wordObject = {
-		date: new Date('2023-08-16T05:00:00.000Z'),
-		url: 'https://www.thefreedictionary.com/punctilious',
-		word: 'punctilious',
-	};
+	let testWordObject;
 	let wordOfTheDay;
 
 	beforeEach(() => {
-		mocks.WordResolver.prototype.get.mockResolvedValue(wordObject);
+		testWordObject = fakeWordObject();
+		mocks.WordResolver.prototype.get.mockResolvedValue(testWordObject);
 
 		wordOfTheDay = new WordOfTheDay();
 	});
@@ -32,7 +30,7 @@ describe('WordOfTheDay', () => {
 			const [wordResolverMock] = mocks.WordResolver.mock.instances;
 			expect(wordResolverMock.get).toHaveBeenCalled();
 			const [mastodonPosterMock] = mocks.MastodonPoster.mock.instances;
-			expect(mastodonPosterMock.post).toHaveBeenCalledWith(wordObject);
+			expect(mastodonPosterMock.post).toHaveBeenCalledWith(testWordObject);
 		});
 	});
 });
