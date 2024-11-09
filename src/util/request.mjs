@@ -1,3 +1,4 @@
+import { config } from '#src/lib/config.mjs';
 import { NamedError } from '#src/util/named-error.mjs';
 
 export class RequestError extends NamedError {
@@ -11,10 +12,6 @@ export class RequestError extends NamedError {
 		this.statusText = statusText;
 	}
 }
-
-export const DEFAULT_REQUEST_RETRY_COUNT = 2;
-
-export const REQUEST_RETRY_DELAY = 30_000; // in milliseconds
 
 function assertResponseOk(response) {
 	if (!response.ok) {
@@ -46,7 +43,7 @@ export async function request(
 	url,
 	options,
 	logger,
-	retryCount = DEFAULT_REQUEST_RETRY_COUNT
+	retryCount = config.request.retryCount
 ) {
 	try {
 		const response = await requestWithMeasure(url, options, logger);
@@ -67,9 +64,9 @@ export async function request(
 		}
 
 		logger.warn('request failed, will retry after delay', {
-			delay: REQUEST_RETRY_DELAY,
 			error,
 			retryCount,
+			retryDelay: config.request.retryDelay,
 		});
 
 		await retrySleep();
@@ -78,5 +75,5 @@ export async function request(
 }
 
 async function retrySleep() {
-	return new Promise((resolve) => setTimeout(() => resolve(), REQUEST_RETRY_DELAY));
+	return new Promise((resolve) => setTimeout(resolve, config.request.retryDelay));
 }

@@ -49,11 +49,20 @@ export function fakeMastodonConfig(overrides = {}) {
 	};
 }
 
+export function fakeRequestConfig(overrides = {}) {
+	return {
+		retryCount: faker.number.int({ min: 1, max: 5 }),
+		retryDelay: faker.number.int({ min: 1_000, max: 120_000 }),
+		...overrides,
+	};
+}
+
 export function fakeConfig(overrides = {}) {
 	return {
 		log: fakeLogConfig(overrides.log),
 		mastodon: fakeMastodonConfig(overrides.mastodon),
 		post: fakePostConfig(overrides.post),
+		request: fakeRequestConfig(overrides.request),
 		source: fakeSourceConfig(overrides.source),
 	};
 }

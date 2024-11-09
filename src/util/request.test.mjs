@@ -1,14 +1,19 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 // project imports
+import { config } from '#src/lib/config.mjs';
+import { fakeRequestConfig } from '#src/vitest/fakers/config.faker.mjs';
 import { fakeRequestOptions, fakeRequestUrl } from '#src/vitest/fakers/request.faker.mjs';
 import { mockLogger } from '#src/vitest/mocks/logger.mock.mjs';
 import { mockNotFoundResponse, mockTextResponse } from '#src/vitest/mocks/response.mock.mjs';
 import {
-	DEFAULT_REQUEST_RETRY_COUNT,
-	REQUEST_RETRY_DELAY,
 	RequestError,
 	request,
 } from './request.mjs';
+
+vi.mock('#src/lib/config.mjs');
+const mocks = {
+	config: vi.mocked(config),
+};
 
 describe('request()', () => {
 	let testUrl;
@@ -18,6 +23,8 @@ describe('request()', () => {
 	let setTimeoutMock;
 
 	beforeEach(() => {
+		vi.spyOn(mocks.config, 'mastodon', 'get').mockReturnValue(fakeRequestConfig());
+
 		testUrl = fakeRequestUrl();
 		testOptions = fakeRequestOptions();
 
@@ -35,15 +42,15 @@ describe('request()', () => {
 	});
 
 	it('should retry the request and return the response when the fetch method throws an error', async () => {
-		for (let callIndex = 0; callIndex < DEFAULT_REQUEST_RETRY_COUNT; ++callIndex) {
+		for (let callIndex = 0; callIndex < mocks.config.request.retryCount; ++callIndex) {
 			fetchMock.mockRejectedValueOnce(new Error());
 		}
 
-		const response = await request(testUrl, testOptions, mockLogger(), DEFAULT_REQUEST_RETRY_COUNT);
+		const response = await request(testUrl, testOptions, mockLogger(), mocks.config.request.retryCount);
 
-		expect(fetchMock).toHaveBeenCalledTimes(DEFAULT_REQUEST_RETRY_COUNT + 1);
-		expect(setTimeoutMock).toHaveBeenCalledTimes(DEFAULT_REQUEST_RETRY_COUNT);
-		expect(setTimeoutMock).toHaveBeenCalledWith(expect.any(Function), REQUEST_RETRY_DELAY);
+		expect(fetchMock).toHaveBeenCalledTimes(mocks.config.request.retryCount + 1);
+		expect(setTimeoutMock).toHaveBeenCalledTimes(mocks.config.request.retryCount);
+		expect(setTimeoutMock).toHaveBeenCalledWith(expect.any(Function), mocks.config.request.retryDelay);
 		expect(response).toBe(responseMock);
 	});
 

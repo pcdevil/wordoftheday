@@ -26,5 +26,10 @@ export const config = {
 		accessToken: process.env.MASTODON_ACCESS_TOKEN,
 		baseUrl: process.env.MASTODON_BASE_URL,
 	},
+
+	request: {
+		retryCount: 2,
+		retryDelay: 20_000, // in milliseconds
+	},
 };
 Object.freeze(config);
