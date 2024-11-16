@@ -28,8 +28,15 @@ export const config = {
 	},
 
 	request: {
-		retryCount: 2,
-		retryDelay: 20_000, // in milliseconds
+		retryCount: parseIntWithUndefined(process.env.RETRY_COUNT) ?? 2,
+		retryDelay: parseInt(process.env.RETRY_DELAY) || 20_000, // in milliseconds
 	},
 };
 Object.freeze(config);
+
+function parseIntWithUndefined(stringValue) {
+	const numberValue = parseInt(stringValue, 10);
+	if (Number.isNaN(numberValue)) return;
+
+	return numberValue;
+}
