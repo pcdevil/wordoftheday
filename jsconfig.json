@@ -5,11 +5,7 @@
 		],
 
 		"paths": {
-			"#lib": ["./src/lib/index.mjs"],
-			"#lib/*": ["./src/lib/*"],
 			"#src/*": ["./src/*"],
-			"#util": ["./src/util/index.mjs"],
-			"#util/*": ["./src/util/*"],
 		},
 	},
 }
