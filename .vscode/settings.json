@@ -17,4 +17,5 @@
 	},
 
 	"dprint.path": "node_modules/.bin/dprint",
+	"eslint.useFlatConfig": true,
 }
