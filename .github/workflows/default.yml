@@ -7,6 +7,9 @@ on:
     branches:
       - main
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref_name }}
+
 env:
   GIT_TAG_NAME: stable
 
