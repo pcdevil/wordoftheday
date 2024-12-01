@@ -1,8 +1,11 @@
+import { includeIgnoreFile } from '@eslint/compat';
 import eslint from '@eslint/js';
-import eslintGitignoreConfig from 'eslint-config-flat-gitignore';
 import eslintNodePlugin from 'eslint-plugin-n';
 import eslintPromisePlugin from 'eslint-plugin-promise';
 import globals from 'globals';
+import { resolve } from 'node:path';
+
+const gitignoreFile = resolve(import.meta.dirname, '.gitignore');
 
 /**
  * @param {{ files?: (string | string[])[], rules?: Object }[]} configArray
@@ -19,11 +22,11 @@ function stripFileOptions(configArray) {
 }
 
 export default [
-	eslintGitignoreConfig(),
-
 	...stripFileOptions([eslint.configs.recommended]),
 	...stripFileOptions([eslintNodePlugin.configs['flat/recommended-script']]),
 	...stripFileOptions([eslintPromisePlugin.configs['flat/recommended']]),
+
+	includeIgnoreFile(gitignoreFile),
 
 	{
 		name: 'project',
@@ -33,10 +36,6 @@ export default [
 			'src/**/*.mjs',
 			'eslint.config.mjs',
 			'vitest.config.mjs',
-		],
-
-		ignores: [
-			'.tmp/**/*',
 		],
 
 		languageOptions: {
