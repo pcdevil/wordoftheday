@@ -37,7 +37,7 @@ describe('MastodonPoster', () => {
 			await mastodonPoster.post(testWordObject);
 
 			expect(mocks.request).toHaveBeenCalledWith(
-				`${mocks.config.mastodon.baseUrl}/api/v1/statuses`,
+				new URL(`${mocks.config.mastodon.baseUrl}/api/v1/statuses`),
 				{
 					body: JSON.stringify({
 						language: mocks.config.post.language,
@@ -66,7 +66,7 @@ describe('MastodonPoster', () => {
 			await mastodonPoster.post(testWordObject);
 
 			expect(mocks.request).toHaveBeenCalledWith(
-				expect.any(String),
+				expect.any(URL),
 				{
 					body: JSON.stringify({
 						language: mocks.config.post.language,

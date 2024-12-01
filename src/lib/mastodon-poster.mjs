@@ -13,7 +13,7 @@ export class MastodonPoster {
 		if (!config.mastodon.baseUrl) throw new UndefinedConfigError(`The mastodon.baseUrl config variable is not defined.`);
 		if (!config.mastodon.accessToken) throw new UndefinedConfigError(`The mastodon.accessToken config variable is not defined.`);
 
-		const url = this.#createUrl(config.mastodon.baseUrl);
+		const url = new URL('/api/v1/statuses', config.mastodon.baseUrl);
 		const status = this.#createStatus(wordObject);
 		const options = this.#createOptions(status);
 
@@ -50,9 +50,5 @@ export class MastodonPoster {
 			'', // empty line
 			wordObject.url,
 		].join('\n');
-	}
-
-	#createUrl(baseUrl) {
-		return new URL('/api/v1/statuses', baseUrl).toString();
 	}
 }
