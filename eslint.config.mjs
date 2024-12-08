@@ -34,8 +34,7 @@ export default [
 		files: [
 			'src/**/*.js',
 			'src/**/*.mjs',
-			'eslint.config.mjs',
-			'vitest.config.mjs',
+			'*.config.mjs',
 		],
 
 		languageOptions: {
