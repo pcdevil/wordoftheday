@@ -1,5 +1,5 @@
 const baseCommitConfig = {
-	preset: 'conventifonalcommits',
+	preset: 'conventionalcommits',
 	parserOpts: {
 		noteKeywords: ['BREAKING CHANGE', 'BREAKING CHANGES', 'BREAKING'],
 	},
