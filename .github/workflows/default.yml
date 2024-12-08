@@ -10,9 +10,6 @@ on:
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref_name }}
 
-env:
-  GIT_TAG_NAME: stable
-
 jobs:
   check:
     name: 'Check'
@@ -49,8 +46,9 @@ jobs:
         run: pnpm style
       - name: Perform tests
         run: pnpm test
-  publish-tag:
-    name: Publish tag
+
+  release:
+    name: Release
     if: ${{ github.event_name == 'push' && github.ref_name == 'main' }}
     needs:
       - check
@@ -58,7 +56,28 @@ jobs:
     steps:
       - name: Checkout project
         uses: actions/checkout@v4
-      - name: Create tag
-        run: git tag --force ${{ env.GIT_TAG_NAME }}
-      - name: Push tag
-        run: git push --force origin ${{ env.GIT_TAG_NAME }}
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+      - name: Setup pnpm
+        shell: bash
+        run: |
+          corepack enable
+          corepack install
+      - name: Get pnpm store directory
+        id: pnpm_store
+        shell: bash
+        run: |
+          echo "path=$(pnpm store path --silent)" >> "$GITHUB_OUTPUT"
+      - name: Setup pnpm cache
+        uses: actions/cache@v4
+        with:
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('pnpm-lock.yaml') }}
+          path: ${{ steps.pnpm_store.outputs.path }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store
+      - name: Install pnpm dependencies
+        run: pnpm install
+      - name: Run semantic-release script
+        run: pnpm semantic-release

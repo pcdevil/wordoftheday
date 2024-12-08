@@ -20,7 +20,6 @@ on:
         type: string
 
 env:
-  GIT_TAG_NAME: stable
   LOG_FILE_PATH: debug.log
   LOG_LEVEL: debug
   LOG_PRETTY: true
@@ -43,7 +42,15 @@ jobs:
       - name: Checkout project
         uses: actions/checkout@v4
         with:
-          ref: ${{ env.GIT_TAG_NAME }}
+          fetch-depth: 0
+          fetch-tags: true
+      - name: Get the most recent tag
+        run: |
+          export GIT_TAG=$(git describe --tags --abbrev=0)
+          echo GIT_TAG="$GIT_TAG" >> "$GITHUB_ENV"
+          echo The most recent tag: "$GIT_TAG"
+      - name: Checkout the most recent tag
+        run: git checkout --quiet "$GIT_TAG"
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
