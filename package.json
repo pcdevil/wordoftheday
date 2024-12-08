@@ -15,6 +15,7 @@
   "scripts": {
     "lint": "eslint",
     "lint:fix": "pnpm run lint --fix",
+    "semantic-release": "semantic-release",
     "start": "node src/cli.mjs",
     "style": "dprint check",
     "style:fix": "dprint fmt",
@@ -45,11 +46,15 @@
     "@eslint/compat": "^1.2.3",
     "@eslint/js": "^9.16.0",
     "@faker-js/faker": "^9.2.0",
+    "@semantic-release/changelog": "^6.0.3",
+    "@semantic-release/git": "^10.0.1",
+    "conventional-changelog-conventionalcommits": "^8.0.0",
     "dprint": "~0.47.5",
     "eslint": "^9.16.0",
     "eslint-plugin-n": "^17.14.0",
     "eslint-plugin-promise": "^7.2.1",
     "globals": "^15.12.0",
+    "semantic-release": "^24.2.0",
     "vitest": "^2.1.5"
   }
 }
