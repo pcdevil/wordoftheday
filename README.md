@@ -2,7 +2,7 @@
 
 A [Mastodon](https://joinmastodon.org/) "Word of the Day" bot.
 
-Profile: <https://botsin.space/@wordoftheday>
+Profile: <https://mastodon.social/@wordoftheday>
 
 ## License
 
