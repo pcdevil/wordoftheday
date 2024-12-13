@@ -2,7 +2,8 @@
 	"excludes": [
 		"**/node_modules",
 		"**/*-lock.json",
-		"**/package.json"
+		"**/package.json",
+		"CHANGELOG.md"
 	],
 
 	"plugins": [
