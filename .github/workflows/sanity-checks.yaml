@@ -1,0 +1,25 @@
+on:
+  workflow_call:
+
+jobs:
+  sanity-checks:
+    name: 'Sanity checks'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout project
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+      - name: Setup project
+        uses: ./.github/actions/setup-project
+      ##########
+      - name: Perform code analyzer check
+        shell: bash
+        run: pnpm lint
+      - name: Perform format check
+        shell: bash
+        run: pnpm style
+      - name: Perform tests
+        shell: bash
+        run: pnpm test

@@ -1,0 +1,30 @@
+name: 'Main push'
+on:
+  push:
+    branches:
+      - main
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref_name }}
+
+jobs:
+  sanity-checks:
+    name: 'Sanity Checks'
+    uses: ./.github/workflows/sanity-checks.yaml
+
+  release:
+    name: Release
+    needs:
+      - sanity-checks
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout project
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+      - name: Setup project
+        uses: ./.github/actions/setup-project
+      ##########
+      - name: Run semantic-release script
+        run: pnpm semantic-release

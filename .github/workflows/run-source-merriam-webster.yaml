@@ -8,7 +8,7 @@ on:
 jobs:
   run:
     name: Trigger run workflow
-    uses: ./.github/workflows/run.yml
+    uses: ./.github/workflows/run.yaml
     with:
       source_name: "Merriam-Webster"
       source_url: "https://www.merriam-webster.com/wotd/feed/rss2"

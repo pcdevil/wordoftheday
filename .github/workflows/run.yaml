@@ -44,36 +44,11 @@ jobs:
         with:
           fetch-depth: 0
           fetch-tags: true
-      - name: Get the most recent tag
-        run: |
-          export GIT_TAG=$(git describe --tags --abbrev=0)
-          echo GIT_TAG="$GIT_TAG" >> "$GITHUB_ENV"
-          echo The most recent tag: "$GIT_TAG"
-      - name: Checkout the most recent tag
-        run: git checkout --quiet "$GIT_TAG"
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - name: Setup project
+        uses: ./.github/actions/setup-project
         with:
-          node-version-file: '.nvmrc'
-      - name: Setup pnpm
-        shell: bash
-        run: |
-          corepack enable
-          corepack install
-      - name: Get pnpm store directory
-        id: pnpm_store
-        shell: bash
-        run: |
-          echo "path=$(pnpm store path --silent)" >> "$GITHUB_OUTPUT"
-      - name: Setup pnpm cache
-        uses: actions/cache@v4
-        with:
-          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('pnpm-lock.yaml') }}
-          path: ${{ steps.pnpm_store.outputs.path }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-store
-      - name: Install pnpm dependencies
-        run: pnpm install
+          use_latest_tag: true
+      ##########
       - name: Run application for "${{ env.SOURCE_NAME }}" source
         run: pnpm start
       - name: Upload logs as artifact
