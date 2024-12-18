@@ -1,3 +1,9 @@
+## [1.1.0](https://github.com/pcdevil/wordoftheday/compare/v1.0.0...v1.1.0) (2024-12-18)
+
+### Features
+
+* rework github workflows ([78555cb](https://github.com/pcdevil/wordoftheday/commit/78555cb980e2b0df9abc7738db1a13acd22701ac))
+
 ## 1.0.0 (2024-12-08)
 
 ### Features
