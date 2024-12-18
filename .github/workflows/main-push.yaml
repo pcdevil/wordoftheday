@@ -13,18 +13,18 @@ jobs:
     uses: ./.github/workflows/sanity-checks.yaml
 
   release:
-    name: Release
+    name: 'Release'
     needs:
       - sanity-checks
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout project
+      - name: 'Checkout project'
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
           fetch-tags: true
-      - name: Setup project
+      - name: 'Setup project'
         uses: ./.github/actions/setup-project
       ##########
-      - name: Run semantic-release script
+      - name: 'Run semantic-release script'
         run: pnpm semantic-release

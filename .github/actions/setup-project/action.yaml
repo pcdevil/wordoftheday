@@ -10,7 +10,7 @@ inputs:
 runs:
   using: composite
   steps:
-    - name: Checkout the latest tag
+    - name: 'Checkout the latest tag'
       if: ${{ inputs.use_latest_tag == 'true' }}
       shell: bash
       run: |
@@ -18,26 +18,26 @@ runs:
         echo "The latest tag: $GIT_TAG"
         git checkout --quiet "$GIT_TAG"
     ##########
-    - name: Setup Node.js
+    - name: 'Setup Node.js'
       uses: actions/setup-node@v4
       with:
-        node-version-file: '.nvmrc'
-    - name: Setup pnpm
+        node-version-file: .nvmrc
+    - name: 'Setup pnpm'
       shell: bash
       run: |
         corepack enable
         corepack install
-    - name: Get pnpm store directory
+    - name: 'Get pnpm store directory'
       id: pnpm_store
       shell: bash
       run: echo "path=$(pnpm store path --silent)" >> "$GITHUB_OUTPUT"
-    - name: Setup pnpm cache
+    - name: 'Setup pnpm cache'
       uses: actions/cache@v4
       with:
         key: ${{ runner.os }}-pnpm-store-${{ hashFiles('pnpm-lock.yaml') }}
         path: ${{ steps.pnpm_store.outputs.path }}
         restore-keys: |
           ${{ runner.os }}-pnpm-store
-    - name: Install pnpm dependencies
+    - name: 'Install pnpm dependencies'
       shell: bash
       run: pnpm install
