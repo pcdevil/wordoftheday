@@ -13,32 +13,6 @@ export class RequestError extends NamedError {
 	}
 }
 
-function assertResponseOk(response) {
-	if (!response.ok) {
-		const { status, statusText } = response;
-
-		throw new RequestError(`Request failed with ${status} "${statusText}" error.`, {
-			status,
-			statusText,
-		});
-	}
-}
-
-function isClientResponseError(error) {
-	return error instanceof RequestError && error.status <= 500;
-}
-
-async function fetchWithMeasure(url, options, logger) {
-	const measureName = `request`;
-	try {
-		logger.mark(`${measureName} start`);
-		return await fetch(url, options);
-	} finally {
-		logger.mark(`${measureName} end`);
-		logger.measure(measureName, `${measureName} start`, `${measureName} end`);
-	}
-}
-
 export async function request(
 	url,
 	options,
@@ -72,6 +46,32 @@ export async function request(
 		await retrySleep();
 		return await request(url, options, logger, retryCount - 1);
 	}
+}
+
+function assertResponseOk(response) {
+	if (!response.ok) {
+		const { status, statusText } = response;
+
+		throw new RequestError(`Request failed with ${status} "${statusText}" error.`, {
+			status,
+			statusText,
+		});
+	}
+}
+
+async function fetchWithMeasure(url, options, logger) {
+	const measureName = `request`;
+	try {
+		logger.mark(`${measureName} start`);
+		return await fetch(url, options);
+	} finally {
+		logger.mark(`${measureName} end`);
+		logger.measure(measureName, `${measureName} start`, `${measureName} end`);
+	}
+}
+
+function isClientResponseError(error) {
+	return error instanceof RequestError && error.status <= 500;
 }
 
 async function retrySleep() {
