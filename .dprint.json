@@ -3,13 +3,13 @@
 		"**/node_modules",
 		"**/*-lock.json",
 		"**/package.json",
-		"CHANGELOG.md"
+		"CHANGELOG.md",
 	],
 
 	"plugins": [
 		"https://plugins.dprint.dev/json-0.19.4.wasm",
 		"https://plugins.dprint.dev/markdown-0.17.8.wasm",
-		"https://plugins.dprint.dev/typescript-0.93.3.wasm"
+		"https://plugins.dprint.dev/typescript-0.93.3.wasm",
 	],
 
 	"lineWidth": 160,
@@ -21,8 +21,9 @@
 		"jsonTrailingCommaFiles": [
 			".vscode/extensions.json",
 			".vscode/settings.json",
-			"jsconfig.json"
-		]
+			"jsconfig.json",
+			".dprint.json",
+		],
 	},
 
 	"typescript": {
@@ -41,6 +42,6 @@
 		"arrowFunction.useParentheses": "force",
 
 		"useBraces": "always",
-		"ifStatement.useBraces": "whenNotSingleLine"
-	}
+		"ifStatement.useBraces": "whenNotSingleLine",
+	},
 }
