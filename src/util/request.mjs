@@ -28,7 +28,7 @@ function isClientResponseError(error) {
 	return error instanceof RequestError && error.status <= 500;
 }
 
-async function requestWithMeasure(url, options, logger) {
+async function fetchWithMeasure(url, options, logger) {
 	const measureName = `request`;
 	try {
 		logger.mark(`${measureName} start`);
@@ -46,7 +46,7 @@ export async function request(
 	retryCount = config.request.retryCount
 ) {
 	try {
-		const response = await requestWithMeasure(url, options, logger);
+		const response = await fetchWithMeasure(url, options, logger);
 		assertResponseOk(response);
 
 		logger.debug('request successful');
