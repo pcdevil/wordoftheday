@@ -14,6 +14,18 @@ const mocks = {
 	request: vi.mocked(request),
 };
 
+function expectRequestMockToHaveBeenLastCalledWithBody(status) {
+	// check body argument separately to avoid fragile assertion on the string
+	const [_url, options] = mocks.request.mock.lastCall;
+	const body = JSON.parse(options.body);
+
+	expect(body).toEqual({
+		language: mocks.config.post.language,
+		status,
+		visibility: mocks.config.post.visibility,
+	});
+}
+
 describe('MastodonPoster', () => {
 	let testWordObject;
 	let testDateString;
@@ -34,22 +46,20 @@ describe('MastodonPoster', () => {
 
 	describe('post()', () => {
 		it('should call the request method', async () => {
+			const status = [
+				`#WordOfTheDay ${mocks.config.post.hashtag} ${testDateString}`,
+				'',
+				testWordObject.word,
+				'',
+				testWordObject.url,
+			].join('\n');
+
 			await mastodonPoster.post(testWordObject);
 
 			expect(mocks.request).toHaveBeenCalledWith(
 				new URL(`${mocks.config.mastodon.baseUrl}/api/v1/statuses`),
 				{
-					body: JSON.stringify({
-						language: mocks.config.post.language,
-						status: [
-							`#WordOfTheDay ${mocks.config.post.hashtag} ${testDateString}`,
-							'',
-							testWordObject.word,
-							'',
-							testWordObject.url,
-						].join('\n'),
-						visibility: mocks.config.post.visibility,
-					}),
+					body: expect.any(String),
 					headers: {
 						Authorization: `Bearer ${mocks.config.mastodon.accessToken}`,
 						'Content-Type': 'application/json',
@@ -58,32 +68,31 @@ describe('MastodonPoster', () => {
 				},
 				expect.any(Object)
 			);
+			expectRequestMockToHaveBeenLastCalledWithBody(status);
 		});
 
 		it('should handle when the source.postHashtag config is not defined', async () => {
 			mocks.config.post.hashtag = undefined;
+			const status = [
+				`#WordOfTheDay ${testDateString}`,
+				'',
+				testWordObject.word,
+				'',
+				testWordObject.url,
+			].join('\n');
 
 			await mastodonPoster.post(testWordObject);
 
 			expect(mocks.request).toHaveBeenCalledWith(
 				expect.any(URL),
 				{
-					body: JSON.stringify({
-						language: mocks.config.post.language,
-						status: [
-							`#WordOfTheDay ${testDateString}`,
-							'',
-							testWordObject.word,
-							'',
-							testWordObject.url,
-						].join('\n'),
-						visibility: mocks.config.post.visibility,
-					}),
+					body: expect.any(String),
 					headers: expect.any(Object),
 					method: expect.any(String),
 				},
 				expect.any(Object)
 			);
+			expectRequestMockToHaveBeenLastCalledWithBody(status);
 		});
 
 		it('should throw an error when the mastodon.baseUrl config is not defined', async () => {
