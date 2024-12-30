@@ -1,3 +1,9 @@
+## [1.2.0](https://github.com/pcdevil/wordoftheday/compare/v1.1.0...v1.2.0) (2024-12-30)
+
+### Features
+
+* add idempotency key to avoid duplicated posts on repeated runs ([3ddfcce](https://github.com/pcdevil/wordoftheday/commit/3ddfccec1678f261dedad4070754bdecc74e0e95))
+
 ## [1.1.0](https://github.com/pcdevil/wordoftheday/compare/v1.0.0...v1.1.0) (2024-12-18)
 
 ### Features
