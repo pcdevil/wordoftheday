@@ -1,3 +1,5 @@
+import crypto from 'node:crypto';
+// project imports
 import { UndefinedConfigError, config } from '#src/lib/config.mjs';
 import { getLogger } from '#src/util/logger.mjs';
 import { request } from '#src/util/request.mjs';
@@ -26,12 +28,14 @@ export class MastodonPoster {
 			status,
 			visibility: config.post.visibility,
 		});
+		const statusHash = crypto.hash('sha1', status);
 
 		return {
 			body,
 			headers: {
 				Authorization: `Bearer ${config.mastodon.accessToken}`,
 				'Content-Type': 'application/json',
+				'Idempotency-Key': statusHash,
 			},
 			method: 'POST',
 		};

@@ -1,3 +1,4 @@
+import crypto from 'node:crypto';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 // project imports
 import { UndefinedConfigError, config } from '#src/lib/config.mjs';
@@ -53,6 +54,7 @@ describe('MastodonPoster', () => {
 				'',
 				testWordObject.url,
 			].join('\n');
+			const statusHash = crypto.hash('sha1', status);
 
 			await mastodonPoster.post(testWordObject);
 
@@ -63,6 +65,7 @@ describe('MastodonPoster', () => {
 					headers: {
 						Authorization: `Bearer ${mocks.config.mastodon.accessToken}`,
 						'Content-Type': 'application/json',
+						'Idempotency-Key': statusHash,
 					},
 					method: 'POST',
 				},
