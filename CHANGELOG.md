@@ -1,3 +1,9 @@
+## [1.3.0](https://github.com/pcdevil/wordoftheday/compare/v1.2.0...v1.3.0) (2025-01-25)
+
+### Features
+
+* update dependencies ([b76d76e](https://github.com/pcdevil/wordoftheday/commit/b76d76e024bfbb2ebba8256185c9e0c6789b85ad))
+
 ## [1.2.0](https://github.com/pcdevil/wordoftheday/compare/v1.1.0...v1.2.0) (2024-12-30)
 
 ### Features
