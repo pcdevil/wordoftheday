@@ -1,8 +1,8 @@
 name: 'Run source: The Free Dictionary'
 
 on:
-  # schedule:
-  #   - cron: '00 12 * * *'
+  schedule:
+    - cron: '00 12 * * *'
   workflow_dispatch:
 
 jobs:
