@@ -1,3 +1,9 @@
+## [1.4.0](https://github.com/pcdevil/wordoftheday/compare/v1.3.0...v1.4.0) (2025-02-11)
+
+### Features
+
+* update node and pnpm ([24e0387](https://github.com/pcdevil/wordoftheday/commit/24e03872cf273f551e6ceb0bb38a53eecc9b6c1d))
+
 ## [1.3.0](https://github.com/pcdevil/wordoftheday/compare/v1.2.0...v1.3.0) (2025-01-25)
 
 ### Features
