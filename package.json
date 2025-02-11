@@ -21,10 +21,6 @@
     "style:fix": "dprint fmt",
     "test": "vitest"
   },
-  "engines": {
-    "node": "^22.12.0",
-    "pnpm": "^9.15.2"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/pcdevil/wordoftheday.git"
@@ -35,7 +31,11 @@
     "url": "https://github.com/pcdevil/wordoftheday/issues"
   },
   "homepage": "https://github.com/pcdevil/wordoftheday#readme",
-  "packageManager": "pnpm@9.15.2+sha512.93e57b0126f0df74ce6bff29680394c0ba54ec47246b9cf321f0121d8d9bb03f750a705f24edc3c1180853afd7c2c3b94196d0a3d53d3e069d9e2793ef11f321",
+  "engines": {
+    "node": "^22.14.0",
+    "pnpm": "^10.3.0"
+  },
+  "packageManager": "pnpm@10.3.0+sha512.ee592eda8815a8a293c206bb0917c4bb0ff274c50def7cbc17be05ec641fc2d1b02490ce660061356bd0d126a4d7eb2ec8830e6959fb8a447571c631d5a2442d",
   "dependencies": {
     "dotenv": "^16.4.7",
     "htmlparser2": "^10.0.0",
