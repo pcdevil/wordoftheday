@@ -1,6 +1,6 @@
 import { vi } from 'vitest';
 
-export function mockJsonResponse(jsonResponse = {}) {
+export function mockJsonResponse (jsonResponse = {}) {
 	return {
 		json: vi.fn().mockResolvedValue(jsonResponse),
 		ok: true,
@@ -9,7 +9,7 @@ export function mockJsonResponse(jsonResponse = {}) {
 	};
 }
 
-export function mockTextResponse(textResponse = '') {
+export function mockTextResponse (textResponse = '') {
 	return {
 		ok: true,
 		status: 200,
@@ -18,7 +18,7 @@ export function mockTextResponse(textResponse = '') {
 	};
 }
 
-export function mockNotFoundResponse() {
+export function mockNotFoundResponse () {
 	return {
 		ok: false,
 		status: 404,

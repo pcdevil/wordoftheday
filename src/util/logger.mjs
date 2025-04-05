@@ -7,7 +7,7 @@ import { config } from '#src/lib/config.mjs';
 let mainLogger;
 const namedLoggers = new Map();
 
-export function getLogger(name) {
+export function getLogger (name) {
 	mainLogger ??= createLogger();
 	if (!name) return mainLogger;
 
@@ -19,12 +19,12 @@ export function getLogger(name) {
 	return namedLogger;
 }
 
-export function clearLoggers() {
+export function clearLoggers () {
 	mainLogger = undefined;
 	namedLoggers.clear();
 }
 
-function createCustomLevels() {
+function createCustomLevels () {
 	// set custom log levels based on existing one
 	const relativeLogLevel = pino.levels.values.debug;
 	return {
@@ -39,9 +39,9 @@ function createCustomLevels() {
 	};
 }
 
-function createPinoLogHooks(customLevels) {
+function createPinoLogHooks (customLevels) {
 	return {
-		logMethod(inputArgs, method, level) {
+		logMethod (inputArgs, method, level) {
 			// handle "mark" logs
 			if (level === customLevels.values.mark) {
 				const [markName] = inputArgs;
@@ -72,7 +72,7 @@ function createPinoLogHooks(customLevels) {
 	};
 }
 
-function createPinoOptions(customLevels, level) {
+function createPinoOptions (customLevels, level) {
 	const options = {
 		base: undefined,
 		customLevels: customLevels.values,
@@ -86,7 +86,7 @@ function createPinoOptions(customLevels, level) {
 	return options;
 }
 
-function createLogger() {
+function createLogger () {
 	const customLevels = createCustomLevels();
 
 	const logStreams = [];

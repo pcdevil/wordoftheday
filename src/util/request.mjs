@@ -2,7 +2,7 @@ import { config } from '#src/lib/config.mjs';
 import { NamedError } from '#src/util/named-error.mjs';
 
 export class RequestError extends NamedError {
-	constructor(message, options = {}) {
+	constructor (message, options = {}) {
 		const { cause, status, statusText } = options ?? {};
 
 		const superOptions = cause ? { cause } : {};
@@ -13,7 +13,7 @@ export class RequestError extends NamedError {
 	}
 }
 
-export async function request(
+export async function request (
 	url,
 	options,
 	logger,
@@ -48,7 +48,7 @@ export async function request(
 	}
 }
 
-function assertResponseOk(response) {
+function assertResponseOk (response) {
 	if (!response.ok) {
 		const { status, statusText } = response;
 
@@ -59,7 +59,7 @@ function assertResponseOk(response) {
 	}
 }
 
-async function fetchWithMeasure(url, options, logger) {
+async function fetchWithMeasure (url, options, logger) {
 	const measureName = `request`;
 	try {
 		logger.mark(`${measureName} start`);
@@ -70,10 +70,10 @@ async function fetchWithMeasure(url, options, logger) {
 	}
 }
 
-function isClientResponseError(error) {
+function isClientResponseError (error) {
 	return error instanceof RequestError && error.status <= 500;
 }
 
-async function retrySleep() {
+async function retrySleep () {
 	return new Promise((resolve) => setTimeout(resolve, config.request.retryDelay));
 }

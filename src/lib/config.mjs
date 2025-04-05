@@ -34,7 +34,7 @@ export const config = {
 };
 Object.freeze(config);
 
-function parseIntWithUndefined(stringValue) {
+function parseIntWithUndefined (stringValue) {
 	const numberValue = parseInt(stringValue, 10);
 	if (Number.isNaN(numberValue)) return;
 

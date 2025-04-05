@@ -8,14 +8,14 @@ export class WordOfTheDay {
 	#mastodonPoster;
 	#wordResolver;
 
-	constructor() {
+	constructor () {
 		this.#logger = getLogger(this.constructor.name);
 
 		this.#mastodonPoster = new MastodonPoster();
 		this.#wordResolver = new WordResolver();
 	}
 
-	async run() {
+	async run () {
 		try {
 			this.#logger.debug('run start', { sourceName: config.source.name });
 

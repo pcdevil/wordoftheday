@@ -11,11 +11,11 @@ export class NoItemError extends NamedError {}
 export class WordResolver {
 	#logger;
 
-	constructor() {
+	constructor () {
 		this.#logger = getLogger(this.constructor.name);
 	}
 
-	async get() {
+	async get () {
 		if (!config.source.url) throw new UndefinedConfigError(`The source.url config variable is not defined.`);
 		if (Number.isNaN(config.source.itemIndex)) throw new UndefinedConfigError(`The source.itemIndex config variable is not an integer.`);
 
@@ -48,7 +48,7 @@ export class WordResolver {
 		};
 	}
 
-	#parseFeedWithMeasure(text) {
+	#parseFeedWithMeasure (text) {
 		const measureName = 'parse feed';
 		try {
 			this.#logger.mark(`${measureName} start`);

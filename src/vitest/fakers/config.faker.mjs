@@ -1,6 +1,6 @@
 import { faker } from '@faker-js/faker';
 
-export function fakeSourceConfig(overrides = {}) {
+export function fakeSourceConfig (overrides = {}) {
 	return {
 		name: faker.company.name(),
 		url: faker.internet.url(),
@@ -9,7 +9,7 @@ export function fakeSourceConfig(overrides = {}) {
 	};
 }
 
-export function fakePostConfig(overrides = {}) {
+export function fakePostConfig (overrides = {}) {
 	return {
 		hashtag: '#' + faker.company.buzzNoun().replace(/-(.)/, (match) => match.substring(1).toUpperCase()),
 		language: faker.helpers.arrayElement(['en-GB', 'fr-FR', 'hu-HU']),
@@ -23,7 +23,7 @@ export function fakePostConfig(overrides = {}) {
 	};
 }
 
-export function fakeLogConfig(overrides = {}) {
+export function fakeLogConfig (overrides = {}) {
 	return {
 		filePath: faker.system.filePath(),
 		level: faker.helpers.arrayElement([
@@ -41,7 +41,7 @@ export function fakeLogConfig(overrides = {}) {
 	};
 }
 
-export function fakeMastodonConfig(overrides = {}) {
+export function fakeMastodonConfig (overrides = {}) {
 	return {
 		accessToken: faker.string.alphanumeric(42),
 		baseUrl: faker.internet.url({ appendSlash: false }),
@@ -49,7 +49,7 @@ export function fakeMastodonConfig(overrides = {}) {
 	};
 }
 
-export function fakeRequestConfig(overrides = {}) {
+export function fakeRequestConfig (overrides = {}) {
 	return {
 		retryCount: faker.number.int({ min: 1, max: 5 }),
 		retryDelay: faker.number.int({ min: 1_000, max: 120_000 }),
@@ -57,7 +57,7 @@ export function fakeRequestConfig(overrides = {}) {
 	};
 }
 
-export function fakeConfig(overrides = {}) {
+export function fakeConfig (overrides = {}) {
 	return {
 		log: fakeLogConfig(overrides.log),
 		mastodon: fakeMastodonConfig(overrides.mastodon),

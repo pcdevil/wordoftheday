@@ -7,11 +7,11 @@ import { request } from '#src/util/request.mjs';
 export class MastodonPoster {
 	#logger;
 
-	constructor() {
+	constructor () {
 		this.#logger = getLogger(this.constructor.name);
 	}
 
-	async post(wordObject) {
+	async post (wordObject) {
 		if (!config.mastodon.baseUrl) throw new UndefinedConfigError(`The mastodon.baseUrl config variable is not defined.`);
 		if (!config.mastodon.accessToken) throw new UndefinedConfigError(`The mastodon.accessToken config variable is not defined.`);
 
@@ -22,7 +22,7 @@ export class MastodonPoster {
 		await request(url, options, this.#logger);
 	}
 
-	#createOptions(status) {
+	#createOptions (status) {
 		const body = JSON.stringify({
 			language: config.post.language,
 			status,
@@ -41,7 +41,7 @@ export class MastodonPoster {
 		};
 	}
 
-	#createStatus(wordObject) {
+	#createStatus (wordObject) {
 		const dateString = new Intl.DateTimeFormat(config.post.language, { dateStyle: 'long' })
 			.format(wordObject.date);
 

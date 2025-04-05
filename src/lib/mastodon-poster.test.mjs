@@ -15,7 +15,7 @@ const mocks = {
 	request: vi.mocked(request),
 };
 
-function expectRequestMockToHaveBeenLastCalledWithBody(status) {
+function expectRequestMockToHaveBeenLastCalledWithBody (status) {
 	// check body argument separately to avoid fragile assertion on the string
 	const [_url, options] = mocks.request.mock.lastCall;
 	const body = JSON.parse(options.body);

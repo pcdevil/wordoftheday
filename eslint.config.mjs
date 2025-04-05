@@ -10,7 +10,7 @@ const gitignoreFile = resolve(import.meta.dirname, '.gitignore');
 /**
  * @param {{ files?: (string | string[])[], rules?: Object }[]} configArray
  */
-function stripFileOptions(configArray) {
+function stripFileOptions (configArray) {
 	const strippedConfigArray = [];
 
 	for (const config of configArray) {

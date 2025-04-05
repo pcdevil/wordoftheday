@@ -1,6 +1,6 @@
 import { vi } from 'vitest';
 
-export function mockLogger() {
+export function mockLogger () {
 	return {
 		// child logger creation
 		child: vi.fn(() => mockLogger()),
