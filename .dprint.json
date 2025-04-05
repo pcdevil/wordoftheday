@@ -36,6 +36,13 @@
 		"module.sortExportDeclarations": "caseSensitive",
 		"module.sortImportDeclarations": "caseSensitive",
 
+		"constructor.spaceBeforeParentheses": true,
+		"functionDeclaration.spaceBeforeParentheses": true,
+		"functionExpression.spaceBeforeParentheses": true,
+		"getAccessor.spaceBeforeParentheses": true,
+		"method.spaceBeforeParentheses": true,
+		"setAccessor.spaceBeforeParentheses": true,
+
 		"arguments.trailingCommas": "never",
 		"parameters.trailingCommas": "never",
 
