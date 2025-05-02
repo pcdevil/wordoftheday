@@ -1,3 +1,10 @@
+## [1.6.0](https://github.com/pcdevil/wordoftheday/compare/v1.5.0...v1.6.0) (2025-05-02)
+
+### Features
+
+* update dependencies ([53a5882](https://github.com/pcdevil/wordoftheday/commit/53a5882379ab92640915faf5a98e836353993864))
+* update node and pnpm ([2d37277](https://github.com/pcdevil/wordoftheday/commit/2d37277b679138aff5afc9e4ad492f1220fd16ed))
+
 ## [1.5.0](https://github.com/pcdevil/wordoftheday/compare/v1.4.0...v1.5.0) (2025-03-09)
 
 ### Features
