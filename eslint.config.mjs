@@ -2,30 +2,13 @@ import { includeIgnoreFile } from '@eslint/compat';
 import eslint from '@eslint/js';
 import eslintNodePlugin from 'eslint-plugin-n';
 import eslintPromisePlugin from 'eslint-plugin-promise';
+import { defineConfig } from 'eslint/config';
 import globals from 'globals';
 import { resolve } from 'node:path';
 
 const gitignoreFile = resolve(import.meta.dirname, '.gitignore');
 
-/**
- * @param {{ files?: (string | string[])[], rules?: Object }[]} configArray
- */
-function stripFileOptions (configArray) {
-	const strippedConfigArray = [];
-
-	for (const config of configArray) {
-		const { files: _files, ...restConfig } = config;
-		strippedConfigArray.push(restConfig);
-	}
-
-	return strippedConfigArray;
-}
-
-export default [
-	...stripFileOptions([eslint.configs.recommended]),
-	...stripFileOptions([eslintNodePlugin.configs['flat/recommended-script']]),
-	...stripFileOptions([eslintPromisePlugin.configs['flat/recommended']]),
-
+export default defineConfig([
 	includeIgnoreFile(gitignoreFile),
 
 	{
@@ -35,6 +18,12 @@ export default [
 			'src/**/*.js',
 			'src/**/*.mjs',
 			'*.config.mjs',
+		],
+
+		extends: [
+			eslint.configs.recommended,
+			eslintNodePlugin.configs['flat/recommended-module'],
+			eslintPromisePlugin.configs['flat/recommended'],
 		],
 
 		languageOptions: {
@@ -55,4 +44,4 @@ export default [
 			}],
 		},
 	},
-];
+]);
