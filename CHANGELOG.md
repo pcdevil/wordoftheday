@@ -1,3 +1,9 @@
+## [1.7.0](https://github.com/pcdevil/wordoftheday/compare/v1.6.0...v1.7.0) (2025-05-19)
+
+### Features
+
+* update dependencies ([2603a4a](https://github.com/pcdevil/wordoftheday/commit/2603a4a67baafbac4dffe976075ac349e3be8930))
+
 ## [1.6.0](https://github.com/pcdevil/wordoftheday/compare/v1.5.0...v1.6.0) (2025-05-02)
 
 ### Features
