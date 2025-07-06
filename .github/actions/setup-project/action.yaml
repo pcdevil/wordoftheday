@@ -31,4 +31,5 @@ runs:
           ${{ runner.os }}-npm-
           ${{ runner.os }}-
     - name: 'Install npm dependencies'
+      shell: bash
       run: npm clean-install
