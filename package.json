@@ -13,13 +13,14 @@
     "#src/*": "./src/*"
   },
   "scripts": {
-    "lint": "eslint",
-    "lint:fix": "eslint --fix",
+    "lint": "eslint --fix",
+    "lint:check-only": "eslint",
     "semantic-release": "semantic-release",
     "start": "node src/cli.mjs",
-    "style": "dprint check",
-    "style:fix": "dprint fmt",
-    "test": "vitest"
+    "format": "dprint fmt",
+    "format:check-only": "dprint check",
+    "test": "vitest",
+    "test:check-only": "vitest run"
   },
   "repository": {
     "type": "git",
