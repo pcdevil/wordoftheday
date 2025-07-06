@@ -1,0 +1,2 @@
+npm run format:check-only
+npm run lint:check-only

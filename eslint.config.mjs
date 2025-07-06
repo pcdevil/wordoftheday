@@ -36,6 +36,8 @@ export default defineConfig([
 		},
 
 		rules: {
+			'n/no-process-exit': 'off',
+
 			'no-unused-vars': ['error', {
 				argsIgnorePattern: '^_',
 				caughtErrorsIgnorePattern: '^_',

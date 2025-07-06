@@ -18,4 +18,8 @@
 
 	"dprint.path": "node_modules/.bin/dprint",
 	"eslint.useFlatConfig": true,
+
+	"files.associations": {
+		"**/.husky/**/*": "shellscript",
+	},
 }

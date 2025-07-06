@@ -19,6 +19,7 @@
     "start": "node src/cli.mjs",
     "format": "dprint fmt",
     "format:check-only": "dprint check",
+    "prepare": "node src/install-husky.mjs",
     "test": "vitest",
     "test:check-only": "vitest run"
   },
@@ -55,6 +56,7 @@
     "eslint-plugin-n": "^17.21.0",
     "eslint-plugin-promise": "^7.2.1",
     "globals": "^16.3.0",
+    "husky": "^9.1.7",
     "semantic-release": "^24.2.6",
     "vitest": "^3.2.4"
   }
