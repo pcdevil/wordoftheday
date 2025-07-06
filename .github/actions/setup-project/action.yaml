@@ -25,7 +25,7 @@ runs:
     - name: 'Setup npm cache'
       uses: actions/cache@v4
       with:
-        ket: ${{ runner.os }}-npm-${{ hashFiles('package-lock.json') }}
+        key: ${{ runner.os }}-npm-${{ hashFiles('package-lock.json') }}
         path: ~/.npm
         restore-keys: |
           ${{ runner.os }}-npm-
