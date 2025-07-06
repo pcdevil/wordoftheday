@@ -17,10 +17,10 @@ jobs:
       ##########
       - name: 'Perform code analyzer check'
         shell: bash
-        run: pnpm lint
+        run: npm run lint
       - name: 'Perform format check'
         shell: bash
-        run: pnpm style
+        run: npm run style
       - name: 'Perform tests'
         shell: bash
-        run: pnpm test
+        run: npm run test

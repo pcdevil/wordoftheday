@@ -50,7 +50,7 @@ jobs:
           use_latest_tag: true
       ##########
       - name: 'Run application for "${{ env.SOURCE_NAME }}" source'
-        run: pnpm start
+        run: npm start
       - name: 'Upload logs as artifact'
         uses: actions/upload-artifact@v4
         with:

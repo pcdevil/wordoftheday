@@ -27,4 +27,4 @@ jobs:
         uses: ./.github/actions/setup-project
       ##########
       - name: 'Run semantic-release script'
-        run: pnpm semantic-release
+        run: npm run semantic-release

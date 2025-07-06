@@ -22,22 +22,13 @@ runs:
       uses: actions/setup-node@v4
       with:
         node-version-file: .nvmrc
-    - name: 'Setup pnpm'
-      shell: bash
-      run: |
-        corepack enable
-        corepack prepare
-    - name: 'Get pnpm store directory'
-      id: pnpm_store
-      shell: bash
-      run: echo "path=$(pnpm store path --silent)" >> "$GITHUB_OUTPUT"
-    - name: 'Setup pnpm cache'
+    - name: 'Setup npm cache'
       uses: actions/cache@v4
       with:
-        key: ${{ runner.os }}-pnpm-store-${{ hashFiles('pnpm-lock.yaml') }}
-        path: ${{ steps.pnpm_store.outputs.path }}
+        ket: ${{ runner.os }}-npm-${{ hashFiles('package-lock.json') }}
+        path: ~/.npm
         restore-keys: |
-          ${{ runner.os }}-pnpm-store
-    - name: 'Install pnpm dependencies'
-      shell: bash
-      run: pnpm install
+          ${{ runner.os }}-npm-
+          ${{ runner.os }}-
+    - name: 'Install npm dependencies'
+      run: npm clean-install
