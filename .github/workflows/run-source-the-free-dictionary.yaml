@@ -1,17 +1,17 @@
-name: 'Run source: The Free Dictionary'
+name: "Run source: The Free Dictionary"
 
 on:
   schedule:
-    - cron: '00 12 * * *'
+    - cron: "00 12 * * *"
   workflow_dispatch:
 
 jobs:
   run:
-    name: 'Trigger run workflow'
+    name: "Trigger run workflow"
     uses: ./.github/workflows/run.yaml
     with:
-      source_name: 'The Free Dictionary'
-      source_url: 'https://www.thefreedictionary.com/_/WoD/rss.aspx'
+      source_name: "The Free Dictionary"
+      source_url: "https://www.thefreedictionary.com/_/WoD/rss.aspx"
       source_item_index: 0
-      post_hashtag: '#TheFreeDictionary'
+      post_hashtag: "#TheFreeDictionary"
     secrets: inherit

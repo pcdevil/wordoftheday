@@ -1,26 +1,26 @@
-name: 'Sanity checks'
+name: "Sanity checks"
 on:
   workflow_call:
 
 jobs:
   sanity-checks:
-    name: 'Sanity checks'
+    name: "Sanity checks"
     runs-on: ubuntu-24.04
     steps:
-      - name: 'Checkout project'
+      - name: "Checkout project"
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
           fetch-tags: true
-      - name: 'Setup project'
+      - name: "Setup project"
         uses: ./.github/actions/setup-project
       ##########
-      - name: 'Perform code analyzer check'
+      - name: "Perform code analyzer check"
         shell: bash
         run: npm run lint
-      - name: 'Perform format check'
+      - name: "Perform format check"
         shell: bash
         run: npm run style
-      - name: 'Perform tests'
+      - name: "Perform tests"
         shell: bash
         run: npm run test

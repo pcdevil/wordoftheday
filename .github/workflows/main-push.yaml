@@ -1,4 +1,4 @@
-name: 'Main push'
+name: "Main push"
 on:
   push:
     branches:
@@ -9,28 +9,28 @@ concurrency:
 
 jobs:
   sanity-checks:
-    name: 'Sanity Checks'
+    name: "Sanity Checks"
     uses: ./.github/workflows/sanity-checks.yaml
 
   release:
-    name: 'Release'
+    name: "Release"
     needs:
       - sanity-checks
     runs-on: ubuntu-24.04
     steps:
-      - name: 'Checkout project'
+      - name: "Checkout project"
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
           fetch-tags: true
-      - name: 'Setup project'
+      - name: "Setup project"
         uses: ./.github/actions/setup-project
       ##########
-      - name: 'Run semantic-release script'
+      - name: "Run semantic-release script"
         env:
           # Set both the Git author and committer to a project specific value
-          GIT_AUTHOR_EMAIL: 'bot@wordoftheday.dev'
-          GIT_AUTHOR_NAME: 'wordoftheday-bot'
-          GIT_COMMITTER_EMAIL: 'bot@wordoftheday.dev'
-          GIT_COMMITTER_NAME: 'wordoftheday-bot'
+          GIT_AUTHOR_EMAIL: "bot@wordoftheday.dev"
+          GIT_AUTHOR_NAME: "wordoftheday-bot"
+          GIT_COMMITTER_EMAIL: "bot@wordoftheday.dev"
+          GIT_COMMITTER_NAME: "wordoftheday-bot"
         run: npm run semantic-release

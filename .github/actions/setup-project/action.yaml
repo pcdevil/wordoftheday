@@ -1,8 +1,8 @@
-name: 'Setup project'
+name: "Setup project"
 
 inputs:
   use_latest_tag:
-    description: 'Controls whether to checkout the latest tag or not. Turned off by default.'
+    description: "Controls whether to checkout the latest tag or not. Turned off by default."
     required: false
     default: false
     type: boolean
@@ -10,7 +10,7 @@ inputs:
 runs:
   using: composite
   steps:
-    - name: 'Checkout the latest tag'
+    - name: "Checkout the latest tag"
       if: ${{ inputs.use_latest_tag == 'true' }}
       shell: bash
       run: |
@@ -18,11 +18,11 @@ runs:
         echo "The latest tag: $GIT_TAG"
         git checkout --quiet "$GIT_TAG"
     ##########
-    - name: 'Setup Node.js'
+    - name: "Setup Node.js"
       uses: actions/setup-node@v4
       with:
         node-version-file: .nvmrc
-    - name: 'Setup npm cache'
+    - name: "Setup npm cache"
       uses: actions/cache@v4
       with:
         key: ${{ runner.os }}-npm-${{ hashFiles('package-lock.json') }}
@@ -30,6 +30,6 @@ runs:
         restore-keys: |
           ${{ runner.os }}-npm-
           ${{ runner.os }}-
-    - name: 'Install npm dependencies'
+    - name: "Install npm dependencies"
       shell: bash
       run: npm clean-install

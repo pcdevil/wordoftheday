@@ -1,22 +1,22 @@
-name: 'Run'
+name: "Run"
 on:
   workflow_call:
     inputs:
       source_name:
-        description: 'Name of the source'
+        description: "Name of the source"
         required: true
         type: string
       source_url:
-        description: 'RSS feed Url for the source'
+        description: "RSS feed Url for the source"
         required: true
         type: string
       source_item_index:
-        description: 'Index of the latest item in the returned RSS feed'
+        description: "Index of the latest item in the returned RSS feed"
         required: true
         type: number
       post_hashtag:
-        description: 'Hashtag to add to the post'
-        default: ''
+        description: "Hashtag to add to the post"
+        default: ""
         type: string
 
 env:
@@ -25,35 +25,35 @@ env:
   LOG_PRETTY: true
   MASTODON_ACCESS_TOKEN: ${{ secrets.MASTODON_ACCESS_TOKEN }}
   MASTODON_BASE_URL: ${{ secrets.MASTODON_BASE_URL }}
-  NODE_ENV: 'production'
+  NODE_ENV: "production"
 
   SOURCE_NAME: ${{ inputs.source_name }}
   SOURCE_URL: ${{ inputs.source_url }}
   SOURCE_ITEM_INDEX: ${{ inputs.source_item_index }}
   POST_HASHTAG: ${{ inputs.post_hashtag }}
-  POST_LANGUAGE: 'en-GB'
-  POST_VISIBILITY: 'public'
+  POST_LANGUAGE: "en-GB"
+  POST_VISIBILITY: "public"
 
 jobs:
   run:
-    name: 'Run'
+    name: "Run"
     runs-on: ubuntu-24.04
     steps:
-      - name: 'Checkout project'
+      - name: "Checkout project"
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
           fetch-tags: true
-      - name: 'Setup project'
+      - name: "Setup project"
         uses: ./.github/actions/setup-project
         with:
           use_latest_tag: true
       ##########
       - name: 'Run application for "${{ env.SOURCE_NAME }}" source'
         run: npm start
-      - name: 'Upload logs as artifact'
+      - name: "Upload logs as artifact"
         uses: actions/upload-artifact@v4
         with:
-          name: '${{ env.SOURCE_NAME }} run ${{ env.LOG_LEVEL }} log'
+          name: "${{ env.SOURCE_NAME }} run ${{ env.LOG_LEVEL }} log"
           path: ${{ env.LOG_FILE_PATH }}
           retention-days: 7
