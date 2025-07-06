@@ -1,4 +1,11 @@
+import dotenv from 'dotenv';
+// project imports
 import { NamedError } from '#src/util/named-error.mjs';
+
+dotenv.config({
+	processEnv: process.env,
+	quiet: true,
+});
 
 export class UndefinedConfigError extends NamedError {}
 
