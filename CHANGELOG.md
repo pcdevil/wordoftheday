@@ -1,3 +1,10 @@
+## [1.8.1](https://github.com/pcdevil/wordoftheday/compare/v1.8.0...v1.8.1) (2025-07-06)
+
+### Bug Fixes
+
+* make sure to load dotenv before the config definitions ([2275336](https://github.com/pcdevil/wordoftheday/commit/22753367f57cf57722f9b13e5ee1a89e153bed8e))
+* use more robust number parsing for configs ([34bb015](https://github.com/pcdevil/wordoftheday/commit/34bb0159998005fc319966feac8bdce7ce1d394c))
+
 ## [1.8.0](https://github.com/pcdevil/wordoftheday/compare/v1.7.0...v1.8.0) (2025-07-06)
 
 ### Features
